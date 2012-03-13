@@ -29,13 +29,9 @@ public class Market implements Serializable {
 	public List<Offer> getOffers(Consumer c, Good g) {
 		List<Offer> offers = new ArrayList<Offer>();
 		for (Firm f : firms) {
-			if (f.produces(g)) {
-				double availQty = f.getInventory(g); 
-				if (availQty > 0.0) {
-					Offer offer = new Offer(f,g,f.getPrice(g, c),availQty);
-					offers.add(offer);
-				}
-			}
+			Offer offer = f.getOffer(g, c);
+			if (offer != null)
+				offers.add(offer);
 		}
 		return offers;
 	}

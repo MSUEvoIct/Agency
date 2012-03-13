@@ -2,7 +2,7 @@ package abce.io.simple;
 
 import abce.agency.Market;
 import abce.agency.consumer.Consumer;
-import abce.agency.consumer.PerfectlyRationalConsumer;
+import abce.agency.consumer.ReluctantSwitcher;
 import abce.agency.engine.MarketSimulation;
 import abce.agency.firm.Firm;
 import abce.agency.firm.SimpleFirm;
@@ -47,7 +47,8 @@ public class SingleGoodSimulation extends MarketSimulation {
 		
 		// Add consumers
 		for (int i = 0; i < testNumConsumerAgents; i++) {
-			Consumer c = new PerfectlyRationalConsumer(testNumPersonsPerConsumerAgent);
+//			Consumer c = new PerfectlyRationalConsumer(testNumPersonsPerConsumerAgent);
+			Consumer c = new ReluctantSwitcher(testNumPersonsPerConsumerAgent);
 			c.enterMarket(m);
 			c.setWTP(g, testWTP);
 			addConsumer(c);

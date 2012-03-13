@@ -8,13 +8,35 @@ public class Offer implements Comparable {
 	public final Firm firm;
 	public final Good good;
 	public final double price;
-	public final double availQty;
+	public final double maxQty;
+	public final double minQty;
 
-	public Offer(Firm f, Good g, double p, double q) {
-		good = g;
-		price = p;
-		availQty = q;
+	/**
+	 * @param f  The firm offering
+	 * @param g The good being offered
+	 * @param price The price of the good, per unit.
+	 * @param maxQuantity  The maximum quantity available for purchase.
+	 */
+	public Offer(Firm f, Good g, double price, double maxQuantity) {
+		this(f,g,price,maxQuantity,0.0);
+	}
+
+	
+	/**
+	 * Currently private, change if minimum quantities are implemented elsewhere.
+	 * 
+	 * @param f
+	 * @param g
+	 * @param price
+	 * @param maxQuantity
+	 * @param minQuantity
+	 */
+	private Offer(Firm f, Good g, double price, double maxQuantity, double minQuantity) {
 		firm = f;
+		good = g;
+		this.price = price;
+		maxQty = maxQuantity;
+		minQty = minQuantity;
 	}
 	
 	@Override

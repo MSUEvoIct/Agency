@@ -8,15 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import sim.engine.SimState;
 import abce.agency.Agent;
 import abce.agency.Market;
 import abce.agency.Offer;
 import abce.agency.actions.MarketEntry;
 import abce.agency.actions.SaleOfGoods;
 import abce.agency.goods.Good;
-
-import sim.engine.SimState;
-import sim.engine.Steppable;
 
 public abstract class Consumer extends Agent {
 	private static final long serialVersionUID = 1L;
@@ -64,17 +62,29 @@ public abstract class Consumer extends Agent {
 	}
 	
 	/**
+	 * @return A list of all goods for which this consumer currently has a non-zero
+	 * willingness to pay.
+	 */
+	protected List<Good> allDesiredGoods() {
+		List<Good> goods = new ArrayList<Good>();
+		for (Good g : this.wilingnessToPay.keySet()) {
+			Double wtp = this.wilingnessToPay.get(g);
+			if (wtp != null)
+				if (wtp > 0.0)
+					goods.add(g);
+		}	
+		return goods;
+	}
+	
+	/**
 	 * Find the lowest cost suppliers for <i>all goods</i> for which this
 	 * consumer has a positive willingness to pay, up to the specified quantity
 	 * (for each and every good), as long as the price is less than their
 	 * willingness to pay.
 	 */
 	protected void findAndConsumeIdeal(double qty) {
-		for (Good g : this.wilingnessToPay.keySet()) {
-			Double wtp = this.wilingnessToPay.get(g);
-			if (wtp != null)
-				if (wtp > 0.0)
-					findAndConsumeIdeal(g, qty);
+		for (Good g : allDesiredGoods()) {
+			findAndConsumeIdeal(g, qty);
 		}
 	}
 	
@@ -89,10 +99,12 @@ public abstract class Consumer extends Agent {
 		findAndConsumeIdeal(g, this.population);
 	}
 	
-	protected void findAndConsumeIdeal(Good g, double qtyToConsume) {
-		// Get function-local copy of WTP
-		double wtp = wilingnessToPay.get(g);
-		
+	/**
+	 * @param g
+	 * @return a list of the available offers for the specified good, in the markets
+	 * in which this consumer participates, sorted by lowest price first.
+	 */
+	protected List<Offer> getSortedOffers(Good g) {
 		// Determine the available markets, create set of offers.
 		Set<Market> availableMarkets = markets.get(g);
 		
@@ -101,14 +113,31 @@ public abstract class Consumer extends Agent {
 		for (Market m : availableMarkets) {
 			offers.addAll(m.getOffers(this, g));
 		}
-		Collections.sort(offers);
+		Collections.sort(offers);		
+
+		return offers;
+	}
+	
+	protected void findAndConsumeIdeal(Good g, double qtyToConsume) {
+		// get list or sorted offers
+		List<Offer> offers = getSortedOffers(g);
+		consumeOrderedOffers(offers,qtyToConsume);
+	}
+	
+	/**
+	 * Consume from the specified list of offers, in order, until the specified quantity has
+	 * been consumed or the offer price is greater than the consumer's willingness to pay.
+	 * 
+	 * @param offers An ordered list of offers to purchase from.
+	 */
+	protected void consumeOrderedOffers(List<Offer> offers, double qtyToConsume) {
+		double leftToConsume = qtyToConsume; // initially, we haven't bought anything yet.
 		
-		/*
-		 * Consume one per person, from the lowest cost providers, until 
-		 * we have consumed the specified quantity of the good or the price
-		 * is higher than the willingness to pay.
-		 */
-		double leftToConsume = qtyToConsume;
+		// Look at the first offer to determine which good we're looking at
+		Offer firstOffer = offers.get(0);
+		// Determine the willingness to pay for that good.
+		double wtp = wilingnessToPay.get(firstOffer.good);
+		
 		for (Offer o : offers) {
 			if ( leftToConsume <= 0.000001 ) // if we've consumed basically everything,
 				break;  // stop looking
@@ -118,15 +147,17 @@ public abstract class Consumer extends Agent {
 				 * to buy and buy it.
 				 */
 				double qtyFromThisFirm = 0.0;
-				if (o.availQty <= qtyToConsume) // can be satisfied with first offer
-					qtyFromThisFirm = o.availQty;
+				if (o.maxQty <= qtyToConsume) // can be satisfied with first offer
+					qtyFromThisFirm = o.maxQty;
 				else
 					qtyFromThisFirm = qtyToConsume;
 					
 				SaleOfGoods sog = new SaleOfGoods(this, o.firm, o.good, o.price, qtyFromThisFirm);
 				sog.process();
+				leftToConsume = leftToConsume - sog.quantity;
 			}
 		}
+		
 	}
 	
 	/**

@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import sim.engine.SimState;
-
 import abce.agency.Agent;
 import abce.agency.Market;
+import abce.agency.Offer;
 import abce.agency.actions.MarketEntry;
 import abce.agency.actions.ProductionAction;
 import abce.agency.actions.SaleOfGoods;
@@ -147,12 +147,24 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 * @param consumer Which consumer
 	 * @return The price
 	 */
-	public double getPrice(Good good, Consumer consumer) {
+	protected double getPrice(Good good, Consumer consumer) {
 		Double price = prices.get(good);
 		if (price != null)
 			return price;
 		else
 			throw new RuntimeException("Firm " + this + " asked to price good, " + good + " but has never set a price for it.");
+	}
+	
+	public final Offer getOffer(Good good, Consumer consumer) {
+		if (! this.produces(good))
+			return null;  //this firm does not produce this good; no offer.
+		double qtyAvailable = this.getInventory(good);
+		if (qtyAvailable <= 0.0)
+			return null; // the firm has no inventory
+
+		// make the offer
+		Offer o = new Offer(this, good, getPrice(good,consumer), qtyAvailable);
+		return o;
 	}
 	
 	public double getInventory(Good good) {
