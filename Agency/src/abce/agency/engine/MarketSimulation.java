@@ -1,6 +1,10 @@
 package abce.agency.engine;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import abce.agency.Market;
@@ -9,25 +13,58 @@ import abce.agency.firm.Firm;
 
 import sim.engine.Schedule;
 import sim.engine.SimState;
+import sim.engine.Steppable;
 
-public class MarketSimulation extends SimState {
+public class MarketSimulation extends SimState implements Runnable {
 	private static final long serialVersionUID = 1L;
-	
+	private static final long defaultStepsToRun = 30L;
 	private static final int defaultFirmOrdering = 100; // default ordering for firms
 	private static final int defaultConsumerOrdering = 200; // default ordering for consumers
+	private static final int defaultEventOrdering = 300; // default ordering for data reporters
 	
+	private long stepsToRun = defaultStepsToRun;
+	
+	// Substantive simulation state
 	private Set<Market> markets = new HashSet<Market>();
 	private Set<Firm> firms = new HashSet<Firm>();
 	private Set<Consumer> consumers = new HashSet<Consumer>();
 	
+	// For evolutionary simulations
+	public final Integer generation;
+	public final Integer simulationID;
+
+	public final File simulationRoot;
+	
 	public MarketSimulation(long seed) {
+		this(seed,defaultStepsToRun,null,null,null);
+	}
+	
+	public MarketSimulation(long seed, long stepsToRun) {
+		this(seed,stepsToRun,null,null,null);
+	}
+	
+	public MarketSimulation(long seed, long stepsToRun, Integer generation,
+			Integer simulationID, File simulationRoot) {
+
 		super(seed);
-		schedule = new AsyncDataSchedule();
-		// TODO Auto-generated constructor stub
+		// override the default MASON Simulation Schedule
+		this.schedule = new AsyncDataSchedule();
+
+		this.generation = generation;
+		this.simulationID = simulationID;
+		if (simulationRoot != null)
+			this.simulationRoot = simulationRoot;
+		else // use the current directory if none specified
+			this.simulationRoot = new File(System.getProperty("user.dir"));
+			
 	}
 
 	public void addMarket(Market market) {
 		this.markets.add(market);
+	}
+	
+	public void addEvent(Steppable event) {
+		schedule.scheduleRepeating(Schedule.EPOCH, defaultEventOrdering, event);
 	}
 	
 	/**
@@ -43,7 +80,7 @@ public class MarketSimulation extends SimState {
 	
 	public void addConsumer(Consumer consumer) {
 		this.consumers.add(consumer);
-		schedule.scheduleRepeating(Schedule.EPOCH,defaultConsumerOrdering,consumer);
+		schedule.scheduleRepeating(Schedule.EPOCH, defaultConsumerOrdering, consumer);
 	}
 	
 	/**
@@ -55,6 +92,29 @@ public class MarketSimulation extends SimState {
 	 */
 	public void forceMarketEntry(Firm firm, Market market) {
 		firm.enter(market);
+	}
+	
+	/**
+	 * @return The number of steps that have been executed so far.
+	 */
+	public long getSteps() {
+		return schedule.getSteps();
+	}
+	
+	public Set<Consumer> getConsumers() {
+		return Collections.unmodifiableSet(consumers);
+	}
+
+	@Override
+	public void run() {
+		for (int i = 0; i < stepsToRun; i++) {
+			// Time Step Starts
+
+			// Scheduled Executes
+			schedule.step(this);
+			
+			// Time Step Ends
+		}
 	}
 	
 	

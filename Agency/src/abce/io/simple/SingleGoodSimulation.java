@@ -1,5 +1,7 @@
 package abce.io.simple;
 
+import java.io.PrintWriter;
+
 import abce.agency.Market;
 import abce.agency.consumer.Consumer;
 import abce.agency.consumer.ReluctantSwitcher;
@@ -23,15 +25,21 @@ public class SingleGoodSimulation extends MarketSimulation {
 	private static final double testConstantPrice = 4.5;
 	private static final long testSeed = 12345;
 	
-	private Good g;
+	public final Good good;
+	
 	private Market m;
 	private ProductionFunction pf;
 	
 	public SingleGoodSimulation(long seed) {
+		this(seed,null,null);
+	}
+	
+	public SingleGoodSimulation(long seed, Integer generation, Integer simulationID) {
 		super(seed);
 		
-		g = new DurableGood("testgood");
-		m = new Market(g);
+		
+		good = new DurableGood("testgood");
+		m = new Market(good);
 		pf = new ConstantCostProductionFunction(testConstantCost);
 		
 		addMarket(m);
@@ -40,7 +48,7 @@ public class SingleGoodSimulation extends MarketSimulation {
 		for (int i = 0; i < testNumFirms; i++) {
 			Firm f = new SimpleFirm(testConstantPrice);
 			f.grantEndowment(testFirmEndowment);
-			f.startProducing(g, pf);
+			f.startProducing(good, pf);
 			forceMarketEntry(f, m);
 			addFirm(f);
 		}
@@ -50,15 +58,16 @@ public class SingleGoodSimulation extends MarketSimulation {
 //			Consumer c = new PerfectlyRationalConsumer(testNumPersonsPerConsumerAgent);
 			Consumer c = new ReluctantSwitcher(testNumPersonsPerConsumerAgent);
 			c.enterMarket(m);
-			c.setWTP(g, testWTP);
+			c.setWTP(good, testWTP);
 			addConsumer(c);
 		}
 	}
 	
 	public static void main(String[] args) {
 		SingleGoodSimulation sgs = new SingleGoodSimulation(testSeed);
-		for (int i = 0; i < 50; i++)
-			sgs.schedule.step(sgs);
+		SimpleConsumerReporter scr = new SimpleConsumerReporter(new PrintWriter(System.out),false,1,sgs);
+		sgs.addEvent(scr);
+		sgs.run();
 	}
 	
 

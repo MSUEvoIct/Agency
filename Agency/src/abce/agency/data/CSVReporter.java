@@ -2,7 +2,9 @@ package abce.agency.data;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import abce.agency.engine.MarketSimulation;
 
@@ -47,13 +49,13 @@ public abstract class CSVReporter implements Serializable, Steppable {
 	public final boolean prependGeneration;
 	public final boolean prependSimulationID;
 	
-	
 	public CSVReporter(PrintWriter outputTo, boolean printColumnHeaders,
 			int stepModulo, MarketSimulation sim) {
 		
 		this.printColumnHeaders = printColumnHeaders;
 		this.stepModulo = stepModulo;
 		this.output = outputTo;
+		this.sim = sim;
 		if (sim != null) {
 			prependGeneration = (sim.generation != null);
 			prependSimulationID = (sim.simulationID != null);
@@ -87,6 +89,6 @@ public abstract class CSVReporter implements Serializable, Steppable {
 		output.println(csvString);
 	}
 	
-	protected abstract Iterable<Object> getHeaders();
+	protected abstract List<Object> getHeaders();
 	
 }

@@ -268,12 +268,12 @@ public class Accounts extends Agent implements Serializable, Steppable {
 		
 	}
 	
-	@Descriptor(name = "CapitalAssets")
+//	@Descriptor(name = "CapitalAssets")
 	public Double getAssetsValue() {
 		return assetsValue;
 	}
 
-	@Descriptor(name = "LiquidAssets")
+//	@Descriptor(name = "LiquidAssets")
 	public Double getCashOnHand() {
 		return cash;
 	}
@@ -316,7 +316,7 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	 * 
 	 * XXX Magic numbers/formula, fixme.
 	 */
-	@Descriptor(name = "AvailableFinancing")
+//	@Descriptor(name = "AvailableFinancing")
 	public double getAvailableFinancing() {
 		double totalAssets = getCashOnHand() + getAssetsValue();
 		// moving average revenue for the last 5 steps
@@ -335,29 +335,29 @@ public class Accounts extends Agent implements Serializable, Steppable {
 		return total / steps;
 	}
 	
-	@Descriptor(name = "DebtBalance")
+//	@Descriptor(name = "DebtBalance")
 	public double getDebtBalance() {
 		return debt;
 	}
 
-	@Descriptor(name = "InterestRate")
+//	@Descriptor(name = "InterestRate")
 	public double getDebtInterestRate() {
 		return interestRate;
 	}
 
-	@Descriptor(name = "DebtPayoffRate")
+//	@Descriptor(name = "DebtPayoffRate")
 	public double getDebtPayoffRate() {
 		return payoffRate;
 	}
 
-	@Descriptor(name = "DeltaRevenue")
+//	@Descriptor(name = "DeltaRevenue")
 	public double getDeltaRevenue() {
 		double lastPeriodRevenue = shortRevenue[shortIndex(1)];
 		double twoPeriodsRevenue = shortRevenue[shortIndex(2)];
 		return lastPeriodRevenue - twoPeriodsRevenue;
 	}
 
-	@Descriptor(name = "DepreciationRate")
+//	@Descriptor(name = "DepreciationRate")
 	public double getDepreciationRate() {
 		return depreciationRate;
 	}
@@ -367,47 +367,47 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	 * 
 	 * @return
 	 */
-	@Descriptor(name = "NetWorth")
+//	@Descriptor(name = "NetWorth")
 	public double getNetWorth() {
 		return assetsValue + cash - debt;
 	}
 
-	@Descriptor(name = "LastStepFinancingCost")
+//	@Descriptor(name = "LastStepFinancingCost")
 	public double getLastStepFinancingCost() {
 		return shortInterestPayments[shortIndex(1)];
 	}
 
-	@Descriptor(name = "LastStepInvestment")
+//	@Descriptor(name = "LastStepInvestment")
 	public double getLastStepInvestment() {
 		return shortInvestment[shortIndex(1)];
 	}
 
-	@Descriptor(name = "LastStepOperationsCost")
+//	@Descriptor(name = "LastStepOperationsCost")
 	public double getLastStepOperationsCost() {
 		return shortOperationsCost[shortIndex(1)];
 	}
 
-	@Descriptor(name = "LastStepRevenue")
+//	@Descriptor(name = "LastStepRevenue")
 	public double getPerStepRevenue() {
 		return shortRevenue[shortIndex(1)];
 	}
 
-	@Descriptor(name = "TotalFinancingCost")
+//	@Descriptor(name = "TotalFinancingCost")
 	public double getTotalFinancingCost() {
 		return totalInterestPayments;
 	}
 
-	@Descriptor(name = "TotalInvestment")
+//	@Descriptor(name = "TotalInvestment")
 	public double getTotalInvestment() {
 		return totalInvestment;
 	}
 
-	@Descriptor(name = "TotalOperationsCost")
+//	@Descriptor(name = "TotalOperationsCost")
 	public double getTotalOperationsCost() {
 		return totalOperationsCost;
 	}
 
-	@Descriptor(name = "TotalRevenue")
+//	@Descriptor(name = "TotalRevenue")
 	public double getTotalRevenue() {
 		return totalRevenue;
 	}

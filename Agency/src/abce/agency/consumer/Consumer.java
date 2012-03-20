@@ -48,6 +48,20 @@ public abstract class Consumer extends Agent {
 	@Override
 	public void step(SimState state) {
 		super.step(state);
+		// reset short-term quantities
+		for ( Good g : shortQuantityOfGoods.keySet()) {
+			double[] shortQtyArray = shortQuantityOfGoods.get(g);
+			shortQtyArray[shortIndex()] = 0.0;
+		}
+		for ( Good g : shortPaidForGoods.keySet()) {
+			double[] shortPaidForArray = shortPaidForGoods.get(g);
+			shortPaidForArray[shortIndex()] = 0.0;
+		}
+		for ( Good g : shortConsumerSurplus.keySet()) {
+			double[] shortSurplusArray = shortConsumerSurplus.get(g);
+			shortSurplusArray[shortIndex()] = 0.0;
+		}
+
 	}
 	
 
@@ -241,6 +255,31 @@ public abstract class Consumer extends Agent {
 		return totalSurplus;
 	}
 		
+	public double getPastQty(Good g, int stepsAgo) {
+		if (stepsAgo < 0)
+			throw new RuntimeException("Cannot get past qty for a future time");
+		if (stepsAgo > trackingPeriods)
+			throw new RuntimeException("Only keeping records for " + trackingPeriods + " steps, but "
+					+ stepsAgo + " were requested.");
+		double[] shortQtyArray = getShortQtyArray(g);
+		if (shortQtyArray == null)
+			return 0.0;
+		return shortQtyArray[shortIndex(stepsAgo)];
+	}
+	
+	public double getPastPaid(Good g, int stepsAgo) {
+		if (stepsAgo < 0)
+			throw new RuntimeException("Cannot get past anmount paid for a future time");
+		if (stepsAgo > trackingPeriods)
+			throw new RuntimeException("Only keeping records for " + trackingPeriods + " steps, but "
+					+ stepsAgo + " were requested.");
+		
+		double[] shortPaidArray = getShortPaidForGoodsArray(g);
+		if (shortPaidArray == null)
+			return 0.0;
+		return shortPaidArray[shortIndex(stepsAgo)];
+	}
+	
 	/**
 	 * @param g
 	 * @param stepsAgo
@@ -257,7 +296,7 @@ public abstract class Consumer extends Agent {
 		double[] shortCSArray = getShortConsumerSurplusArray(g);
 		if (shortCSArray == null)
 			return 0.0;
-		return shortCSArray[shortIndex()];
+		return shortCSArray[shortIndex(stepsAgo)];
 	}
 	
 	/**
