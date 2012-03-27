@@ -304,7 +304,6 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	}
 
 
-
 	@Stimulus(name = "CapitalAssets")
 	public Double getAssetsValue() {
 		return assetsValue;
@@ -387,7 +386,6 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	}
 
 
-
 	@Stimulus(name = "DebtBalance")
 	public double getDebtBalance() {
 		return debt;
@@ -401,12 +399,10 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	}
 
 
-
 	@Stimulus(name = "DebtPayoffRate")
 	public double getDebtPayoffRate() {
 		return payoffRate;
 	}
-
 
 
 	@Stimulus(name = "DeltaRevenue")
@@ -415,7 +411,6 @@ public class Accounts extends Agent implements Serializable, Steppable {
 		double twoPeriodsRevenue = shortRevenue[shortIndex(2)];
 		return lastPeriodRevenue - twoPeriodsRevenue;
 	}
-
 
 
 	@Stimulus(name = "DepreciationRate")
@@ -430,7 +425,7 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	 * 
 	 * @return
 	 */
-	@Stimulus(name = "NetWorth")
+    @Stimulus(name = "NetWorth")
 	public double getNetWorth() {
 		return assetsValue + cash - debt;
 	}
@@ -441,8 +436,6 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	public double getLastStepFinancingCost() {
 		return shortInterestPayments[shortIndex(1)];
 	}
-
-
 
 	@Stimulus(name = "LastStepInvestment")
 	public double getLastStepInvestment() {
@@ -455,7 +448,6 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	public double getLastStepOperationsCost() {
 		return shortOperationsCost[shortIndex(1)];
 	}
-
 
 
 	@Stimulus(name = "LastStepRevenue")
@@ -483,7 +475,6 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	public double getTotalOperationsCost() {
 		return totalOperationsCost;
 	}
-
 
 
 	@Stimulus(name = "TotalRevenue")

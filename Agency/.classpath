@@ -5,6 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Mason"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/EvoICT"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/EvoMan"/>
-	<classpathentry kind="src" path="/ECJ"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ECJ"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

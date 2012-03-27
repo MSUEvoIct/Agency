@@ -49,7 +49,7 @@ public abstract class Agent implements Steppable {
 			throw new RuntimeException("Wanted history for " + howLongAgo + 
 					" steps ago, but only " + trackingPeriods + " are being tracked.");
 		
-		if (howLongAgo < 1)
+		if (howLongAgo < 0)
 			throw new RuntimeException("Must be looking at the past...");
 		
 		int index = shortIndex() - howLongAgo;
