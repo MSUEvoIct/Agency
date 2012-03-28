@@ -8,6 +8,6 @@ import ec.gp.*;
 
 public interface ECJEvolvableAgent extends EvolvableAgent {
 
-	public void register(GPIndividual ind, Class<? extends StimulusResponse> sr);
+	public void register(GPIndividual ind, Class<? extends StimulusResponse>[] sr);
 
 }

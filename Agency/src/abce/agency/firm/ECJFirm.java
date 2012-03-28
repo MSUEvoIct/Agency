@@ -9,6 +9,10 @@ import ec.gp.*;
 
 public class ECJFirm extends Firm implements ECJEvolvableAgent {
 
+	/**
+	 * 
+	 */
+	private static final long			serialVersionUID	= 1L;
 	Class<? extends StimulusResponse>[]	stimulus_responses	= null;
 	GPIndividual						individual;
 
@@ -27,16 +31,10 @@ public class ECJFirm extends Firm implements ECJEvolvableAgent {
 
 
 
-	public void register(GPIndividual ind, Class<? extends StimulusResponse>[] sr) {
-		// TODO Auto-generated method stub
-
-	}
-
-
-
 	@Override
-	public void register(GPIndividual ind, Class<? extends StimulusResponse> sr) {
-		// TODO Auto-generated method stub
+	public void register(GPIndividual ind, Class<? extends StimulusResponse>[] sr) {
+		individual = ind;
+		stimulus_responses = sr;
 
 	}
 
