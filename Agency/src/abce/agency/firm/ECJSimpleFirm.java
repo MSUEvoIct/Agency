@@ -1,13 +1,17 @@
 package abce.agency.firm;
 
 
+import javax.xml.ws.*;
+
 import abce.agency.ec.*;
 import abce.agency.ec.ecj.*;
+import abce.agency.finance.*;
 import ec.gp.*;
+import evoict.reflection.*;
 
 
 
-public class ECJFirm extends Firm implements ECJEvolvableAgent {
+public class ECJSimpleFirm extends SimpleFirm implements ECJEvolvableAgent {
 
 	/**
 	 * 
@@ -15,6 +19,12 @@ public class ECJFirm extends Firm implements ECJEvolvableAgent {
 	private static final long			serialVersionUID	= 1L;
 	Class<? extends StimulusResponse>[]	stimulus_responses	= null;
 	GPIndividual						individual;
+
+
+
+	public ECJSimpleFirm(double price) {
+		super(price);
+	}
 
 
 
@@ -42,8 +52,7 @@ public class ECJFirm extends Firm implements ECJEvolvableAgent {
 
 	@Override
 	protected void price() {
-		// TODO Auto-generated method stub
-
+		emit(new FirmPriceSR(this));
 	}
 
 
@@ -52,6 +61,42 @@ public class ECJFirm extends Firm implements ECJEvolvableAgent {
 	protected void produce() {
 		// TODO Auto-generated method stub
 
+	}
+
+}
+
+
+
+class FirmPriceSR implements StimulusResponse {
+
+	static final RestrictedMethodDictionary	static_dict	=
+																new RestrictedMethodDictionary(FirmPriceSR.class, 3);
+
+	@Stimulus(name = "Firm")
+	public ECJSimpleFirm					_firm;
+
+	@Stimulus(name = "Account")
+	public Accounts							_account;
+
+
+
+	public FirmPriceSR(ECJSimpleFirm firm) {
+		_firm = firm;
+		_account = firm.accounts;
+	}
+
+
+
+	@Action
+	public void setPrice(double new_price) {
+		_firm.price = new_price;
+	}
+
+
+
+	@Override
+	public MethodDictionary dictionary() {
+		return static_dict;
 	}
 
 }

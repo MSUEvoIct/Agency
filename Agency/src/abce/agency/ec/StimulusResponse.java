@@ -9,8 +9,4 @@ public interface StimulusResponse {
 
 	public MethodDictionary dictionary();
 
-
-
-	public int maxPathLength();
-
 }
