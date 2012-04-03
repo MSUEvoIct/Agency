@@ -1,13 +1,11 @@
 package abce.agency.firm;
 
 
-import javax.xml.ws.*;
-
 import abce.agency.ec.*;
 import abce.agency.ec.ecj.*;
 import abce.agency.finance.*;
+import abce.agency.firm.sr.*;
 import ec.gp.*;
-import evoict.reflection.*;
 
 
 
@@ -52,7 +50,7 @@ public class ECJSimpleFirm extends SimpleFirm implements ECJEvolvableAgent {
 
 	@Override
 	protected void price() {
-		emit(new FirmPriceSR(this));
+		emit(new ECJSimpleFirmPriceSR(this));
 	}
 
 
@@ -63,40 +61,16 @@ public class ECJSimpleFirm extends SimpleFirm implements ECJEvolvableAgent {
 
 	}
 
-}
 
 
-
-class FirmPriceSR implements StimulusResponse {
-
-	static final RestrictedMethodDictionary	static_dict	=
-																new RestrictedMethodDictionary(FirmPriceSR.class, 3);
-
-	@Stimulus(name = "Firm")
-	public ECJSimpleFirm					_firm;
-
-	@Stimulus(name = "Account")
-	public Accounts							_account;
-
-
-
-	public FirmPriceSR(ECJSimpleFirm firm) {
-		_firm = firm;
-		_account = firm.accounts;
+	public void setPrice(double p) {
+		price = p;
 	}
 
 
 
-	@Action
-	public void setPrice(double new_price) {
-		_firm.price = new_price;
-	}
-
-
-
-	@Override
-	public MethodDictionary dictionary() {
-		return static_dict;
+	public Accounts getAccounts() {
+		return accounts;
 	}
 
 }

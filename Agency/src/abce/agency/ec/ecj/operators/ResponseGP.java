@@ -3,6 +3,7 @@ package abce.agency.ec.ecj.operators;
 
 import java.lang.reflect.*;
 
+import abce.agency.ec.ecj.*;
 import abce.agency.ec.ecj.types.*;
 import ec.*;
 import ec.gp.*;
@@ -55,7 +56,7 @@ public class ResponseGP extends GPNode {
 		// Setup action method
 		if (m == null) {
 			try {
-				m = ResponseUtils.findResponse(problem);
+				m = ResponseUtils.findResponse(((StimulusResponseProblem) problem).retrieve());
 				arg_types = m.getParameterTypes();
 			} catch (BadConfiguration e) {
 				System.err.println("Unable to find a response method: " + e.getMessage());
@@ -92,7 +93,7 @@ public class ResponseGP extends GPNode {
 		if (type.equals(boolean.class) || type.equals(Boolean.class)) {
 			return new BooleanGP();
 		}
-		else if (type.equals(double.class) || type.equals(Boolean.class)) {
+		else if (type.equals(double.class) || type.equals(Double.class)) {
 			return new DoubleGP();
 		} else {
 			return null;

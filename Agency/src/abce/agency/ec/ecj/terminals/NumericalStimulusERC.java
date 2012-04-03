@@ -2,6 +2,7 @@ package abce.agency.ec.ecj.terminals;
 
 
 import abce.agency.ec.*;
+import abce.agency.ec.ecj.types.*;
 import ec.*;
 import ec.gp.*;
 import ec.util.*;
@@ -12,8 +13,12 @@ import evoict.reflection.*;
 
 public class NumericalStimulusERC extends ERC {
 
-	String						path	= null;
-	RestrictedMethodDictionary	dict	= null;
+	/**
+	 * 
+	 */
+	private static final long	serialVersionUID	= 1L;
+	String						path				= null;
+	RestrictedMethodDictionary	dict				= null;
 
 
 
@@ -38,8 +43,25 @@ public class NumericalStimulusERC extends ERC {
 			resetNode(state, thread);
 		}
 
+		/*
+		 * The resolved stored in result value needs to be either a Double or
+		 * Integer; because the value is stored in an object, any primitives
+		 * (int, double) are converted to Integer or Double. Integer values need
+		 * to be converted to a double, which is done automatically, to be
+		 * stored in DoubleGP's value field.
+		 */
 		try {
-			dict.evaluate(path, problem);
+			Object result = dict.evaluate(path, problem);
+			if (result.getClass().isAssignableFrom(Double.class)) {
+				input = new DoubleGP();
+				((DoubleGP) input).value = (Double) result;
+			} else if (result.getClass().isAssignableFrom(Integer.class)) {
+				input = new DoubleGP();
+				((DoubleGP) input).value = ((Integer) result);
+			} else {
+				throw new UnresolvableException("Incorrect type: received + " + result.getClass() + " from path "
+						+ path);
+			}
 		} catch (UnresolvableException e) {
 			System.err.println("Unable to resolve method path: " + path + " with root object "
 					+ problem.getClass().getCanonicalName());
