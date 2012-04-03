@@ -9,6 +9,13 @@ import evoict.reflection.*;
 
 
 
+/**
+ * This test simply examines one StimulusResponse class for all available paths,
+ * outputting the web in a compressed CSV file.
+ * 
+ * @author ruppmatt
+ * 
+ */
 public class ExamineECJSimpleFirmSR {
 
 	@Test

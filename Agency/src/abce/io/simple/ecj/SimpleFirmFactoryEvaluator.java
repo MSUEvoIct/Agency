@@ -10,7 +10,6 @@ import abce.agency.engine.*;
 import abce.agency.firm.*;
 import abce.io.simple.*;
 import ec.*;
-import ec.gp.*;
 import ec.simple.*;
 import ec.util.*;
 
@@ -60,6 +59,10 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 		SimpleProblemForm spf = (SimpleProblemForm) p_problem.clone();
 		for (Subpopulation sp : state.population.subpops) {
 			for (Individual individual : sp.individuals) {
+				if (((AgencyGPIndividual) individual).getAgent() == null) {
+					System.err.println("Unable to evaluate individual not bound to an agent.");
+					System.exit(1);
+				}
 				spf.evaluate(state, individual, 0, 0);
 			}
 		}
@@ -175,7 +178,7 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 	 */
 	protected static void bindSR(EvolutionState state, int subpop_ndx, int ind_ndx, ECJEvolvableAgent agent,
 			Class<? extends StimulusResponse>[] sr_classes) {
-		GPIndividual ind = (GPIndividual) state.population.subpops[subpop_ndx].individuals[ind_ndx];
+		AgencyGPIndividual ind = (AgencyGPIndividual) state.population.subpops[subpop_ndx].individuals[ind_ndx];
 		agent.register(ind, sr_classes.clone());
 	}
 

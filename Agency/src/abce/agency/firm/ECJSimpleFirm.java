@@ -5,7 +5,6 @@ import abce.agency.ec.*;
 import abce.agency.ec.ecj.*;
 import abce.agency.finance.*;
 import abce.agency.firm.sr.*;
-import ec.gp.*;
 
 
 
@@ -16,7 +15,7 @@ public class ECJSimpleFirm extends SimpleFirm implements ECJEvolvableAgent {
 	 */
 	private static final long			serialVersionUID	= 1L;
 	Class<? extends StimulusResponse>[]	stimulus_responses	= null;
-	GPIndividual						individual;
+	AgencyGPIndividual					individual;
 
 
 
@@ -40,10 +39,10 @@ public class ECJSimpleFirm extends SimpleFirm implements ECJEvolvableAgent {
 
 
 	@Override
-	public void register(GPIndividual ind, Class<? extends StimulusResponse>[] sr) {
+	public void register(AgencyGPIndividual ind, Class<? extends StimulusResponse>[] sr) {
 		individual = ind;
 		stimulus_responses = sr;
-
+		ind.setAgent(this);
 	}
 
 
@@ -71,6 +70,13 @@ public class ECJSimpleFirm extends SimpleFirm implements ECJEvolvableAgent {
 
 	public Accounts getAccounts() {
 		return accounts;
+	}
+
+
+
+	@Override
+	public double getFitness() {
+		return accounts.getNetWorth();
 	}
 
 }

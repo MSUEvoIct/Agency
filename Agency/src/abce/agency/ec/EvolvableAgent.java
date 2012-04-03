@@ -5,4 +5,7 @@ public interface EvolvableAgent {
 
 	public void emit(StimulusResponse sr);
 
+
+
+	public double getFitness();
 }
