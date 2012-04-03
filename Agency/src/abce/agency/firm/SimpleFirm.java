@@ -31,6 +31,7 @@ public class SimpleFirm extends Firm {
 	@Override
 	protected void price() {
 		// DO NOTHING. Override getPrice() instead.
+		System.err.println("Entering SimpleFirm price()");
 	}
 
 

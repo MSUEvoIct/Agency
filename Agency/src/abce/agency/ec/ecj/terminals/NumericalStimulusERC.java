@@ -2,6 +2,7 @@ package abce.agency.ec.ecj.terminals;
 
 
 import abce.agency.ec.*;
+import abce.agency.ec.ecj.*;
 import abce.agency.ec.ecj.types.*;
 import ec.*;
 import ec.gp.*;
@@ -33,7 +34,7 @@ public class NumericalStimulusERC extends ERC {
 	public void eval(EvolutionState state, int thread, GPData input, ADFStack stack, GPIndividual individual,
 			Problem problem) {
 
-		StimulusResponse sr = (StimulusResponse) problem;
+		StimulusResponse sr = ((StimulusResponseProblem) problem).retrieve();
 
 		// Always reset the dictionary to avoid references to really old
 		// dictionary references
@@ -43,6 +44,8 @@ public class NumericalStimulusERC extends ERC {
 			resetNode(state, thread);
 		}
 
+		// System.err.println("About to evaluate path: " + path);
+
 		/*
 		 * The resolved stored in result value needs to be either a Double or
 		 * Integer; because the value is stored in an object, any primitives
@@ -51,15 +54,14 @@ public class NumericalStimulusERC extends ERC {
 		 * stored in DoubleGP's value field.
 		 */
 		try {
-			Object result = dict.evaluate(path, problem);
+			Object result = dict.evaluate(path, sr);
 			if (result.getClass().isAssignableFrom(Double.class)) {
-				input = new DoubleGP();
 				((DoubleGP) input).value = (Double) result;
 			} else if (result.getClass().isAssignableFrom(Integer.class)) {
-				input = new DoubleGP();
 				((DoubleGP) input).value = ((Integer) result);
 			} else {
-				throw new UnresolvableException("Incorrect type: received + " + result.getClass() + " from path "
+				throw new UnresolvableException("Incorrect type: " + result.getClass().getCanonicalName()
+						+ " from path "
 						+ path);
 			}
 		} catch (UnresolvableException e) {
@@ -98,7 +100,10 @@ public class NumericalStimulusERC extends ERC {
 	public boolean nodeEquals(GPNode node) {
 		if (node instanceof NumericalStimulusERC) {
 			NumericalStimulusERC comapre_to = (NumericalStimulusERC) node;
-			if (path.equals(comapre_to.path)) {
+			if (comapre_to.path == null && path == null) {
+				return true;
+			}
+			else if (path.equals(comapre_to.path)) {
 				return true;
 			}
 		}
@@ -128,6 +133,7 @@ public class NumericalStimulusERC extends ERC {
 
 	@Override
 	public String encode() {
-		return Code.encode(this.path);
+		String to_encode = (this.path == null) ? "unbound" : this.path;
+		return Code.encode(to_encode);
 	}
 }

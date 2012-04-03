@@ -28,7 +28,8 @@ public class ResponseGP extends GPNode {
 
 	@Override
 	public String toString() {
-		return "action<" + m.getName() + ">";
+		String name = (m == null) ? "unbound" : m.getName();
+		return "action<" + name + ">";
 	}
 
 
@@ -65,24 +66,33 @@ public class ResponseGP extends GPNode {
 			}
 		}
 
-		Object[] actual_args = new Object[arg_types.length];
+		BooleanGP should_execute = new BooleanGP();
+		this.children[0].eval(state, thread, should_execute, stack, individual, problem);
 
-		for (int k = 0; k < actual_args.length; k++) {
-			GPData result = ResponseGP.buildResponse(arg_types[k]);
-			if (result == null) {
-				System.err.println("Unable to create an appropriate GPData type for parameter: " + arg_types[k]
-						+ " required for method " + m.getName());
+		if (should_execute.value) {
+			// System.err.println("Triggering response: " + m.getName());
+			Object[] actual_args = new Object[arg_types.length];
+
+			for (int k = 0; k < actual_args.length; k++) {
+				GPData result = ResponseGP.buildResponse(arg_types[k]);
+				if (result == null) {
+					System.err.println("Unable to create an appropriate GPData type for parameter: " + arg_types[k]
+							+ " required for method " + m.getName());
+				}
+				this.children[k + 1].eval(state, thread, result, stack, individual, problem);
+				actual_args[k] = ((Valuable) result).value();
 			}
-			this.children[k].eval(state, thread, result, stack, individual, problem);
-			actual_args[k] = ((Valuable) result).value();
-		}
 
-		try {
-			m.invoke(problem, actual_args);
-		} catch (Exception e) {
-			System.err.println("Unable to invoke method " + m.getName() + " using object "
-					+ problem.getClass().getName() + ".");
-			System.exit(1);
+			try {
+				m.invoke(((StimulusResponseProblem) problem).retrieve(), actual_args);
+			} catch (Exception e) {
+				System.err.println("Unable to invoke method " + m.getName() + " using object "
+						+ problem.getClass().getName() + ".");
+				e.printStackTrace();
+				System.exit(1);
+			}
+		} else {
+			// System.err.println("Not triggering response: " + m.getName());
 		}
 
 	}

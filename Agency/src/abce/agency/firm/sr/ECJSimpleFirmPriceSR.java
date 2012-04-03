@@ -1,8 +1,6 @@
 package abce.agency.firm.sr;
 
 
-import javax.xml.ws.*;
-
 import abce.agency.ec.*;
 import abce.agency.finance.*;
 import abce.agency.firm.*;
@@ -12,9 +10,11 @@ import evoict.reflection.*;
 
 public class ECJSimpleFirmPriceSR implements StimulusResponse {
 
-	static final RestrictedMethodDictionary	static_dict	=
-																new RestrictedMethodDictionary(
-																		ECJSimpleFirmPriceSR.class, 3);
+	static final Class<?>[]					allowed_classes	= { Integer.class, int.class, Double.class, double.class };
+	static final RestrictedMethodDictionary	static_dict		=
+																	new RestrictedMethodDictionary(
+																			ECJSimpleFirmPriceSR.class, 3,
+																			allowed_classes);
 
 	@Stimulus(name = "Firm")
 	public ECJSimpleFirm					_firm;
@@ -31,8 +31,10 @@ public class ECJSimpleFirmPriceSR implements StimulusResponse {
 
 
 
-	@Action
+	@Response
 	public void setPrice(double new_price) {
+		new_price = Math.abs(new_price);
+		System.err.println("Setting price " + new_price);
 		_firm.setPrice(new_price);
 	}
 

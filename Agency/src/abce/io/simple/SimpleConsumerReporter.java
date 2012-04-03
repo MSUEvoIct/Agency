@@ -1,25 +1,33 @@
 package abce.io.simple;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
-import abce.agency.consumer.Consumer;
-import abce.agency.consumer.ConsumerReporter;
-import abce.agency.engine.MarketSimulation;
-import abce.agency.goods.Good;
+import java.io.*;
+import java.util.*;
+
+import abce.agency.consumer.*;
+import abce.agency.engine.*;
+import abce.agency.goods.*;
+
+
 
 public class SimpleConsumerReporter extends ConsumerReporter {
-	private static final long serialVersionUID = 1L;
 
-	private Good good;
-	
+	private static final long	serialVersionUID	= 1L;
+
+	private final Good			good;
+
+
+
 	public SimpleConsumerReporter(PrintWriter outputTo,
 			boolean printColumnHeaders, int stepModulo, MarketSimulation sim) {
 		super(outputTo, printColumnHeaders, stepModulo, sim);
-		good = ((SingleGoodSimulation)sim).good;
+		System.err.println("\tBegin constructing SimpleConsumerReporter.");
+
+		good = ((SingleGoodSimulation) sim).good;
+		System.err.println("\tFinsihed constructing SimpleConsumerReporter.");
 	}
+
+
 
 	@Override
 	protected List<Object> getData(Consumer c) {
@@ -29,9 +37,11 @@ public class SimpleConsumerReporter extends ConsumerReporter {
 		data.add(c.getPastQty(good, 0));
 		data.add(c.getPastPaid(good, 0));
 		data.add(c.getPastSurplus(good, 0));
-		
+
 		return data;
 	}
+
+
 
 	@Override
 	protected List<Object> getHeaders() {
@@ -43,7 +53,5 @@ public class SimpleConsumerReporter extends ConsumerReporter {
 		headers.add("Surplus");
 		return headers;
 	}
-	
-	
-	
+
 }

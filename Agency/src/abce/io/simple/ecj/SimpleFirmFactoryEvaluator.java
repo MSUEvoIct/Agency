@@ -6,7 +6,6 @@ import java.util.concurrent.*;
 
 import abce.agency.ec.*;
 import abce.agency.ec.ecj.*;
-import abce.agency.engine.*;
 import abce.agency.firm.*;
 import abce.io.simple.*;
 import ec.*;
@@ -155,7 +154,7 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 	protected static ECJEvolvableAgent setupAgent(Constructor<ECJEvolvableAgent> constructor,
 			ECSimpleMarketSimulation model)
 			throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		ECJEvolvableAgent agent = constructor.newInstance(model);
+		ECJEvolvableAgent agent = constructor.newInstance();
 		if (agent instanceof ECJSimpleFirm) {
 			model.setupFirm((Firm) agent);
 		}
@@ -180,7 +179,7 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 	protected static void bindSR(EvolutionState state, int subpop_ndx, int ind_ndx, ECJEvolvableAgent agent,
 			Class<? extends StimulusResponse>[] sr_classes) {
 		AgencyGPIndividual ind = (AgencyGPIndividual) state.population.subpops[subpop_ndx].individuals[ind_ndx];
-		agent.register(ind, sr_classes.clone());
+		agent.register(state, ind, sr_classes.clone());
 	}
 
 
@@ -208,7 +207,8 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 				.push("agent");
 		agentClassName = state.parameters.getString(p, null);
 		agentClass = Class.forName(agentClassName);
-		agentConstructor = (Constructor<ECJEvolvableAgent>) agentClass.getConstructor(MarketSimulation.class);
+		System.err.println("Class to find constructor for: " + agentClass.getCanonicalName());
+		agentConstructor = (Constructor<ECJEvolvableAgent>) agentClass.getConstructor((Class<?>[]) null);
 		return agentConstructor;
 	}
 
@@ -243,9 +243,10 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 		Parameter base = new Parameter("agency");
 		int num_threads = state.parameters.getIntWithDefault(base.push("threads"), null, 1);
 		int thread_timeout = state.parameters.getIntWithDefault(base.push("thread_timeout"), null, 20);
+		System.err.println(">>> NumThreads: " + num_threads + " threads\t\t" + thread_timeout + " minutes.");
 		ExecutorService thread_pool = Executors.newFixedThreadPool(num_threads);
 		for (int k = 0; k < models.length; k++) {
-			thread_pool.submit(models[k]);
+			thread_pool.execute(models[k]);
 		}
 		thread_pool.shutdown();
 		try {
