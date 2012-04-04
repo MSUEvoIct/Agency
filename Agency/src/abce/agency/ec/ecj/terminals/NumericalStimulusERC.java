@@ -25,7 +25,8 @@ public class NumericalStimulusERC extends ERC {
 
 	@Override
 	public String toString() {
-		return "NumericalStimulusGP";
+		String to_print = (path == null) ? "unbound" : path;
+		return "NumericalStimulusGP<" + to_print + ">";
 	}
 
 
