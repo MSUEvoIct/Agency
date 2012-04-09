@@ -55,7 +55,6 @@ public class ECJSimpleFirm extends SimpleFirm implements ECJEvolvableAgent {
 
 	@Override
 	protected void price() {
-		System.err.println("Entering ECJSimpleFirm price()");
 		emit(new ECJSimpleFirmPriceSR(this));
 	}
 

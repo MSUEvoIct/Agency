@@ -63,7 +63,6 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 
 	@Override
 	public void step(SimState state) {
-		System.err.println("Stepping");
 		super.step(state);
 		produce();
 		price();

@@ -34,7 +34,6 @@ public class ECJSimpleFirmPriceSR implements StimulusResponse {
 	@Response
 	public void setPrice(double new_price) {
 		new_price = Math.abs(new_price);
-		System.err.println("Setting price " + new_price);
 		_firm.setPrice(new_price);
 	}
 

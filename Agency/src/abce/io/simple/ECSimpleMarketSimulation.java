@@ -63,7 +63,6 @@ public class ECSimpleMarketSimulation extends MarketSimulation
 
 
 	public void setupFirm(Firm firm) {
-		System.err.println("\t\tSetting up firm.");
 		firm.grantEndowment(_config.firm_endowment);
 		firm.startProducing(good, pf);
 		((ECJSimpleFirm) firm).setPrice(_config.firm_initial_price);

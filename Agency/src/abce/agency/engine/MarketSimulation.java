@@ -150,7 +150,6 @@ public class MarketSimulation extends SimState implements Runnable {
 
 	@Override
 	public void run() {
-		System.err.println("\tBegin run.");
 		for (int i = 0; i < stepsToRun; i++) {
 			// Time Step Starts
 

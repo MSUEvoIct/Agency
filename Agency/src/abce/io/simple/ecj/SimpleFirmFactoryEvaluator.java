@@ -207,7 +207,8 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 				.push("agent");
 		agentClassName = state.parameters.getString(p, null);
 		agentClass = Class.forName(agentClassName);
-		System.err.println("Class to find constructor for: " + agentClass.getCanonicalName());
+		// System.err.println("Class to find constructor for: " +
+		// agentClass.getCanonicalName());
 		agentConstructor = (Constructor<ECJEvolvableAgent>) agentClass.getConstructor((Class<?>[]) null);
 		return agentConstructor;
 	}
@@ -243,7 +244,8 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 		Parameter base = new Parameter("agency");
 		int num_threads = state.parameters.getIntWithDefault(base.push("threads"), null, 1);
 		int thread_timeout = state.parameters.getIntWithDefault(base.push("thread_timeout"), null, 20);
-		System.err.println(">>> NumThreads: " + num_threads + " threads\t\t" + thread_timeout + " minutes.");
+		// System.err.println(">>> NumThreads: " + num_threads + " threads\t\t"
+		// + thread_timeout + " minutes.");
 		ExecutorService thread_pool = Executors.newFixedThreadPool(num_threads);
 		for (int k = 0; k < models.length; k++) {
 			thread_pool.execute(models[k]);
