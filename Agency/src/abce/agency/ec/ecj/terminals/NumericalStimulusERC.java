@@ -12,7 +12,7 @@ import evoict.reflection.*;
 
 
 
-public class NumericalStimulusERC extends ERC {
+public class NumericalStimulusERC extends ERC implements Cloneable {
 
 	/**
 	 * 
@@ -20,13 +20,33 @@ public class NumericalStimulusERC extends ERC {
 	private static final long	serialVersionUID	= 1L;
 	String						path				= null;
 	RestrictedMethodDictionary	dict				= null;
+	boolean						was_cloned			= false;
 
 
 
 	@Override
 	public String toString() {
 		String to_print = (path == null) ? "unbound" : path;
-		return "NumericalStimulusGP<" + to_print + ">";
+		String cloned = (was_cloned) ? "*" : "";
+		return "NumericalStimulusGP<" + to_print + cloned + ">";
+	}
+
+
+
+	@Override
+	public Object clone() {
+		NumericalStimulusERC newnode = (NumericalStimulusERC) (lightClone());
+		newnode.path = path;
+		// newnode.dict = dict;
+		for (int x = 0; x < children.length; x++)
+		{
+			newnode.children[x] = (children[x].cloneReplacing());
+			// if you think about it, the following CAN'T be implemented by
+			// the children's clone method. So it's set here.
+			newnode.children[x].parent = newnode;
+			newnode.children[x].argposition = (byte) x;
+		}
+		return newnode;
 	}
 
 

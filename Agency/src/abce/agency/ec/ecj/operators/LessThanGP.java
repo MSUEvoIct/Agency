@@ -22,7 +22,7 @@ public class LessThanGP extends GPNode {
 		DoubleGP second = new DoubleGP();
 
 		this.children[0].eval(state, thread, first, stack, individual, problem);
-		this.children[0].eval(state, thread, second, stack, individual, problem);
+		this.children[1].eval(state, thread, second, stack, individual, problem);
 
 		if (first.value < second.value)
 			result.value = true;

@@ -7,13 +7,6 @@ import ec.gp.*;
 
 
 
-/**
- * Not returns true only if both of its children return false. If one of its
- * children returns true, it returns false.
- * 
- * @author kkoning
- * 
- */
 public class NotGP extends GPNode {
 
 	private static final long	serialVersionUID	= 1L;
@@ -26,25 +19,14 @@ public class NotGP extends GPNode {
 		BooleanGP result = (BooleanGP) input;
 
 		this.children[0].eval(state, thread, result, stack, individual, problem);
-		if (result.value) { // if one was true,
-			result.value = false; // the NOT is false
-			return;
-		}
-		this.children[1].eval(state, thread, result, stack, individual, problem);
-		if (result.value) { // if one was true,
-			result.value = false; // the NOT is false
-			return;
-		}
-
-		// We only get here if both children were false
-		result.value = true;
+		result.value = (result.value) ? false : true;
 	}
 
 
 
 	@Override
 	public String toString() {
-		return "not";
+		return "NOT";
 	}
 
 }
