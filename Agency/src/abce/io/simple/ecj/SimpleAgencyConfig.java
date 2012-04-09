@@ -20,6 +20,7 @@ public class SimpleAgencyConfig extends Properties {
 	public double				willingness_to_pay;
 	public double				cost_constant;
 	public double				price_constant;
+	public int					steps_to_run;
 
 
 
@@ -41,6 +42,7 @@ public class SimpleAgencyConfig extends Properties {
 		willingness_to_pay = D("willingness_to_pay");
 		cost_constant = D("cost_constant");
 		price_constant = D("price_constant");
+		steps_to_run = I("steps_to_run");
 	}
 
 

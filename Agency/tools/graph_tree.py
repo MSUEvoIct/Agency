@@ -68,7 +68,6 @@ def graphTree(tree, args):
 if __name__ == '__main__':
   parser = setup()
   args = parser.parse_args()
-  print args
   trees = readFile(args.file) if args.file != None else readStdIn()
   if not os.path.exists(args.outdir):
     os.mkdir(args.outdir)

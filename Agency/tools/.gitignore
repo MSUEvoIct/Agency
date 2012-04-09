@@ -1,1 +1,6 @@
+#Ignore pre-compiled python files and pdfs
+*.pdf
+*.pyc
+
+#Ignore the tree directory
 /trees

@@ -1,11 +1,14 @@
 package abce.agency.firm;
 
 
+import abce.agency.*;
 import abce.agency.ec.*;
 import abce.agency.ec.ecj.*;
 import abce.agency.finance.*;
 import abce.agency.firm.sr.*;
+import abce.agency.goods.*;
 import ec.*;
+import evoict.reflection.*;
 
 
 
@@ -18,6 +21,9 @@ public class ECJSimpleFirm extends SimpleFirm implements ECJEvolvableAgent {
 	Class<? extends StimulusResponse>[]	stimulus_responses	= null;
 	AgencyGPIndividual					individual;
 	EvolutionState						state;
+
+	@Stimulus(name = "LastScaling")
+	double								last_scale			= 1.0;
 
 	public static final double			UNDEFINED			= Double.MAX_VALUE * -1.0;
 
@@ -53,9 +59,20 @@ public class ECJSimpleFirm extends SimpleFirm implements ECJEvolvableAgent {
 
 
 
+	@Stimulus(name = "Price")
+	public double getPrice() {
+		return price;
+	}
+
+
+
 	@Override
 	protected void price() {
-		emit(new ECJSimpleFirmPriceSR(this));
+		for (Market m : this.markets) {
+			for (Good g : this.goods) {
+				emit(new ECJSimpleFirmPriceSR(this, m, g));
+			}
+		}
 	}
 
 
@@ -63,7 +80,20 @@ public class ECJSimpleFirm extends SimpleFirm implements ECJEvolvableAgent {
 	@Override
 	protected void produce() {
 		super.produce();
+	}
 
+
+
+	public void adjustPrice(double perc) {
+		double scale = 1.0 + (perc / 100.0);
+		// System.err.println("Scaling: " + scale);
+		if (scale < 0.0) {
+			last_scale = 1.0;
+			return;
+		} else {
+			last_scale = scale;
+			price = price * scale;
+		}
 	}
 
 

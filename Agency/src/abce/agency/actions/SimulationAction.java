@@ -1,20 +1,27 @@
 package abce.agency.actions;
 
-import java.io.Serializable;
+
+import java.io.*;
+
+
 
 public abstract class SimulationAction implements Serializable {
-	private static final long serialVersionUID = 1L;
+
+	private static final long	serialVersionUID	= 1L;
+
+
 
 	/**
-	 * Process the current action.  The action first checks if it is allowed.  If so,
+	 * Process the current action. The action first checks if it is allowed. If
+	 * so,
 	 * the execute() method is called, otherwise reject().
 	 * 
 	 * @return true if the action was allowed and executed, false otherwise.
 	 */
 	public final boolean process() {
-		if (true)
-			System.out.println(describe());
-		
+		// if (true)
+		// System.out.println(describe());
+
 		boolean allowed = verify();
 		if (allowed) {
 			execute();
@@ -24,26 +31,39 @@ public abstract class SimulationAction implements Serializable {
 			return false;
 		}
 	}
-	
+
+
+
 	protected abstract void execute();
-	
+
+
+
 	/**
-	 * Checks to see if the action is allowed.  The default implementation automatically
-	 * rejects the action; action object <i>compile</i> without overriding verify() and/or
+	 * Checks to see if the action is allowed. The default implementation
+	 * automatically
+	 * rejects the action; action object <i>compile</i> without overriding
+	 * verify() and/or
 	 * reject(), but would always throw a RuntimeException.
 	 * 
-	 * @return True if the action is allowed and may be processed, false otherwise.
+	 * @return True if the action is allowed and may be processed, false
+	 *         otherwise.
 	 */
 	protected abstract boolean verify();
-	
+
+
+
 	protected abstract String describe();
-	
+
+
+
 	/**
-	 * Called if the action fails verification and is rejected.  Derived actions should override
-	 * this method if they wish to prevent failure from throwing a RuntimeExcetion will be thrown 
+	 * Called if the action fails verification and is rejected. Derived actions
+	 * should override
+	 * this method if they wish to prevent failure from throwing a
+	 * RuntimeExcetion will be thrown
 	 */
 	protected void reject() {
 		throw new RuntimeException("Action " + this + " rejected, but no reject function specified");
 	}
-	
+
 }

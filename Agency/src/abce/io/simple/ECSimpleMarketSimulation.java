@@ -40,6 +40,8 @@ public class ECSimpleMarketSimulation extends MarketSimulation
 
 		loadConfiguration(config_path);
 
+		super.setStepsToRun(_config.steps_to_run);
+
 		good = new DurableGood("testgood");
 		m = new Market(good);
 		pf = new ConstantCostProductionFunction(_config.cost_constant);
@@ -51,9 +53,9 @@ public class ECSimpleMarketSimulation extends MarketSimulation
 
 		// Add consumers
 		for (int i = 0; i < _config.number_of_customers; i++) {
+			Consumer c = new PerfectlyRationalConsumer(_config.persons_per_consumer_agent);
 			// Consumer c = new
-			// PerfectlyRationalConsumer(testNumPersonsPerConsumerAgent);
-			Consumer c = new ReluctantSwitcher(_config.persons_per_consumer_agent);
+			// ReluctantSwitcher(_config.persons_per_consumer_agent);
 			c.enterMarket(m);
 			c.setWTP(good, _config.willingness_to_pay);
 			addConsumer(c);

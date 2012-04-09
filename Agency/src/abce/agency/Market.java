@@ -1,30 +1,48 @@
 package abce.agency;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-import abce.agency.actions.MarketEntry;
-import abce.agency.consumer.Consumer;
-import abce.agency.firm.Firm;
-import abce.agency.goods.Good;
+import java.io.*;
+import java.util.*;
+
+import abce.agency.actions.*;
+import abce.agency.consumer.*;
+import abce.agency.firm.*;
+import abce.agency.goods.*;
+import evoict.reflection.*;
+
+
 
 public class Market implements Serializable {
-	private static final long serialVersionUID = 1L;
+
+	private static final long	serialVersionUID	= 1L;
 
 	// Markets are for exactly one good.
-	public final Good good;
+	public final Good			good;
 
-	private Set<Firm> firms = new HashSet<Firm>();
-	private Set<Consumer> consumers = new HashSet<Consumer>();
+	private final Set<Firm>		firms				= new HashSet<Firm>();
+	private final Set<Consumer>	consumers			= new HashSet<Consumer>();
+
+
 
 	public Market(Good good) {
 		if (good == null)
 			throw new RuntimeException("Cannot have a market for a null good");
 		this.good = good;
 	}
+
+
+
+	public Firm[] getFirms() {
+		return firms.toArray(new Firm[firms.size()]);
+	}
+
+
+
+	public Consumer[] getConsumers() {
+		return consumers.toArray(new Consumer[consumers.size()]);
+	}
+
+
 
 	public List<Offer> getOffers(Consumer c, Good g) {
 		List<Offer> offers = new ArrayList<Offer>();
@@ -35,7 +53,9 @@ public class Market implements Serializable {
 		}
 		return offers;
 	}
-	
+
+
+
 	/**
 	 * The specified consumer is indicating that it will no longer participate
 	 * in this market; when market information is gathered, this consumer will
@@ -46,15 +66,24 @@ public class Market implements Serializable {
 	public void exit(Consumer consumer) {
 		consumers.remove(consumer);
 	}
-	
+
+
+
+	@Stimulus(name = "NumberOfFirms")
 	public int getNumberOfFirms() {
 		return firms.size();
 	}
-	
+
+
+
+	@Stimulus(name = "NumberOfAgents")
 	public int getNumberOfConsumerAgents() {
 		return consumers.size();
 	}
 
+
+
+	@Stimulus(name = "NumberOfPeople")
 	public double getNumberOfPeople() {
 		double people = 0.0;
 		for (Consumer c : consumers) {
@@ -63,6 +92,8 @@ public class Market implements Serializable {
 		return people;
 	}
 
+
+
 	public void execute(MarketEntry marketEntry) {
 		if (marketEntry.firm != null)
 			firms.add(marketEntry.firm);
@@ -70,6 +101,4 @@ public class Market implements Serializable {
 			consumers.add(marketEntry.consumer);
 	}
 
-	
-	
 }
