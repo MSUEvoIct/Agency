@@ -2,6 +2,13 @@ package abce.agency.goods;
 
 public abstract class Good {
 	private String name = "Unnamed Good";
+	
+	private static int idSequence = 0;
+	public final int id;
+	
+	public Good() {
+		id = idSequence++;
+	}
 
 	public String getName() {
 		return name;

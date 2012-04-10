@@ -1,33 +1,45 @@
 package abce.agency.engine;
 
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-import sim.engine.*;
-import abce.agency.*;
-import abce.agency.consumer.*;
-import abce.agency.firm.*;
+import sim.engine.Schedule;
+import sim.engine.SimState;
+import sim.engine.Steppable;
+import abce.agency.Market;
+import abce.agency.consumer.Consumer;
+import abce.agency.firm.Firm;
 
 
 
 public class MarketSimulation extends SimState implements Runnable {
-
 	private static final long	serialVersionUID		= 1L;
+	
+	/**
+	 * Each simulation per evolutionary run should be uniquely identified. Upon
+	 * creation, this number should be used and incremented.
+	 */
+	private static int idSequence = 0;
+	
 	private static final long	defaultStepsToRun		= 30L;
-	private static final int	defaultFirmOrdering		= 100;						// default
-																					// ordering
-																					// for
-																					// firms
-	private static final int	defaultConsumerOrdering	= 200;						// default
-																					// ordering
-																					// for
-																					// consumers
-	private static final int	defaultEventOrdering	= 300;						// default
-																					// ordering
-																					// for
-																					// data
-																					// reporters
+	
+	/**
+	 * Default ordering for firms; firms must produce before consumers can purchase that production
+	 */
+	private static final int	defaultFirmOrdering		= 100;
+	
+	/**
+	 * Default ordering for consumers; firms must produce before consumers can purchase that production
+	 */
+	private static final int	defaultConsumerOrdering	= 200;
+	
+	/**
+	 * Default ordering for reporters and other non-simulation events
+	 */
+	private static final int	defaultEventOrdering	= 300;
 
 	private long				stepsToRun				= defaultStepsToRun;
 
@@ -37,34 +49,35 @@ public class MarketSimulation extends SimState implements Runnable {
 	private final Set<Consumer>	consumers				= new HashSet<Consumer>();
 
 	// For evolutionary simulations
-	public final Integer		generation;
-	public final Integer		simulationID;
+	public Integer		generation;
+	public Integer		simulationID;
 
 	public final File			simulationRoot;
 
 
 
 	public MarketSimulation(long seed) {
-		this(seed, defaultStepsToRun, null, null, null);
+		this(seed, defaultStepsToRun, null,  null);
 	}
 
 
 
 	public MarketSimulation(long seed, long stepsToRun) {
-		this(seed, stepsToRun, null, null, null);
+		this(seed, stepsToRun, null, null);
 	}
 
 
 
 	public MarketSimulation(long seed, long stepsToRun, Integer generation,
-			Integer simulationID, File simulationRoot) {
+			File simulationRoot) {
 
 		super(seed);
 		// override the default MASON Simulation Schedule
 		this.schedule = new AsyncDataSchedule();
 
-		this.generation = generation;
-		this.simulationID = simulationID;
+		this.generation = generation;  // generation must be taken from EC system
+		this.simulationID = MarketSimulation.idSequence++;  
+		
 		if (simulationRoot != null)
 			this.simulationRoot = simulationRoot;
 		else
@@ -141,11 +154,26 @@ public class MarketSimulation extends SimState implements Runnable {
 	}
 
 
-
+	/**
+	 * @return an immutable set of all consumers within the simulation.   
+	 */
 	public Set<Consumer> getConsumers() {
 		return Collections.unmodifiableSet(consumers);
 	}
-
+	
+	/**
+	 * @return an immutable set of all firms within the simulation
+	 */
+	public Set<Firm> getFirms() {
+		return Collections.unmodifiableSet(firms);
+	}
+	
+	/**
+	 * @return an immutable set of all markets within the simulation
+	 */
+	public Set<Market> getMarkets() {
+		return Collections.unmodifiableSet(markets);
+	}
 
 
 	@Override
