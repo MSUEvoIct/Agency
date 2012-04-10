@@ -1,17 +1,25 @@
 package abce.agency.firm;
 
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import sim.engine.*;
-import abce.agency.*;
-import abce.agency.actions.*;
-import abce.agency.async.*;
-import abce.agency.consumer.*;
-import abce.agency.finance.*;
-import abce.agency.goods.*;
-import abce.agency.production.*;
-import evoict.*;
+import sim.engine.SimState;
+import abce.agency.Agent;
+import abce.agency.Market;
+import abce.agency.Offer;
+import abce.agency.actions.MarketEntry;
+import abce.agency.actions.ProductionAction;
+import abce.agency.actions.SaleOfGoods;
+import abce.agency.async.AsyncUpdate;
+import abce.agency.consumer.Consumer;
+import abce.agency.finance.Accounts;
+import abce.agency.goods.Good;
+import abce.agency.production.ProductionFunction;
+import evoict.FitnessFunction;
+import evoict.NamedFitness;
 
 
 
@@ -198,8 +206,6 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 		if (!this.produces(good))
 			return null; // this firm does not produce this good; no offer.
 		double qtyAvailable = this.getInventory(good);
-		if (qtyAvailable <= 0.0)
-			return null; // the firm has no inventory
 
 		// make the offer
 		Offer o = new Offer(this, good, getPrice(good, consumer), qtyAvailable);
