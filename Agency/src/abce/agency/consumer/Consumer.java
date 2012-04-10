@@ -79,7 +79,7 @@ public abstract class Consumer extends Agent {
 	 * @return A list of all goods for which this consumer currently has a non-zero
 	 * willingness to pay.
 	 */
-	protected List<Good> allDesiredGoods() {
+	public List<Good> allDesiredGoods() {
 		List<Good> goods = new ArrayList<Good>();
 		for (Good g : this.wilingnessToPay.keySet()) {
 			Double wtp = this.wilingnessToPay.get(g);

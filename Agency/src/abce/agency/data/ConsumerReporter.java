@@ -8,9 +8,15 @@ import sim.engine.SimState;
 import abce.agency.consumer.Consumer;
 import abce.agency.engine.MarketSimulation;
 
-public abstract class ConsumerReporter extends CSVReporter {
+public class ConsumerReporter extends CSVReporter {
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * @param outputTo  Output CSV lines to this PrintWriter
+	 * @param printColumnHeaders
+	 * @param stepModulo  Output data every X steps
+	 * @param sim  Reference to the MarketSimulation on which we are reporting.
+	 */
 	public ConsumerReporter(PrintWriter outputTo,
 			boolean printColumnHeaders, int stepModulo, MarketSimulation sim) {
 		super(outputTo, printColumnHeaders, stepModulo, sim);

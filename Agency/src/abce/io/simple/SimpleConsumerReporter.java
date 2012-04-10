@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.*;
 
 import abce.agency.consumer.*;
+import abce.agency.data.ConsumerReporter;
 import abce.agency.engine.*;
 import abce.agency.goods.*;
 

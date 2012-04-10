@@ -1,16 +1,27 @@
 package abce.io.simple.ecj;
 
 
-import java.lang.reflect.*;
-import java.util.concurrent.*;
+import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-import abce.agency.ec.*;
-import abce.agency.ec.ecj.*;
-import abce.agency.firm.*;
-import abce.io.simple.*;
-import ec.*;
-import ec.simple.*;
-import ec.util.*;
+import abce.agency.data.PriceReporter;
+import abce.agency.data.SalesReporter;
+import abce.agency.ec.StimulusResponse;
+import abce.agency.ec.ecj.AgencyGPIndividual;
+import abce.agency.ec.ecj.ECJEvolvableAgent;
+import abce.agency.firm.ECJSimpleFirm;
+import abce.agency.firm.Firm;
+import abce.io.simple.ECSimpleMarketSimulation;
+import ec.Evaluator;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.Subpopulation;
+import ec.simple.SimpleProblemForm;
+import ec.util.Parameter;
 
 
 
@@ -41,6 +52,20 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 		for (int i = 0; i < numChunks; i++) {
 			int seed = state.random[0].nextInt();
 			models[i] = new ECSimpleMarketSimulation(seed, config_path, i, state.generation);
+			
+			/*
+			 * TODO-MATT:  These are something you'll want to put in your configuration system.
+			 */
+			
+//			ConsumerReporter cr = new ConsumerReporter(new PrintWriter(System.out), false, 1, models[i]);
+			PriceReporter pr = new PriceReporter(new PrintWriter(System.out), false, 1, models[i]);
+			SalesReporter sr = new SalesReporter(new PrintWriter(System.out), false, 1, models[i]);
+
+			
+			models[i].addEvent(pr);
+//			models[i].addEvent(cr);
+			models[i].addEvent(sr);
+			
 		}
 
 		// Populate the domain models and bind representations

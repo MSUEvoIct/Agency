@@ -2,13 +2,12 @@ package abce.agency.data;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import abce.agency.engine.MarketSimulation;
-
+import sim.engine.SimState;
 import sim.engine.Steppable;
+import abce.agency.engine.MarketSimulation;
 
 /**
  * This is the new Reporter system for Simternet.
@@ -45,6 +44,10 @@ public abstract class CSVReporter implements Serializable, Steppable {
 	protected MarketSimulation sim;
 	
 	public int stepModulo;
+	
+	/**
+	 * TODO:  Currently has no effect
+	 */
 	public final boolean printColumnHeaders;
 	public final boolean prependGeneration;
 	public final boolean prependSimulationID;
@@ -75,8 +78,8 @@ public abstract class CSVReporter implements Serializable, Steppable {
 		Iterator<Object> oi = elements.iterator();
 		while (oi.hasNext()) {
 			Object thing = oi.next();
-			String description = thing.toString();
-			sb.append(description);
+//			String description = thing.toString();
+			sb.append(thing);
 			if (oi.hasNext()) {
 				sb.append(",");
 			}
@@ -90,5 +93,18 @@ public abstract class CSVReporter implements Serializable, Steppable {
 	}
 	
 	protected abstract List<Object> getHeaders();
+
+	@Override
+	public void step(SimState state) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+	}
+	
+	
 	
 }

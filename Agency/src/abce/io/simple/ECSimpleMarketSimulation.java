@@ -1,31 +1,32 @@
 package abce.io.simple;
 
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import abce.agency.*;
-import abce.agency.consumer.*;
-import abce.agency.engine.*;
-import abce.agency.firm.*;
-import abce.agency.goods.*;
-import abce.agency.production.*;
-import abce.io.simple.ecj.*;
+import abce.agency.Market;
+import abce.agency.consumer.Consumer;
+import abce.agency.consumer.PerfectlyRationalConsumer;
+import abce.agency.engine.MarketSimulation;
+import abce.agency.firm.ECJSimpleFirm;
+import abce.agency.firm.Firm;
+import abce.agency.goods.DurableGood;
+import abce.agency.goods.Good;
+import abce.agency.production.ConstantCostProductionFunction;
+import abce.agency.production.ProductionFunction;
+import abce.io.simple.ecj.SimpleAgencyConfig;
 
 
 
-public class ECSimpleMarketSimulation extends MarketSimulation
-{
-
+public class ECSimpleMarketSimulation extends MarketSimulation {
 	private static final long			serialVersionUID	= 1L;
-
+	
+	
 	public final Good					good;
 	private final Market				m;
 	private final ProductionFunction	pf;
 
 	protected SimpleAgencyConfig		_config;
-	protected Integer					_chunk				= null;
-	protected Integer					_generation			= null;
-
 
 
 	public ECSimpleMarketSimulation(long seed, String config_path, int chunk, int gen) {
@@ -40,14 +41,23 @@ public class ECSimpleMarketSimulation extends MarketSimulation
 
 		loadConfiguration(config_path);
 
-		super.setStepsToRun(_config.steps_to_run);
+		/*
+		 * TODO-MATT:  Why must this be determined here, rather than before this function is called?  Generation
+		 * and simulaiton ID are final because they should be assigned once and then never change (i.e., the definition
+		 * of final) 
+		 */
+		super.setStepsToRun(_config.steps_to_run); 
+		
+		/*
+		 * TODO-MATT: This is set in the constructor, and that constructor
+		 * should be the one called above. I make generation non-final to make
+		 * this work here as a kludge.
+		 */
+		super.generation = gen;
 
 		good = new DurableGood("testgood");
 		m = new Market(good);
 		pf = new ConstantCostProductionFunction(_config.cost_constant);
-
-		_chunk = chunk;
-		_generation = gen;
 
 		addMarket(m);
 
@@ -61,8 +71,6 @@ public class ECSimpleMarketSimulation extends MarketSimulation
 			addConsumer(c);
 		}
 	}
-
-
 
 	public void setupFirm(Firm firm) {
 		firm.grantEndowment(_config.firm_endowment);
