@@ -8,7 +8,6 @@ import abce.agency.firm.SimpleEvolvingFirm;
 import abce.agency.goods.Good;
 import ec.Problem;
 import evoict.reflection.Response;
-import evoict.reflection.Stimulus;
 
 
 public class EvolvingIOFirm extends SimpleEvolvingFirm {
@@ -32,7 +31,7 @@ public class EvolvingIOFirm extends SimpleEvolvingFirm {
 	 * @author kkoning
 	 *
 	 */
-	@Stimulus(name = "ProductionStimulus")
+//	@Stimulus(name = "ProductionStimulus")
 	public class ProductionStimulus extends Problem {
 		private static final long serialVersionUID = 1L;
 		public Market m;
