@@ -1,11 +1,11 @@
-package abce.agency.consumer;
+package abce.agency.data;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import sim.engine.SimState;
-import abce.agency.data.CSVReporter;
+import abce.agency.consumer.Consumer;
 import abce.agency.engine.MarketSimulation;
 
 public abstract class ConsumerReporter extends CSVReporter {
