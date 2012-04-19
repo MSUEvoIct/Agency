@@ -1,20 +1,20 @@
 package abce.agency.ec.ecj;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
 
-import ec.EvolutionState;
-import ec.gp.GPFunctionSet;
-import ec.gp.GPInitializer;
-import ec.gp.GPNode;
-import ec.gp.GPType;
-import ec.util.Parameter;
+import java.util.*;
+
+import ec.*;
+import ec.gp.*;
+import ec.util.*;
+
+
 
 public class GPFunctionSetSet extends GPFunctionSet {
 
 	public static final String	P_FUNCSET			= "funcSet";
 	private static final long	serialVersionUID	= 1L;
+
+
 
 	@Override
 	public void setup(EvolutionState state, Parameter base) {
@@ -37,6 +37,7 @@ public class GPFunctionSetSet extends GPFunctionSet {
 			funcSetBasesList.add(funcSetBase);
 		}
 
+		// TODO: Is this safe? --MR
 		this.nodesByName = new Hashtable();
 		Vector tmp = new Vector();
 

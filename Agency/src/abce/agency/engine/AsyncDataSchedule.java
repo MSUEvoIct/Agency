@@ -1,14 +1,12 @@
 package abce.agency.engine;
 
-import java.util.HashSet;
-import java.util.Set;
 
-import abce.agency.async.AsyncUpdate;
+import java.util.*;
 
-import sim.engine.Schedule;
-import sim.engine.SimState;
-import sim.engine.Steppable;
-import sim.engine.Stoppable;
+import sim.engine.*;
+import abce.agency.async.*;
+
+
 
 /**
  * This addition to the MASON scheduler tests whether Steppables also implement
@@ -34,7 +32,9 @@ public class AsyncDataSchedule extends Schedule {
 	 * set rather than a list/vector/array because updating an agent more than
 	 * once would cause undesirable (inaccurate) behavior.
 	 */
-	protected Set<AsyncUpdate>	asyncUpdaters		= new HashSet<AsyncUpdate>();
+	protected Set<AsyncUpdate>	asyncUpdaters		= new LinkedHashSet<AsyncUpdate>();
+
+
 
 	@Override
 	public synchronized boolean step(SimState state) {
@@ -45,9 +45,11 @@ public class AsyncDataSchedule extends Schedule {
 		for (AsyncUpdate updater : asyncUpdaters) {
 			updater.update();
 		}
-		
+
 		return toReturn;
 	}
+
+
 
 	@Override
 	public boolean scheduleOnce(Steppable event) {
@@ -57,6 +59,8 @@ public class AsyncDataSchedule extends Schedule {
 		return super.scheduleOnce(event);
 	}
 
+
+
 	@Override
 	public boolean scheduleOnceIn(double delta, Steppable event) {
 		if (event instanceof AsyncUpdate) {
@@ -64,6 +68,8 @@ public class AsyncDataSchedule extends Schedule {
 		}
 		return super.scheduleOnceIn(delta, event);
 	}
+
+
 
 	@Override
 	public boolean scheduleOnce(Steppable event, int ordering) {
@@ -73,6 +79,8 @@ public class AsyncDataSchedule extends Schedule {
 		return super.scheduleOnce(event, ordering);
 	}
 
+
+
 	@Override
 	public boolean scheduleOnceIn(double delta, Steppable event, int ordering) {
 		if (event instanceof AsyncUpdate) {
@@ -80,6 +88,8 @@ public class AsyncDataSchedule extends Schedule {
 		}
 		return super.scheduleOnceIn(delta, event, ordering);
 	}
+
+
 
 	@Override
 	public boolean scheduleOnce(double time, Steppable event) {
@@ -89,6 +99,8 @@ public class AsyncDataSchedule extends Schedule {
 		return super.scheduleOnce(time, event);
 	}
 
+
+
 	@Override
 	public boolean scheduleOnce(double time, int ordering, Steppable event) {
 		if (event instanceof AsyncUpdate) {
@@ -96,6 +108,8 @@ public class AsyncDataSchedule extends Schedule {
 		}
 		return super.scheduleOnce(time, ordering, event);
 	}
+
+
 
 	@Override
 	public boolean scheduleOnce(Key key, Steppable event) {
@@ -105,6 +119,8 @@ public class AsyncDataSchedule extends Schedule {
 		return super.scheduleOnce(key, event);
 	}
 
+
+
 	@Override
 	public Stoppable scheduleRepeating(double time, int ordering, Steppable event, double interval) {
 		if (event instanceof AsyncUpdate) {
@@ -113,6 +129,4 @@ public class AsyncDataSchedule extends Schedule {
 		return super.scheduleRepeating(time, ordering, event, interval);
 	}
 
-	
-	
 }

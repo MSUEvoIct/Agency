@@ -1,10 +1,10 @@
 package abce.agency.async;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.io.*;
+import java.util.*;
+
+
 
 /**
  * TemporalHashMaps defer changes made to a map until after the object's update
@@ -51,18 +51,20 @@ import java.util.Map;
  *            detection of the value class was used instead, with a negligible
  *            performance penalty for non- AsyncUpdate types.
  */
-public class TemporalHashMap<K, V> extends HashMap<K, V> implements
+public class TemporalHashMap<K, V> extends LinkedHashMap<K, V> implements
 		AsyncUpdate, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long	serialVersionUID	= 1L;
 
-	protected List<K> toRemove = null;
-	protected Map<K, V> updates = null;
+	protected List<K>			toRemove			= null;
+	protected Map<K, V>			updates				= null;
 
 	/**
 	 * We will only attempt to run update() method on value
 	 */
-	private boolean updateValues = true;
+	private boolean				updateValues		= true;
+
+
 
 	/*
 	 * (non-Javadoc)
@@ -72,16 +74,20 @@ public class TemporalHashMap<K, V> extends HashMap<K, V> implements
 	@Override
 	public V put(K key, V value) {
 		if (this.updates == null)
-			this.updates = new HashMap<K, V>();
+			this.updates = new LinkedHashMap<K, V>();
 		this.updates.put(key, value);
 		return value;
 	}
+
+
 
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
 		for (K key : m.keySet())
 			this.put(key, m.get(key));
 	}
+
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -92,6 +98,8 @@ public class TemporalHashMap<K, V> extends HashMap<K, V> implements
 		this.toRemove.add((K) key);
 		return this.get(key);
 	}
+
+
 
 	@Override
 	public void update() {

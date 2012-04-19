@@ -1,22 +1,25 @@
 package abce.agency.async;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
-public class TemporalHashSet<E> extends HashSet<E> implements AsyncUpdate,
+import java.io.*;
+import java.util.*;
+
+
+
+public class TemporalHashSet<E> extends LinkedHashSet<E> implements AsyncUpdate,
 		Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long	serialVersionUID	= 1L;
 
-	private boolean clear = false;
-	protected Set<E> toAdd = new HashSet<E>();
-	protected Set<Object> toRemove = new HashSet<Object>();
+	private boolean				clear				= false;
+	protected Set<E>			toAdd				= new LinkedHashSet<E>();
+	protected Set<Object>		toRemove			= new LinkedHashSet<Object>();
 	/**
 	 * We will only attempt to run update() method on value
 	 */
-	private boolean updateValues = true;
+	private boolean				updateValues		= true;
+
+
 
 	@Override
 	public boolean add(E e) {
@@ -24,16 +27,22 @@ public class TemporalHashSet<E> extends HashSet<E> implements AsyncUpdate,
 		return true;
 	}
 
+
+
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		this.toAdd.addAll(c);
 		return true;
 	}
 
+
+
 	@Override
 	public void clear() {
 		this.clear = true;
 	}
+
+
 
 	@Override
 	public boolean remove(Object o) {
@@ -41,11 +50,15 @@ public class TemporalHashSet<E> extends HashSet<E> implements AsyncUpdate,
 		return true;
 	}
 
+
+
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		this.toRemove.addAll(c);
 		return true;
 	}
+
+
 
 	@Override
 	public void update() {

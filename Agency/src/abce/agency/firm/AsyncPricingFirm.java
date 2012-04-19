@@ -1,15 +1,20 @@
 package abce.agency.firm;
 
-import java.util.HashMap;
-import java.util.Map;
 
-import abce.agency.async.AsyncUpdate;
-import abce.agency.goods.Good;
+import java.util.*;
+
+import abce.agency.async.*;
+import abce.agency.goods.*;
+
+
 
 public abstract class AsyncPricingFirm extends Firm implements AsyncUpdate {
-	private static final long serialVersionUID = 1L;
-	
-	protected Map<Good,Double> futurePrices = new HashMap<Good,Double>();
+
+	private static final long	serialVersionUID	= 1L;
+
+	protected Map<Good, Double>	futurePrices		= new LinkedHashMap<Good, Double>();
+
+
 
 	@Override
 	public void update() {
@@ -18,5 +23,5 @@ public abstract class AsyncPricingFirm extends Firm implements AsyncUpdate {
 			prices.put(good, futurePrices.get(good));
 		}
 	}
-	
+
 }

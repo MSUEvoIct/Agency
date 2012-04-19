@@ -19,8 +19,8 @@ public class Market implements Serializable {
 	// Markets are for exactly one good.
 	public final Good			good;
 
-	private final Set<Firm>		firms				= new HashSet<Firm>();
-	private final Set<Consumer>	consumers			= new HashSet<Consumer>();
+	private final Set<Firm>		firms				= new LinkedHashSet<Firm>();
+	private final Set<Consumer>	consumers			= new LinkedHashSet<Consumer>();
 
 
 

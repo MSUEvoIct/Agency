@@ -7,7 +7,6 @@ import java.util.*;
 import sim.engine.*;
 import abce.agency.*;
 import abce.agency.actions.*;
-import abce.agency.finance.*;
 import abce.agency.firm.*;
 import abce.agency.goods.*;
 import evoict.reflection.*;
@@ -48,12 +47,12 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	 */
 	private double						cash					= 0;
 	private double						debt					= 0;
-	private final Map<Object, Double>	assetAcquisitionCosts	= new HashMap<Object, Double>();
-	private final Map<Object, Double>	assetValues				= new HashMap<Object, Double>();
-	private double						assetsValue;												// cached
-																									// sum
-																									// of
-																									// above
+	private final Map<Object, Double>	assetAcquisitionCosts	= new LinkedHashMap<Object, Double>();
+	private final Map<Object, Double>	assetValues				= new LinkedHashMap<Object, Double>();
+	private double						assetsValue;													// cached
+																										// sum
+																										// of
+																										// above
 
 	/*
 	 * Short-term tracking accounts
@@ -62,9 +61,9 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	private final double[]				shortInterestPayments	= new double[trackingPeriods];
 	private final double[]				shortOperationsCost		= new double[trackingPeriods];
 	private final double[]				shortRevenue			= new double[trackingPeriods];
-	private final Map<Asset, double[]>	shortAssetRevenues		= new HashMap<Asset, double[]>();
-	private final Map<Good, double[]>	shortGoodsRevenue		= new HashMap<Good, double[]>();
-	private final Map<Good, double[]>	shortProductionCosts	= new HashMap<Good, double[]>();
+	private final Map<Asset, double[]>	shortAssetRevenues		= new LinkedHashMap<Asset, double[]>();
+	private final Map<Good, double[]>	shortGoodsRevenue		= new LinkedHashMap<Good, double[]>();
+	private final Map<Good, double[]>	shortProductionCosts	= new LinkedHashMap<Good, double[]>();
 
 	/*
 	 * Long-term tracking accounts
@@ -73,9 +72,9 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	private double						totalInterestPayments	= 0;
 	private final double				totalOperationsCost		= 0;
 	private double						totalRevenue			= 0;
-	private final Map<Asset, Double>	totalAssetRevenue		= new HashMap<Asset, Double>();
-	private final Map<Good, Double>		totalGoodsRevenue		= new HashMap<Good, Double>();
-	private final Map<Good, Double>		totalProductionCosts	= new HashMap<Good, Double>();
+	private final Map<Asset, Double>	totalAssetRevenue		= new LinkedHashMap<Asset, Double>();
+	private final Map<Good, Double>		totalGoodsRevenue		= new LinkedHashMap<Good, Double>();
+	private final Map<Good, Double>		totalProductionCosts	= new LinkedHashMap<Good, Double>();
 
 
 

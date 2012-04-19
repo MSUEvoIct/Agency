@@ -28,13 +28,13 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 */
 	protected Accounts						accounts			= new Accounts();
 
-	protected Map<Good, Double>				inventory			= new HashMap<Good, Double>();
+	protected Map<Good, Double>				inventory			= new LinkedHashMap<Good, Double>();
 
 	/**
 	 * Contains the production functions necessary to determine a cost of for
 	 * a given quantity of production.
 	 */
-	protected Map<Good, ProductionFunction>	productionFunctions	= new HashMap<Good, ProductionFunction>();
+	protected Map<Good, ProductionFunction>	productionFunctions	= new LinkedHashMap<Good, ProductionFunction>();
 
 	/**
 	 * A simple map which stores calculated prices for goods produced by this
@@ -42,17 +42,17 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 * Derived classes may ignore these values if, e.g., prices are dynamically
 	 * calculated.
 	 */
-	protected Map<Good, Double>				prices				= new HashMap<Good, Double>();
+	protected Map<Good, Double>				prices				= new LinkedHashMap<Good, Double>();
 
 	/**
 	 * The set of markets in which this firm offers its products
 	 */
-	protected Set<Market>					markets				= new HashSet<Market>();
+	protected Set<Market>					markets				= new LinkedHashSet<Market>();
 
 	/**
 	 * The set of goods produced by this firm.
 	 */
-	protected Set<Good>						goods				= new HashSet<Good>();
+	protected Set<Good>						goods				= new LinkedHashSet<Good>();
 
 
 

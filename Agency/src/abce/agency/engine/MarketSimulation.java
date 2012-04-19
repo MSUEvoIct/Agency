@@ -15,26 +15,26 @@ public class MarketSimulation extends SimState implements Runnable {
 
 	private static final long	serialVersionUID		= 1L;
 	private static final long	defaultStepsToRun		= 30L;
-	private static final int	defaultFirmOrdering		= 100;						// default
-																					// ordering
-																					// for
-																					// firms
-	private static final int	defaultConsumerOrdering	= 200;						// default
-																					// ordering
-																					// for
-																					// consumers
-	private static final int	defaultEventOrdering	= 300;						// default
-																					// ordering
-																					// for
-																					// data
-																					// reporters
+	private static final int	defaultFirmOrdering		= 100;								// default
+																							// ordering
+																							// for
+																							// firms
+	private static final int	defaultConsumerOrdering	= 200;								// default
+																							// ordering
+																							// for
+																							// consumers
+	private static final int	defaultEventOrdering	= 300;								// default
+																							// ordering
+																							// for
+																							// data
+																							// reporters
 
 	private long				stepsToRun				= defaultStepsToRun;
 
 	// Substantive simulation state
-	private final Set<Market>	markets					= new HashSet<Market>();
-	private final Set<Firm>		firms					= new HashSet<Firm>();
-	private final Set<Consumer>	consumers				= new HashSet<Consumer>();
+	private final Set<Market>	markets					= new LinkedHashSet<Market>();
+	private final Set<Firm>		firms					= new LinkedHashSet<Firm>();
+	private final Set<Consumer>	consumers				= new LinkedHashSet<Consumer>();
 
 	// For evolutionary simulations
 	public final Integer		generation;
