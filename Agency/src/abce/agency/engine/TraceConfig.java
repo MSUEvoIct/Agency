@@ -1,6 +1,7 @@
 package abce.agency.engine;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import abce.agency.actions.SimulationAction;
@@ -17,10 +18,11 @@ public class TraceConfig implements Serializable {
 
 	public final boolean traceEnabled;
 
-	private Map<? extends Class<? extends SimulationAction>, Boolean> actionTraces;
+	private Map<Class<? extends SimulationAction>, Boolean> actionTraces;
 	
 	public TraceConfig() {
 		traceEnabled = true;
+		actionTraces = new HashMap<Class<? extends SimulationAction>,Boolean>();
 	}
 	
 	
