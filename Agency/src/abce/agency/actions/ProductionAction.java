@@ -24,7 +24,7 @@ public class ProductionAction extends SimulationAction {
 
 	
 	@Override
-	public boolean verify() {
+	public boolean isAllowed() {
 		return firm.verify(this);
 	}
 
@@ -35,8 +35,8 @@ public class ProductionAction extends SimulationAction {
 	}
 
 	@Override
-	protected void execute() {
-		firm.process(this);
+	protected void actualize() {
+		firm.actualize(this);
 	}
 	
 }

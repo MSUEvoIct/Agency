@@ -54,13 +54,13 @@ public class SaleOfGoods extends SimulationAction {
 	}
 
 	@Override
-	protected void execute() {
-		buyer.execute(this);
-		seller.execute(this);
+	protected void actualize() {
+		buyer.actualize(this);
+		seller.actualize(this);
 	}
 
 	@Override
-	protected boolean verify() {
+	protected boolean isAllowed() {
 		return true;  // TODO: How should this be verified?
 	}
 

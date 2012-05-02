@@ -1,6 +1,7 @@
 package abce.agency.firm;
 
 
+import test.firm.SimpleFirm;
 import abce.agency.*;
 import abce.agency.ec.*;
 import abce.agency.ec.ecj.*;

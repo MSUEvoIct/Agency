@@ -1,49 +1,18 @@
 package abce.agency.firm;
 
+import abce.agency.Market;
+import abce.agency.actions.ProductionAction;
+import abce.agency.goods.Good;
+import sim.engine.SimState;
 
-import abce.agency.*;
-import abce.agency.actions.*;
-import abce.agency.consumer.*;
-import abce.agency.goods.*;
+public abstract class SimpleFirm extends Firm {
 
+	/**
+	 * Firms must override this method, and perform all pricing activities
+	 * within.
+	 */
+	protected abstract void price();
 
-
-/**
- * When a SimpleFirm enters a market and produces a good, it will always
- * produces exactly one of each good for each natural person in each market.
- * It charges a fixed, specified price.
- * 
- * @author kkoning
- * 
- */
-public class SimpleFirm extends Firm {
-
-	protected double	price;
-
-
-
-	public SimpleFirm(double price) {
-		this.price = price;
-	}
-
-
-
-	@Override
-	protected void price() {
-		// DO NOTHING. Override getPrice() instead.
-		System.err.println("Entering SimpleFirm price()");
-	}
-
-
-
-	@Override
-	public double getPrice(Good good, Consumer consumer) {
-		return price;
-	}
-
-
-
-	@Override
 	protected void produce() {
 		/*
 		 * Produce as decribed in the object description...
@@ -57,4 +26,13 @@ public class SimpleFirm extends Firm {
 		}
 	}
 
+	@Override
+	public void step(SimState state) {
+		price();
+		produce();
+		super.step(state);
+	}
+
+	
+	
 }

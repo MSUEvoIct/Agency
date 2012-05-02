@@ -2,12 +2,13 @@ package abce.io.simple;
 
 import java.io.PrintWriter;
 
+import test.firm.SimpleFirm;
+
 import abce.agency.Market;
 import abce.agency.consumer.Consumer;
 import abce.agency.consumer.ReluctantSwitcher;
 import abce.agency.engine.MarketSimulation;
 import abce.agency.firm.Firm;
-import abce.agency.firm.SimpleFirm;
 import abce.agency.goods.DurableGood;
 import abce.agency.goods.Good;
 import abce.agency.production.ConstantCostProductionFunction;

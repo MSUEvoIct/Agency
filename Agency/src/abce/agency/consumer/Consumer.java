@@ -193,7 +193,7 @@ public abstract class Consumer extends Agent {
 	 * 
 	 * @param saleOfGoods
 	 */
-	public void execute(SaleOfGoods saleOfGoods) {
+	public void actualize(SaleOfGoods saleOfGoods) {
 		Good good = saleOfGoods.good;
 		double price = saleOfGoods.price;
 		double qty = saleOfGoods.quantity;
@@ -231,7 +231,7 @@ public abstract class Consumer extends Agent {
 	 * 
 	 * @param marketEntry
 	 */
-	public void execute(MarketEntry marketEntry) {
+	public void actualize(MarketEntry marketEntry) {
 		addMarket(marketEntry.market.good,marketEntry.market);
 	}
 	

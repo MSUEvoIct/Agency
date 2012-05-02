@@ -23,16 +23,16 @@ public class MarketEntry extends SimulationAction {
 	}
 
 	@Override
-	protected void execute() {
+	protected void actualize() {
 		market.execute(this);
 		if (firm != null)
-			firm.execute(this);
+			firm.actualize(this);
 		if (consumer != null)
-			consumer.execute(this);
+			consumer.actualize(this);
 	}
 
 	@Override
-	protected boolean verify() {
+	protected boolean isAllowed() {
 		return true; // simulation always allows market entry
 	}
 

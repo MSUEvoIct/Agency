@@ -150,8 +150,8 @@ public class ReluctantSwitcher extends Consumer {
 	 * abce.agency.consumer.Consumer#execute(abce.agency.actions.SaleOfGoods)
 	 */
 	@Override
-	public void execute(SaleOfGoods saleOfGoods) {
-		super.execute(saleOfGoods);
+	public void actualize(SaleOfGoods saleOfGoods) {
+		super.actualize(saleOfGoods);
 		existingSuppliers.put(saleOfGoods.good, saleOfGoods.seller);
 	}
 

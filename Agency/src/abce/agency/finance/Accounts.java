@@ -1,6 +1,5 @@
 package abce.agency.finance;
 
-
 import java.io.*;
 import java.util.*;
 
@@ -11,8 +10,6 @@ import abce.agency.finance.*;
 import abce.agency.firm.*;
 import abce.agency.goods.*;
 import evoict.reflection.*;
-
-
 
 /**
  * 
@@ -113,14 +110,10 @@ public class Accounts extends Agent implements Serializable, Steppable {
 		solvencyCheck();
 	}
 
-
-
 	private void solvencyCheck() {
 		// TODO Auto-generated method stub
 
 	}
-
-
 
 	/**
 	 * @param capital
