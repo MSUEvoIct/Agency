@@ -151,7 +151,7 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 		@SuppressWarnings("unchecked")
 		Class<? extends StimulusResponse>[] sr_classes = (Class<? extends StimulusResponse>[]) new Class<?>[num_trees];
 		for (int tree_ndx = 0; tree_ndx < num_trees; tree_ndx++) {
-			Parameter tree_base = species_base.push("tree").push(Integer.toString(sp_ndx));
+			Parameter tree_base = species_base.push("tree").push(Integer.toString(tree_ndx));
 			String sr_name = state.parameters.getString(tree_base.push("sr"), null);
 			@SuppressWarnings("unchecked")
 			Class<? extends StimulusResponse> sr_class = (Class<? extends StimulusResponse>) Class.forName(sr_name);
