@@ -7,6 +7,7 @@ import java.io.IOException;
 import abce.agency.Market;
 import abce.agency.consumer.Consumer;
 import abce.agency.consumer.PerfectlyRationalConsumer;
+import abce.agency.consumer.ReluctantSwitcher;
 import abce.agency.engine.MarketSimulation;
 import abce.agency.firm.ECJSimpleFirm;
 import abce.agency.firm.Firm;
@@ -63,11 +64,18 @@ public class ECSimpleMarketSimulation extends MarketSimulation {
 
 		// Add consumers
 		for (int i = 0; i < _config.number_of_customers; i++) {
-			Consumer c = new PerfectlyRationalConsumer(_config.persons_per_consumer_agent);
-			// Consumer c = new
-			// ReluctantSwitcher(_config.persons_per_consumer_agent);
+			double range = _config.willingness_to_pay_high - _config.willingness_to_pay_low;
+			double amountReduced = (i / _config.number_of_customers) * range;
+			double wtp = _config.willingness_to_pay_high - amountReduced;
+			
+//			Consumer c = new PerfectlyRationalConsumer(_config.persons_per_consumer_agent);
+			 ReluctantSwitcher c = new
+			 ReluctantSwitcher(_config.persons_per_consumer_agent);
 			c.enterMarket(m);
-			c.setWTP(good, _config.willingness_to_pay);
+			c.setWTP(good, wtp);
+			c.setMode(ReluctantSwitcher.Mode.PERCENTAGE);
+			c.setDefaultPercentage(5.0);
+			
 			addConsumer(c);
 		}
 	}

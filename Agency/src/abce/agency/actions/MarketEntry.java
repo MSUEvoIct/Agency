@@ -24,7 +24,7 @@ public class MarketEntry extends SimulationAction {
 
 	@Override
 	protected void actualize() {
-		market.execute(this);
+		market.actualize(this);
 		if (firm != null)
 			firm.actualize(this);
 		if (consumer != null)

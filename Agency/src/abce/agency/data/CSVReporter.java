@@ -49,6 +49,7 @@ public abstract class CSVReporter implements Serializable, Steppable {
 	 * TODO:  Currently has no effect
 	 */
 	public final boolean printColumnHeaders;
+	
 	public final boolean prependGeneration;
 	public final boolean prependSimulationID;
 	
@@ -59,6 +60,7 @@ public abstract class CSVReporter implements Serializable, Steppable {
 		this.stepModulo = stepModulo;
 		this.output = outputTo;
 		this.sim = sim;
+		
 		if (sim != null) {
 			prependGeneration = (sim.generation != null);
 			prependSimulationID = (sim.simulationID != null);
@@ -75,10 +77,11 @@ public abstract class CSVReporter implements Serializable, Steppable {
 			sb.append(sim.generation + ",");
 		if (prependSimulationID)
 			sb.append(sim.simulationID + ",");
+		sb.append(sim.getSteps() + ",");
+		
 		Iterator<Object> oi = elements.iterator();
 		while (oi.hasNext()) {
 			Object thing = oi.next();
-//			String description = thing.toString();
 			sb.append(thing);
 			if (oi.hasNext()) {
 				sb.append(",");

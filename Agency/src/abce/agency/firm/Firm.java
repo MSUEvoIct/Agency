@@ -12,6 +12,7 @@ import abce.agency.Offer;
 import abce.agency.actions.MarketEntry;
 import abce.agency.actions.ProductionAction;
 import abce.agency.actions.SaleOfGoods;
+import abce.agency.actions.SetPriceAction;
 import abce.agency.async.AsyncUpdate;
 import abce.agency.consumer.Consumer;
 import abce.agency.finance.Accounts;
@@ -61,6 +62,20 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	protected Set<Good> goods = new HashSet<Good>();
 	
 	
+	/*
+	 * Tracking Variables
+	 */
+	// Long-term tracking
+	private Map<Good,Double> totalQuantityProduced = new HashMap<Good,Double>();
+	private Map<Good,Double> totalQuantitySold = new HashMap<Good,Double>();
+	private Map<Good,Double> totalRevenue = new HashMap<Good,Double>();
+	
+	// Short-term tracking
+	private Map<Good,double[]> shortQuantityProduced = new HashMap<Good,double[]>();
+	private Map<Good,double[]> shortQuantitySold = new HashMap<Good,double[]>();
+	private Map<Good,double[]> shortRevenue = new HashMap<Good,double[]>();
+	
+	
 	public Firm() {
 
 	}
@@ -74,6 +89,24 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	@Override
 	public void update() {
 		spoilage(); // spoilage happens at the tick of every step.
+
+		// Reset short-term quantities
+		// -------
+		for ( Good g : shortQuantityProduced.keySet()) {
+			double[] shortQtyArray = shortQuantityProduced.get(g);
+			shortQtyArray[shortIndex()] = 0.0;
+		}
+
+		for ( Good g : shortQuantitySold.keySet()) {
+			double[] shortQtyArray = shortQuantitySold.get(g);
+			shortQtyArray[shortIndex()] = 0.0;
+		}
+
+		for ( Good g : shortRevenue.keySet()) {
+			double[] shortQtyArray = shortRevenue.get(g);
+			shortQtyArray[shortIndex()] = 0.0;
+		}
+
 	}
 
 	public void grantEndowment(double amount) {
@@ -124,6 +157,34 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 		Double invQty = inventory.get(good);
 		if (invQty == null)
 			inventory.put(good, 0.0);
+		
+		// Initialize tracking data structures for this good.
+		// -----------  Long term tracking
+		Double totalProduction = totalQuantityProduced.get(good);
+		if (totalProduction == null)
+			totalQuantityProduced.put(good, 0.0);
+		
+		Double totalSold = totalQuantitySold.get(good);
+		if (totalSold == null)
+			totalQuantitySold.put(good, 0.0);
+		
+		Double revenue = totalRevenue.get(good);
+		if (revenue == null)
+			totalRevenue.put(good, 0.0);
+		
+		// ---------  Short Term Tracking
+		double[] shortProductionArray = shortQuantityProduced.get(good);
+		if (shortProductionArray == null)
+			shortQuantityProduced.put(good, new double[trackingPeriods]);
+		
+		double[] shortQtySold = shortQuantitySold.get(good);
+		if (shortQtySold == null)
+			shortQuantitySold.put(good, new double[trackingPeriods]);
+		
+		double[] shortRevenueArray = shortRevenue.get(good);
+		if (shortRevenueArray == null)
+			shortRevenue.put(good, new double[trackingPeriods]);
+		
 	}
 
 	/**
@@ -148,33 +209,33 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 *            Which consumer
 	 * @return The price
 	 */
-	protected double getPrice(Good good, Consumer consumer) {
-		Double price = prices.get(good);
+	protected double getPrice(Market m, Consumer consumer) {
+		Double price = prices.get(m.good);  // XXX Assumes one price for a good in all markets
 		if (price != null)
 			return price;
 		else
 			throw new RuntimeException("Firm " + this
-					+ " asked to price good, " + good
+					+ " asked to price good, " + m.good
 					+ " but has never set a price for it.");
 	}
 
-	public final Offer getOffer(Good good, Consumer consumer) {
-		if (!this.produces(good))
+	public final Offer getOffer(Market m, Consumer consumer) {
+		if (!this.produces(m.good))
 			return null; // this firm does not produce this good; no offer.
-		double qtyAvailable = this.getInventory(good);
+		double qtyAvailable = this.getInventory(m);
 
 		// make the offer
-		Offer o = new Offer(this, good, getPrice(good, consumer), qtyAvailable);
+		Offer o = new Offer(this, m, getPrice(m, consumer), qtyAvailable);
 		return o;
 	}
 
-	public double getInventory(Good good) {
-		Double invQty = inventory.get(good);
+	public double getInventory(Market m) {
+		Double invQty = inventory.get(m.good); // XXX Assumes a single inventory across all markets
 		if (invQty != null)
 			return invQty;
 		else
 			throw new RuntimeException("Firm " + this
-					+ " asked for inventory of good " + good
+					+ " asked for inventory of good " + m.good
 					+ "but has never had one.");
 	}
 
@@ -234,9 +295,21 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 * @param saleOfGoods
 	 */
 	public void actualize(SaleOfGoods saleOfGoods) {
-		accounts.revenue(saleOfGoods.good, saleOfGoods.price
+		// Decrese Inventory
+		deplete(saleOfGoods.offer.market.good, saleOfGoods.quantity);
+
+		// Increase Cash
+		accounts.revenue(saleOfGoods.offer.market.good, saleOfGoods.offer.price
 				* saleOfGoods.quantity);
-		deplete(saleOfGoods.good, saleOfGoods.quantity);
+		
+		// Track long-term sales
+		Double totalSales = totalQuantitySold.get(saleOfGoods.offer.market.good);
+		totalSales += saleOfGoods.quantity;
+		totalQuantitySold.put(saleOfGoods.offer.market.good, totalSales);
+		
+		// Track short-term sales
+		
+		
 	}
 
 	/**
@@ -274,5 +347,76 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 		double newInventory = currentInventory + productionAction.qty;
 		inventory.put(productionAction.good, newInventory);
 	}
+
+	public void actualize(SetPriceAction setPriceAction) {
+		// Simply update the data structure containing the price for this good
+		prices.put(setPriceAction.good, setPriceAction.price);
+	}
+	
+	
+	/**
+	 * @param good
+	 * @return The total quantity of this good produced by this firm over the
+	 *         entire simulation.
+	 */
+	public double getTotalQtyProduced(Good good) {
+		Double foo = totalQuantityProduced.get(good);
+		if (foo == null)
+			return 0.0;
+		else
+			return foo;
+	}
+
+	/**
+	 * @param good
+	 * @return The total quantity of this good sold by this firm over the entire
+	 *         simulation.
+	 */
+	public double getTotalQtySold(Good good) {
+		Double foo = totalQuantitySold.get(good);
+		if (foo == null)
+			return 0.0;
+		else
+			return foo;
+	}
+
+	/**
+	 * @param good
+	 * @return The total amount of revenue earned by this firm on this product
+	 *         over the entire simulation.
+	 */
+	public double getTotalRevenue(Good good) {
+		Double foo = totalRevenue.get(good);
+		if (foo == null)
+			return 0.0;
+		else
+			return foo;
+	}	
+	
+	public double getPastQtyProduced(Good g, int stepsAgo) {
+		verifyShortData(stepsAgo);
+		double[] shortQtyArray = shortQuantityProduced.get(g);
+		if (shortQtyArray == null)
+			return 0.0;
+		return shortQtyArray[shortIndex(stepsAgo)];
+	}
+
+	public double getPastQtySold(Good g, int stepsAgo) {
+		verifyShortData(stepsAgo);
+		double[] shortQtyArray = shortQuantitySold.get(g);
+		if (shortQtyArray == null)
+			return 0.0;
+		return shortQtyArray[shortIndex(stepsAgo)];
+	}
+
+	public double getPastRevenue(Good g, int stepsAgo) {
+		verifyShortData(stepsAgo);
+		double[] shortQtyArray = shortQuantityProduced.get(g);
+		if (shortQtyArray == null)
+			return 0.0;
+		return shortQtyArray[shortIndex(stepsAgo)];
+	}
+
+
 
 }

@@ -219,10 +219,11 @@ public class Accounts extends Agent implements Serializable, Steppable {
 
 
 	public void borrow(double amount) {
-		if (amount > getAvailableFinancing())
-			throw new RuntimeException("Borrowing " + amount + ", but only "
-					+ getAvailableFinancing() + " available.  Shouldn't this amount have been checked first?");
-		else
+		// XXX FIXME
+//		if (amount > getAvailableFinancing())
+//			throw new RuntimeException("Borrowing " + amount + ", but only "
+//					+ getAvailableFinancing() + " available.  Shouldn't this amount have been checked first?");
+//		else
 			debt += amount;
 
 	}

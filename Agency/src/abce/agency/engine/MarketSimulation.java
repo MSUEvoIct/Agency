@@ -90,6 +90,7 @@ public class MarketSimulation extends SimState implements Runnable {
 
 	public void addMarket(Market market) {
 		this.markets.add(market);
+		schedule.scheduleRepeating(Schedule.EPOCH,market);
 	}
 
 

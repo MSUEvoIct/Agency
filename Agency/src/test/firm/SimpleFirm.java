@@ -19,7 +19,6 @@ import abce.agency.goods.*;
  */
 public class SimpleFirm extends Firm {
 
-	protected double	price;
 
 
 
@@ -27,18 +26,14 @@ public class SimpleFirm extends Firm {
 		this.price = price;
 	}
 
-
-
 	@Override
 	protected void price() {
 		// DO NOTHING. Override getPrice() instead.
 		System.err.println("Entering SimpleFirm price()");
 	}
 
-
-
 	@Override
-	public double getPrice(Good good, Consumer consumer) {
+	public double getPrice(Market m, Consumer consumer) {
 		return price;
 	}
 

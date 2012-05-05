@@ -19,7 +19,8 @@ public class SimpleAgencyConfig extends Properties {
 	public double				firm_endowment;
 	public int					number_of_customers;
 	public int					persons_per_consumer_agent;
-	public double				willingness_to_pay;
+	public double				willingness_to_pay_high;
+	public double				willingness_to_pay_low;
 	public double				cost_constant;
 	public double				price_constant;
 	public int					steps_to_run;
@@ -41,9 +42,10 @@ public class SimpleAgencyConfig extends Properties {
 		firm_endowment = D("firm_endowment");
 		number_of_customers = I("number_of_customers");
 		persons_per_consumer_agent = I("persons_per_consumer_agent");
-		willingness_to_pay = D("willingness_to_pay");
+		willingness_to_pay_high = D("willingness_to_pay_high");
+		willingness_to_pay_low = D("willingness_to_pay_low");
 		cost_constant = D("cost_constant");
-		price_constant = D("price_constant");
+//		price_constant = D("price_constant");
 		steps_to_run = I("steps_to_run");
 	}
 

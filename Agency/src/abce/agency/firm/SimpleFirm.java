@@ -28,8 +28,8 @@ public abstract class SimpleFirm extends Firm {
 
 	@Override
 	public void step(SimState state) {
-		price();
 		produce();
+		price();
 		super.step(state);
 	}
 

@@ -2,6 +2,8 @@ package abce.agency.actions;
 
 import java.io.Serializable;
 
+import abce.agency.Market;
+import abce.agency.Offer;
 import abce.agency.consumer.Consumer;
 import abce.agency.firm.Firm;
 import abce.agency.goods.Good;
@@ -10,10 +12,8 @@ public class SaleOfGoods extends SimulationAction {
 	private static final long serialVersionUID = 1L;
 
 	public final Consumer buyer;
-	public final Firm seller;
-	public final Good good;
+	public final Offer offer;
 	public final double quantity;
-	public final double price;
 	
 	/**
 	 * Create a transaction for the sale of goods where the quantity purchased is equal
@@ -24,8 +24,8 @@ public class SaleOfGoods extends SimulationAction {
 	 * @param g The good
 	 * @param price The price of the good
 	 */
-	public SaleOfGoods(Consumer c, Firm f, Good g, double price) {
-		this(c,f,g,c.getPopulation(),price);
+	public SaleOfGoods(Consumer c, Offer o) {
+		this(c,o,c.getPopulation());
 	}
 	
 	/**
@@ -40,23 +40,22 @@ public class SaleOfGoods extends SimulationAction {
 	 * 							represented by the consumer agent
 	 * @param price The price of the good
 	 */
-	public SaleOfGoods(Consumer c, Firm f, Good g, double price, double quantity) {
+	public SaleOfGoods(Consumer c, Offer o, double quantity) {
 			this.buyer = c;
-			this.seller = f;
-			this.good = g;
+			this.offer = o;
 			this.quantity = quantity;
-			this.price = price;
 	}
 	
 	@Override
 	protected String describe() {
-		return "Firm " + seller + " selling " + quantity + " of good " + good + " to consumer " + buyer + " at price " + price; 
+		return "Firm " + offer.firm + " selling " + quantity + " of good " + offer.market.good + " to consumer " + buyer + " at price " + offer.price; 
 	}
 
 	@Override
 	protected void actualize() {
 		buyer.actualize(this);
-		seller.actualize(this);
+		offer.firm.actualize(this);
+		offer.market.actualize(this);
 	}
 
 	@Override

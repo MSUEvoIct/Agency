@@ -30,8 +30,7 @@ public class ProductionAction extends SimulationAction {
 
 	@Override
 	public void reject() {
-		// TODO Auto-generated method stub
-		super.reject();
+		// do nothing; the firm will just not produce this period.
 	}
 
 	@Override

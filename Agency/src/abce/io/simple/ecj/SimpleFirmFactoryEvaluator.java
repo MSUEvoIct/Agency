@@ -59,12 +59,12 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 			
 //			ConsumerReporter cr = new ConsumerReporter(new PrintWriter(System.out), false, 1, models[i]);
 			PriceReporter pr = new PriceReporter(new PrintWriter(System.out), false, 1, models[i]);
-			SalesReporter sr = new SalesReporter(new PrintWriter(System.out), false, 1, models[i]);
+			//SalesReporter sr = new SalesReporter(new PrintWriter(System.out), false, 1, models[i]);
 
 			
 			models[i].addEvent(pr);
 //			models[i].addEvent(cr);
-			models[i].addEvent(sr);
+			//models[i].addEvent(sr);
 			
 		}
 
