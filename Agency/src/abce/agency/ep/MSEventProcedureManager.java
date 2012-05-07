@@ -57,9 +57,9 @@ public class MSEventProcedureManager extends EventProcedureManager {
 
 	@Override
 	public void finish() {
-		// for (EventProcedureContainer epc : events.values()) {
-		// epc.finish();
-		// }
+		for (EventProcedureContainer epc : events.values()) {
+			epc.finish();
+		}
 
 	}
 
