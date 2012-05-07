@@ -98,7 +98,7 @@ public class MarketSimulation extends SimState implements Runnable {
 
 	public void addMarket(Market market) {
 		this.markets.add(market);
-		schedule.scheduleRepeating(Schedule.EPOCH,market);
+		schedule.scheduleRepeating(Schedule.EPOCH, market);
 	}
 
 
@@ -214,6 +214,7 @@ public class MarketSimulation extends SimState implements Runnable {
 			event_manager.process(MSEventProcedureManager.EVENT_STEP, schedule.time(), this);
 		}
 		event_manager.process(MSEventProcedureManager.EVENT_STEP, Interval.ATEND, this);
+		event_manager.finish();
 	}
 
 
