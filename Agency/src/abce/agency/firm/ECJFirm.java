@@ -7,6 +7,14 @@ import ec.*;
 
 
 
+/**
+ * ECJFirm implements the interface ECJEvolvableAgents on an ECFirm, providing
+ * the ability of StimulusResponse objects to inform AgencyGPIndividuals and
+ * alter the behavior of this ECJFirm from within ECJ.
+ * 
+ * @author ruppmatt
+ * 
+ */
 public class ECJFirm extends ECFirm implements ECJEvolvableAgent {
 
 	/**

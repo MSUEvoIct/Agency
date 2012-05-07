@@ -78,10 +78,11 @@ public abstract class CSVReporter implements Serializable, Steppable {
 			sb.append(sim.generation + ",");
 
 		sb.append(sim.simulationID + ",");
+		sb.append(sim.getSteps() + ",");
+		
 		Iterator<Object> oi = elements.iterator();
 		while (oi.hasNext()) {
 			Object thing = oi.next();
-			// String description = thing.toString();
 			sb.append(thing);
 			if (oi.hasNext()) {
 				sb.append(",");

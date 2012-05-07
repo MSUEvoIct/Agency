@@ -42,7 +42,7 @@ public class ReportPrice implements Procedure {
 			for (Firm f : m.getFirms()) {
 				// Price
 				Double price = null;
-				Offer o = f.getOffer(m.good, null);
+				Offer o = f.getOffer(m, null);
 				price = (o != null) ? price = o.price : Double.NaN;
 				out.write(state.generation, state.simulationID, state.schedule.getTime(), m.good.id, m.id, f.agentID,
 						price);

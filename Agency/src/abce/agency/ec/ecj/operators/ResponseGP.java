@@ -54,23 +54,25 @@ public class ResponseGP extends GPNode {
 	public void eval(EvolutionState state, int thread, GPData input, ADFStack stack, GPIndividual individual,
 			Problem problem) {
 
-		// Setup action method
-		if (m == null) {
-			try {
-				m = ResponseUtils.findResponse(((StimulusResponseProblem) problem).retrieve());
-				arg_types = m.getParameterTypes();
-			} catch (BadConfiguration e) {
-				System.err.println("Unable to find a response method: " + e.getMessage());
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
-
 		BooleanGP should_execute = new BooleanGP();
 		this.children[0].eval(state, thread, should_execute, stack, individual, problem);
 
 		if (should_execute.value) {
+
 			// System.err.println("Triggering response: " + m.getName());
+			
+			try {
+				m = ResponseUtils
+						.findResponse(((StimulusResponseProblem) problem)
+								.retrieve());
+				arg_types = m.getParameterTypes();
+			} catch (BadConfiguration e) {
+				System.err.println("Unable to find a response method: "
+						+ e.getMessage());
+				e.printStackTrace();
+				System.exit(1);
+			}
+			
 			Object[] actual_args = new Object[arg_types.length];
 
 			for (int k = 0; k < actual_args.length; k++) {

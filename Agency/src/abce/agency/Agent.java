@@ -72,6 +72,13 @@ public abstract class Agent implements Steppable {
 		return index;
 	}
 
+	protected void verifyShortData(int stepsAgo) {
+		if (stepsAgo < 0)
+			throw new RuntimeException("Cannot get past qty for a future time");
+		if (stepsAgo > trackingPeriods)
+			throw new RuntimeException("Only keeping records for " + trackingPeriods + " steps, but "
+					+ stepsAgo + " were requested.");
+	}
 
 
 	/**

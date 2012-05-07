@@ -6,18 +6,19 @@ import java.util.*;
 import sim.engine.*;
 import abce.agency.*;
 import abce.agency.actions.*;
+import abce.agency.async.*;
 import abce.agency.goods.*;
 
 
 
-public abstract class Consumer extends Agent {
+public abstract class Consumer extends Agent implements AsyncUpdate {
 
 	private static final long					serialVersionUID		= 1L;
 
 	/*
 	 * State Variables
 	 */
-	private final double						population;																// how
+	public final double							population;																// how
 																															// many
 																															// individuals
 																															// does
@@ -52,19 +53,6 @@ public abstract class Consumer extends Agent {
 	@Override
 	public void step(SimState state) {
 		super.step(state);
-		// reset short-term quantities
-		for (Good g : shortQuantityOfGoods.keySet()) {
-			double[] shortQtyArray = shortQuantityOfGoods.get(g);
-			shortQtyArray[shortIndex()] = 0.0;
-		}
-		for (Good g : shortPaidForGoods.keySet()) {
-			double[] shortPaidForArray = shortPaidForGoods.get(g);
-			shortPaidForArray[shortIndex()] = 0.0;
-		}
-		for (Good g : shortConsumerSurplus.keySet()) {
-			double[] shortSurplusArray = shortConsumerSurplus.get(g);
-			shortSurplusArray[shortIndex()] = 0.0;
-		}
 
 	}
 
@@ -141,7 +129,7 @@ public abstract class Consumer extends Agent {
 		// Find available prices in increasing order (cheapest first)
 		List<Offer> offers = new ArrayList<Offer>();
 		for (Market m : availableMarkets) {
-			offers.addAll(m.getOffers(this, g));
+			offers.addAll(m.getOffers(this));
 		}
 		Collections.sort(offers);
 
@@ -174,7 +162,7 @@ public abstract class Consumer extends Agent {
 		// Look at the first offer to determine which good we're looking at
 		Offer firstOffer = offers.get(0);
 		// Determine the willingness to pay for that good.
-		double wtp = wilingnessToPay.get(firstOffer.good);
+		double wtp = wilingnessToPay.get(firstOffer.market.good);
 
 		for (Offer o : offers) {
 			if (leftToConsume <= 0.000001) // if we've consumed basically
@@ -190,10 +178,14 @@ public abstract class Consumer extends Agent {
 				if (o.maxQty <= qtyToConsume) // can be satisfied with first
 												// offer
 					qtyFromThisFirm = o.maxQty;
+				double instantInventory = o.firm.getInventory(o.market);
+				if (instantInventory <= qtyToConsume) // can be satisfied with
+														// first offer
+					qtyFromThisFirm = instantInventory;
 				else
 					qtyFromThisFirm = qtyToConsume;
 
-				SaleOfGoods sog = new SaleOfGoods(this, o.firm, o.good, o.price, qtyFromThisFirm);
+				SaleOfGoods sog = new SaleOfGoods(this, o, qtyFromThisFirm);
 				sog.process();
 				leftToConsume = leftToConsume - sog.quantity;
 			}
@@ -228,9 +220,9 @@ public abstract class Consumer extends Agent {
 	 * 
 	 * @param saleOfGoods
 	 */
-	public void execute(SaleOfGoods saleOfGoods) {
-		Good good = saleOfGoods.good;
-		double price = saleOfGoods.price;
+	public void actualize(SaleOfGoods saleOfGoods) {
+		Good good = saleOfGoods.offer.market.good;
+		double price = saleOfGoods.offer.price;
 		double qty = saleOfGoods.quantity;
 		double wtp = wilingnessToPay.get(good);
 		double totalPaid = price * qty;
@@ -268,7 +260,7 @@ public abstract class Consumer extends Agent {
 	 * 
 	 * @param marketEntry
 	 */
-	public void execute(MarketEntry marketEntry) {
+	public void actualize(MarketEntry marketEntry) {
 		addMarket(marketEntry.market.good, marketEntry.market);
 	}
 
@@ -298,11 +290,7 @@ public abstract class Consumer extends Agent {
 
 
 	public double getPastQty(Good g, int stepsAgo) {
-		if (stepsAgo < 0)
-			throw new RuntimeException("Cannot get past qty for a future time");
-		if (stepsAgo > trackingPeriods)
-			throw new RuntimeException("Only keeping records for " + trackingPeriods + " steps, but "
-					+ stepsAgo + " were requested.");
+		verifyShortData(stepsAgo);
 		double[] shortQtyArray = getShortQtyArray(g);
 		if (shortQtyArray == null)
 			return 0.0;
@@ -312,12 +300,7 @@ public abstract class Consumer extends Agent {
 
 
 	public double getPastPaid(Good g, int stepsAgo) {
-		if (stepsAgo < 0)
-			throw new RuntimeException("Cannot get past anmount paid for a future time");
-		if (stepsAgo > trackingPeriods)
-			throw new RuntimeException("Only keeping records for " + trackingPeriods + " steps, but "
-					+ stepsAgo + " were requested.");
-
+		verifyShortData(stepsAgo);
 		double[] shortPaidArray = getShortPaidForGoodsArray(g);
 		if (shortPaidArray == null)
 			return 0.0;
@@ -333,12 +316,7 @@ public abstract class Consumer extends Agent {
 	 *         period.
 	 */
 	public double getPastSurplus(Good g, int stepsAgo) {
-		if (stepsAgo < 0)
-			throw new RuntimeException("Cannot get past surplus for a future time");
-		if (stepsAgo > trackingPeriods)
-			throw new RuntimeException("Only keeping records for " + trackingPeriods + " steps, but "
-					+ stepsAgo + " were requested.");
-
+		verifyShortData(stepsAgo);
 		double[] shortCSArray = getShortConsumerSurplusArray(g);
 		if (shortCSArray == null)
 			return 0.0;
@@ -482,6 +460,25 @@ public abstract class Consumer extends Agent {
 			shortConsumerSurplus.put(good, shortConsumerSurplusArray);
 		}
 		return shortConsumerSurplusArray;
+	}
+
+
+
+	@Override
+	public void update() {
+		// Reset short-term quantities
+		for (Good g : shortQuantityOfGoods.keySet()) {
+			double[] shortQtyArray = shortQuantityOfGoods.get(g);
+			shortQtyArray[shortIndex()] = 0.0;
+		}
+		for (Good g : shortPaidForGoods.keySet()) {
+			double[] shortPaidForArray = shortPaidForGoods.get(g);
+			shortPaidForArray[shortIndex()] = 0.0;
+		}
+		for (Good g : shortConsumerSurplus.keySet()) {
+			double[] shortSurplusArray = shortConsumerSurplus.get(g);
+			shortSurplusArray[shortIndex()] = 0.0;
+		}
 	}
 
 }

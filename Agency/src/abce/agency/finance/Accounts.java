@@ -1,6 +1,5 @@
 package abce.agency.finance;
 
-
 import java.io.*;
 import java.util.*;
 
@@ -10,8 +9,6 @@ import abce.agency.actions.*;
 import abce.agency.firm.*;
 import abce.agency.goods.*;
 import evoict.reflection.*;
-
-
 
 /**
  * 
@@ -112,14 +109,10 @@ public class Accounts extends Agent implements Serializable, Steppable {
 		solvencyCheck();
 	}
 
-
-
 	private void solvencyCheck() {
 		// TODO Auto-generated method stub
 
 	}
-
-
 
 	/**
 	 * @param capital
@@ -225,10 +218,11 @@ public class Accounts extends Agent implements Serializable, Steppable {
 
 
 	public void borrow(double amount) {
-		if (amount > getAvailableFinancing())
-			throw new RuntimeException("Borrowing " + amount + ", but only "
-					+ getAvailableFinancing() + " available.  Shouldn't this amount have been checked first?");
-		else
+		// XXX FIXME
+//		if (amount > getAvailableFinancing())
+//			throw new RuntimeException("Borrowing " + amount + ", but only "
+//					+ getAvailableFinancing() + " available.  Shouldn't this amount have been checked first?");
+//		else
 			debt += amount;
 
 	}

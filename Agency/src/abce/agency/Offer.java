@@ -6,7 +6,7 @@ import abce.agency.goods.Good;
 public class Offer implements Comparable {
 	
 	public final Firm firm;
-	public final Good good;
+	public final Market market;
 	public final double price;
 	public final double maxQty;
 	public final double minQty;
@@ -17,8 +17,8 @@ public class Offer implements Comparable {
 	 * @param price The price of the good, per unit.
 	 * @param maxQuantity  The maximum quantity available for purchase.
 	 */
-	public Offer(Firm f, Good g, double price, double maxQuantity) {
-		this(f,g,price,maxQuantity,0.0);
+	public Offer(Firm f, Market m, double price, double maxQuantity) {
+		this(f,m,price,maxQuantity,0.0);
 	}
 
 	
@@ -31,9 +31,9 @@ public class Offer implements Comparable {
 	 * @param maxQuantity
 	 * @param minQuantity
 	 */
-	private Offer(Firm f, Good g, double price, double maxQuantity, double minQuantity) {
+	private Offer(Firm f, Market m, double price, double maxQuantity, double minQuantity) {
 		firm = f;
-		good = g;
+		market = m;
 		this.price = price;
 		maxQty = maxQuantity;
 		minQty = minQuantity;

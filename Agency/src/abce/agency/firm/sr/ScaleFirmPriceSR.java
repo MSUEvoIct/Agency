@@ -54,9 +54,9 @@ public class ScaleFirmPriceSR implements FirmPricingSR {
 
 
 
-	@Stimulus(name = "LastProduction")
-	public double lastProduction() {
-		return _firm.getLastProduction(_good);
+	@Stimulus(name = "MyProduction(t-1)")
+	public double productionLastPeriod() {
+		return _firm.getPastQtyProduced(_good, 1);
 	}
 
 
@@ -66,7 +66,7 @@ public class ScaleFirmPriceSR implements FirmPricingSR {
 		double total = 0.0;
 		for (Firm f : _market.getFirms()) {
 			if (f.produces(_good)) {
-				total += f.getInventory(_good);
+				total += f.getInventory(_market);
 			}
 		}
 		return total;
@@ -76,14 +76,14 @@ public class ScaleFirmPriceSR implements FirmPricingSR {
 
 	@Stimulus(name = "Inventory")
 	public double inventory() {
-		return _firm.getInventory(_good);
+		return _firm.getInventory(_market);
 	}
 
 
 
 	@Stimulus(name = "Price")
 	public double getPrice() {
-		return _firm.getPrice(_good, null);
+		return _firm.getPrice(_market, null);
 	}
 
 
@@ -95,9 +95,9 @@ public class ScaleFirmPriceSR implements FirmPricingSR {
 		try {
 			for (Consumer c : _market.getConsumers()) {
 				for (Firm f : _market.getFirms()) {
-					Offer offer = f.getOffer(_good, c);
+					Offer offer = f.getOffer(_market, c);
 					if (offer != null) {
-						total_price += f.getOffer(_good, c).price;
+						total_price += offer.price;
 						num_firms++;
 					}
 				}

@@ -6,7 +6,6 @@ import java.util.*;
 import sim.engine.*;
 import abce.agency.*;
 import abce.agency.actions.*;
-import abce.agency.firm.*;
 import abce.agency.goods.*;
 
 
@@ -15,7 +14,7 @@ public class ReluctantSwitcher extends Consumer {
 
 	private static final long	serialVersionUID	= 1L;
 
-	protected Map<Good, Firm>	existingSuppliers	= new LinkedHashMap<Good, Firm>();
+	protected Map<Good, Offer>	lastOfferAccepted	= new LinkedHashMap<Good, Offer>();
 
 	/**
 	 * If a specific per-good amount is not specified, this amount is used.
@@ -83,21 +82,21 @@ public class ReluctantSwitcher extends Consumer {
 		// For all goods we want to consume...
 		for (Good g : allDesiredGoods()) {
 			// Find the offer from the past supplier, if any.
-			Firm f = existingSuppliers.get(g);
-			if (f == null) {
+			Offer oldOffer = lastOfferAccepted.get(g);
+			if (oldOffer == null) {
 				// Just make the ideal purchase for this good
 				findAndConsumeIdeal(g);
 
 			} else {
 				// There is an existing firm.
 				// Determine their offier
-				Offer oldOffer = f.getOffer(g, this);
+				Offer newOffer = oldOffer.firm.getOffer(oldOffer.market, this);
 
 				// Get the list of all offers
 				List<Offer> bestOffers = this.getSortedOffers(g);
 				Offer bestOffer = bestOffers.get(0);
 
-				boolean goWithNewFirm = doSupplierSwitch(bestOffer, oldOffer);
+				boolean goWithNewFirm = doSupplierSwitch(bestOffer, newOffer);
 				if (goWithNewFirm) {
 					orderedOffers = bestOffers;
 				} else {
@@ -105,9 +104,13 @@ public class ReluctantSwitcher extends Consumer {
 													// isn't included twice.
 					// can't do this by object; they are two different offer
 					// objects. once from the initial probe
+					bestOffers.remove(newOffer); // make sure the old offer
+													// isn't included twice.
+					// can't do this by object; they are two different offer
+					// objects. once from the initial probe
 					// and once again when looking at all offers.
 					orderedOffers = new ArrayList<Offer>();
-					orderedOffers.add(oldOffer);
+					orderedOffers.add(newOffer);
 					orderedOffers.addAll(bestOffers);
 				}
 				consumeOrderedOffers(orderedOffers, this.getPopulation());
@@ -118,7 +121,7 @@ public class ReluctantSwitcher extends Consumer {
 
 
 	protected boolean doSupplierSwitch(Offer fromNewFirm, Offer fromOldFirm) {
-		Good g = fromOldFirm.good;
+		Good g = fromOldFirm.market.good;
 
 		if (this.mode.equals(Mode.AMOUNT)) {
 			double amount = defaultAmount;
@@ -142,8 +145,8 @@ public class ReluctantSwitcher extends Consumer {
 			}
 			// how much less is the cheapest offer?
 			double priceDifference = fromOldFirm.price - fromNewFirm.price;
-			double percentageDifference = priceDifference / fromOldFirm.price;
-			if (percentageDifference > percentage)
+			double priceDifRatio = priceDifference / fromOldFirm.price;
+			if (priceDifRatio > (percentage / 100))
 				return true;
 			else
 				return false;
@@ -163,9 +166,9 @@ public class ReluctantSwitcher extends Consumer {
 	 * abce.agency.consumer.Consumer#execute(abce.agency.actions.SaleOfGoods)
 	 */
 	@Override
-	public void execute(SaleOfGoods saleOfGoods) {
-		super.execute(saleOfGoods);
-		existingSuppliers.put(saleOfGoods.good, saleOfGoods.seller);
+	public void actualize(SaleOfGoods saleOfGoods) {
+		super.actualize(saleOfGoods);
+		lastOfferAccepted.put(saleOfGoods.offer.market.good, saleOfGoods.offer);
 	}
 
 

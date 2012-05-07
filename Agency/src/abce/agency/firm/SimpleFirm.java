@@ -1,6 +1,7 @@
 package abce.agency.firm;
 
 
+import sim.engine.*;
 import abce.agency.*;
 import abce.agency.actions.*;
 import abce.agency.goods.*;
@@ -17,20 +18,27 @@ import abce.agency.goods.*;
  */
 public class SimpleFirm extends Firm {
 
-	public SimpleFirm() {
+	/**
+	 * 
+	 */
+	private static final long	serialVersionUID	= 1L;
+	public double				price;
+
+
+
+	public SimpleFirm(double price) {
+		this.price = price;
 	}
 
 
 
-	@Override
-	protected void price() {
-		// DO NOTHING. Override getPrice() instead.
-		System.err.println("Entering SimpleFirm price()");
+	protected void price()
+	{
+
 	}
 
 
 
-	@Override
 	protected void produce() {
 		/*
 		 * Produce as decribed in the object description...
@@ -42,6 +50,15 @@ public class SimpleFirm extends Firm {
 				pa.process();
 			}
 		}
+	}
+
+
+
+	@Override
+	public void step(SimState state) {
+		produce();
+		price();
+		super.step(state);
 	}
 
 }

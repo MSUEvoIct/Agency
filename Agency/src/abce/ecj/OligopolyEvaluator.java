@@ -137,7 +137,6 @@ public class OligopolyEvaluator extends Evaluator {
 			String sr_name = state.parameters.getString(tree_base.push("sr"), null);
 			@SuppressWarnings("unchecked")
 			Class<? extends StimulusResponse> sr_class = (Class<? extends StimulusResponse>) Class.forName(sr_name);
-			System.err.println("@@" + sr_class.getCanonicalName());
 			sr_classes[tree_ndx] = sr_class;
 		}
 		return sr_classes;

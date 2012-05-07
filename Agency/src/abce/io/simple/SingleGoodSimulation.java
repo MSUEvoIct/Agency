@@ -52,7 +52,7 @@ public class SingleGoodSimulation extends MarketSimulation {
 
 		// Add firms
 		for (int i = 0; i < testNumFirms; i++) {
-			Firm f = new SimpleFirm();
+			Firm f = new SimpleFirm(testConstantPrice);
 			f.setPrice(good, testConstantPrice);
 			f.grantEndowment(testFirmEndowment);
 			f.startProducing(good, pf);

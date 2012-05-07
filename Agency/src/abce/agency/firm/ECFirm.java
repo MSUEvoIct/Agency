@@ -3,6 +3,7 @@ package abce.agency.firm;
 
 import java.util.*;
 
+import sim.engine.*;
 import abce.agency.*;
 import abce.agency.actions.*;
 import abce.agency.ec.*;
@@ -12,33 +13,43 @@ import evoict.reflection.*;
 
 
 
-public abstract class ECFirm extends Firm implements EvolvableAgent {
+/**
+ * ECFirm provides a general interface to any evolutionary computation system
+ * that uses StimulusResponse objects.
+ * 
+ * @author ruppmatt
+ * 
+ */
+public abstract class ECFirm extends Firm implements FirmBehaviors, EvolvableAgent {
 
 	/**
 	 * 
 	 */
-	private static final long						serialVersionUID		= 1L;
+	private static final long						serialVersionUID	= 1L;
 
 	/**
 	 * 
 	 */
 	@Stimulus(name = "LastPriceScaling")
-	double											last_price_scale		= 1.0;
+	double											last_price_scale	= 1.0;
 
-	@Stimulus(name = "LastProductionScaling")
-	double											last_production_scale	= 1.0;
+	@Stimulus(name = "LastProduction")
+	Double											production			= null;
 
-	ArrayList<Class<? extends FirmPricingSR>>		sr_pricing				= new ArrayList<Class<? extends FirmPricingSR>>();
-	ArrayList<Class<? extends FirmProductionSR>>	sr_production			= new ArrayList<Class<? extends FirmProductionSR>>();
+	ArrayList<Class<? extends FirmPricingSR>>		sr_pricing			= new ArrayList<Class<? extends FirmPricingSR>>();
+	ArrayList<Class<? extends FirmProductionSR>>	sr_production		= new ArrayList<Class<? extends FirmProductionSR>>();
 
 
 
+	/**
+	 * Add a stimulus response class to the ECFirm; these classes get put into
+	 * specific (e.g. pricing or production) queues for SR emissions.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addSR(Class<? extends StimulusResponse> cl) {
 		Class<?>[] cls = cl.getInterfaces();
 		for (Class<?> c : cls) {
-			System.err.println(c.getCanonicalName());
 			if (c.isAssignableFrom(FirmPricingSR.class)) {
 				sr_pricing.add((Class<? extends FirmPricingSR>) cl);
 			} else if (c.isAssignableFrom(FirmProductionSR.class)) {
@@ -50,7 +61,7 @@ public abstract class ECFirm extends Firm implements EvolvableAgent {
 
 
 	@Override
-	protected void price() {
+	public void price() {
 		for (Market m : this.markets) {
 			Good g = m.good;
 			try {
@@ -71,16 +82,17 @@ public abstract class ECFirm extends Firm implements EvolvableAgent {
 
 
 	@Override
-	protected void produce() {
+	public void produce() {
 		for (Market m : this.markets) {
 			Good g = m.good;
 			try {
-
+				if (production == null)
+					production = m.getNumberOfPeople() / m.getNumberOfFirms();
 				FirmProductionSR sr;
 				for (Class<? extends FirmProductionSR> cl : sr_production) {
+
 					sr = cl.newInstance();
 					sr.setup(this, m, g);
-					System.err.println(sr.getClass().getCanonicalName());
 					emit(sr);
 				}
 			} catch (Exception e) {
@@ -101,7 +113,8 @@ public abstract class ECFirm extends Firm implements EvolvableAgent {
 		} else {
 			last_price_scale = scale;
 			double current_price = prices.get(g);
-			setPrice(g, current_price * scale);
+			SetPriceAction spa = new SetPriceAction(this, g, current_price * scale);
+			actualize(spa);
 		}
 	}
 
@@ -114,12 +127,19 @@ public abstract class ECFirm extends Firm implements EvolvableAgent {
 			scale = 1.0;
 		}
 
-		last_production_scale = scale;
-		double last_production = getLastProduction(g);
-		double new_production = last_production * scale;
-		System.err.println("Produce: " + new_production);
+		double new_production = production * scale;
 		ProductionAction pa = new ProductionAction(this, g, new_production);
 		pa.process();
-		setLastProduction(g, new_production);
+		actualize(pa);
+		production = new_production;
+	}
+
+
+
+	@Override
+	public void step(SimState state) {
+		produce();
+		price();
+		super.step(state);
 	}
 }

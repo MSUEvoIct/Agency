@@ -24,6 +24,7 @@ public class PriceReporter extends CSVReporter {
 		File outFile = new File("PriceReporter.csv");
 		try {
 			staticOut = new PrintWriter(outFile);
+			staticOut.println("Generation,Simulation,Step,Market,Agenty,Qty,Price");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -48,18 +49,23 @@ public class PriceReporter extends CSVReporter {
 		for (Market m : sim.getMarkets()) {
 			for (Firm f : m.getFirms()) {
 				List<Object> data = new ArrayList<Object>();
-				data.add(m.good.id);
 				data.add(m.id);
 				data.add(f.agentID);
 				
+				// Quantity
+				Double quantity = m.getShortQtySold(f, 0);
+				if (quantity == null)
+					quantity = Double.MIN_VALUE;
+				if (quantity == 0.0)
+					quantity = Double.MIN_VALUE;
+				data.add(quantity);
+
 				// Price
-				Double price = null;
-				Offer o = f.getOffer(m.good, null);
-				if (o != null) 
-					price = o.price;
-				if (price > 200) 
-					price = 200.0;
-				data.add(price);
+				Double revenue = m.getShortRevenue(f, 0);
+				if (revenue == null)
+					revenue = 0.0;
+				double avgPrice = revenue / quantity;
+				data.add(avgPrice);
 				
 				outputCSVLine(data);
 			}
