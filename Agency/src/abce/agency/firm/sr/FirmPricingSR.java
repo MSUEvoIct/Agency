@@ -10,5 +10,5 @@ import abce.agency.goods.*;
 
 public interface FirmPricingSR extends MarketSimulationSR {
 
-	public void setup(ECFirm f, Market m, Good g);
+	public void setup(ECProdPriceFirm f, Market m, Good g);
 }

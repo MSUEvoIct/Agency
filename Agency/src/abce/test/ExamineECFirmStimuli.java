@@ -22,7 +22,7 @@ public class ExamineECFirmStimuli {
 
 	@Test
 	public void test() {
-		examine(ECFirm.class, "ECFirm-Stimuli.csv.gz");
+		examine(ECProdPriceFirm.class, "ECFirm-Stimuli.csv.gz");
 
 	}
 

@@ -19,7 +19,7 @@ public class ScaleFirmPriceSR implements FirmPricingSR {
 																			allowed_classes);
 
 	@Stimulus(name = "Firm")
-	public ECFirm							_firm;
+	public ECProdPriceFirm							_firm;
 
 	@Stimulus(name = "Account")
 	public Accounts							_account;
@@ -38,7 +38,7 @@ public class ScaleFirmPriceSR implements FirmPricingSR {
 
 
 	@Override
-	public void setup(ECFirm f, Market m, Good g) {
+	public void setup(ECProdPriceFirm f, Market m, Good g) {
 		_firm = f;
 		_market = m;
 		_good = g;

@@ -5,7 +5,7 @@ import abce.agency.firm.*;
 
 
 
-public class CournotFirmECJ implements FirmBehaviors {
+public class CournotFirmECJ implements ProducingPricingFirm {
 
 	@Override
 	public void price() {

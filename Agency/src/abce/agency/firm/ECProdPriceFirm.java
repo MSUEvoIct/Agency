@@ -20,7 +20,7 @@ import evoict.reflection.*;
  * @author ruppmatt
  * 
  */
-public abstract class ECFirm extends Firm implements FirmBehaviors, EvolvableAgent {
+public abstract class ECProdPriceFirm extends Firm implements ProducingPricingFirm, EvolvableAgent {
 
 	/**
 	 * 

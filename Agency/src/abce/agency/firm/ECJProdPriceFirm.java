@@ -15,7 +15,7 @@ import ec.*;
  * @author ruppmatt
  * 
  */
-public class ECJFirm extends ECFirm implements ECJEvolvableAgent {
+public class ECJProdPriceFirm extends ECProdPriceFirm implements ECJEvolvableAgent {
 
 	/**
 	 * 
@@ -27,7 +27,7 @@ public class ECJFirm extends ECFirm implements ECJEvolvableAgent {
 
 
 
-	public ECJFirm() {
+	public ECJProdPriceFirm() {
 		super();
 	}
 
