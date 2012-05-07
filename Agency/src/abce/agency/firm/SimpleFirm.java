@@ -3,7 +3,6 @@ package abce.agency.firm;
 
 import abce.agency.*;
 import abce.agency.actions.*;
-import abce.agency.consumer.*;
 import abce.agency.goods.*;
 
 
@@ -18,12 +17,7 @@ import abce.agency.goods.*;
  */
 public class SimpleFirm extends Firm {
 
-	protected double	price;
-
-
-
-	public SimpleFirm(double price) {
-		this.price = price;
+	public SimpleFirm() {
 	}
 
 
@@ -37,13 +31,6 @@ public class SimpleFirm extends Firm {
 
 
 	@Override
-	public double getPrice(Good good, Consumer consumer) {
-		return price;
-	}
-
-
-
-	@Override
 	protected void produce() {
 		/*
 		 * Produce as decribed in the object description...
@@ -51,7 +38,7 @@ public class SimpleFirm extends Firm {
 		for (Market m : this.markets) {
 			for (Good g : this.goods) {
 				double naturalPersons = m.getNumberOfPeople();
-				ProductionAction pa = new ProductionAction(this, g, naturalPersons);
+				ProductionAction pa = new ProductionAction(this, g, naturalPersons / 20.0);
 				pa.process();
 			}
 		}

@@ -44,6 +44,8 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 */
 	protected Map<Good, Double>				prices				= new LinkedHashMap<Good, Double>();
 
+	protected Map<Good, Double>				last_production		= new LinkedHashMap<Good, Double>();
+
 	/**
 	 * The set of markets in which this firm offers its products
 	 */
@@ -133,6 +135,16 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 
 
 	/**
+	 * @return
+	 *         The accounts associated with this firm.
+	 */
+	public Accounts getAccounts() {
+		return accounts;
+	}
+
+
+
+	/**
 	 * The firm should start producing the specified good. The good will be
 	 * listed in the
 	 * set of goods produced by the firm, but actual (i.e., non-zero) production
@@ -147,6 +159,7 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	public void startProducing(Good good, ProductionFunction pf) {
 		goods.add(good);
 		productionFunctions.put(good, pf);
+		last_production.put(good, 0.0);
 
 		// Initialize inventory of good.
 		Double invQty = inventory.get(good);
@@ -171,6 +184,30 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 
 
 	/**
+	 * Returns the quantity of the good produced in the last step.
+	 * 
+	 * @param good
+	 * @return
+	 */
+	public double getLastProduction(Good good) {
+		return last_production.get(good);
+	}
+
+
+
+	/**
+	 * Sets the quantity of goods produced in the last period
+	 * 
+	 * @param good
+	 * @param price
+	 */
+	public void setLastProduction(Good good, double price) {
+		last_production.put(good, price);
+	}
+
+
+
+	/**
 	 * Query the price set by the firm for the specified good to the specified
 	 * consumer.
 	 * The default version just uses the stored value and ignores the consumer
@@ -183,7 +220,7 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 *            Which consumer
 	 * @return The price
 	 */
-	protected double getPrice(Good good, Consumer consumer) {
+	public double getPrice(Good good, Consumer consumer) {
 		Double price = prices.get(good);
 		if (price != null)
 			return price;
@@ -194,12 +231,22 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 
 
 
+	/**
+	 * Sets a new price for a particular good
+	 * 
+	 * @param good
+	 * @param price
+	 */
+	public void setPrice(Good good, double price) {
+		prices.put(good, price);
+	}
+
+
+
 	public final Offer getOffer(Good good, Consumer consumer) {
 		if (!this.produces(good))
 			return null; // this firm does not produce this good; no offer.
 		double qtyAvailable = this.getInventory(good);
-		if (qtyAvailable <= 0.0)
-			return null; // the firm has no inventory
 
 		// make the offer
 		Offer o = new Offer(this, good, getPrice(good, consumer), qtyAvailable);

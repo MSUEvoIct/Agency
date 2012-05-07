@@ -86,6 +86,7 @@ public class ResponseGP extends GPNode {
 			try {
 				m.invoke(((StimulusResponseProblem) problem).retrieve(), actual_args);
 			} catch (Exception e) {
+				System.err.println(e.getCause());
 				System.err.println("Unable to invoke method " + m.getName() + " using object "
 						+ problem.getClass().getName() + ".");
 				e.printStackTrace();

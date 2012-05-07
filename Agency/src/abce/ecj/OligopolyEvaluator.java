@@ -1,4 +1,4 @@
-package abce.io.simple.ecj;
+package abce.ecj;
 
 
 import java.lang.reflect.*;
@@ -7,14 +7,14 @@ import java.util.concurrent.*;
 import abce.agency.ec.*;
 import abce.agency.ec.ecj.*;
 import abce.agency.firm.*;
-import abce.io.simple.*;
 import ec.*;
 import ec.simple.*;
 import ec.util.*;
+import evoict.ep.*;
 
 
 
-public class SimpleFirmFactoryEvaluator extends Evaluator {
+public class OligopolyEvaluator extends Evaluator {
 
 	private static final long	serialVersionUID	= 1L;
 	boolean						inStep				= false;
@@ -22,7 +22,13 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 
 
 	@Override
-	public void evaluatePopulation(EvolutionState state) {
+	public void evaluatePopulation(EvolutionState base_state) {
+
+		EPSimpleEvolutionState state = (EPSimpleEvolutionState) base_state;
+
+		// Create any events that are needed for this generation's evaluation of
+		// the domain model
+		state.event_manager.process(ECJEventProceedureManager.EVENT_DOMAIN, state.generation, state);
 
 		// Protect from recursion
 		if (inStep)
@@ -33,14 +39,15 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 		// Collect configuration information
 		Parameter base = new Parameter("agency");
 		int numChunks = state.parameters.getInt(base.push("chunks"), null);
-		int numSteps = state.parameters.getInt(base.push("steps"), null);
 		String config_path = state.parameters.getString(base.push("config"), null);
 
 		// Build the domain models
-		ECSimpleMarketSimulation[] models = new ECSimpleMarketSimulation[numChunks];
+		OligopolySimulation[] models = new OligopolySimulation[numChunks];
 		for (int i = 0; i < numChunks; i++) {
 			int seed = state.random[0].nextInt();
-			models[i] = new ECSimpleMarketSimulation(seed, config_path, i, state.generation);
+			models[i] = new OligopolySimulation(seed, config_path, i, state.generation);
+			models[i]
+					.setupEvents(state.domain_events.toArray(new EventProcedureDescription[state.domain_events.size()]));
 		}
 
 		// Populate the domain models and bind representations
@@ -85,7 +92,7 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected void populateModels(EvolutionState state, ECSimpleMarketSimulation[] models)
+	protected void populateModels(EvolutionState state, OligopolySimulation[] models)
 			throws SecurityException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
 			IllegalArgumentException, InstantiationException, IllegalAccessException {
 		for (int sp_ndx = 0; sp_ndx < state.population.subpops.length; sp_ndx++) {
@@ -126,10 +133,11 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 		@SuppressWarnings("unchecked")
 		Class<? extends StimulusResponse>[] sr_classes = (Class<? extends StimulusResponse>[]) new Class<?>[num_trees];
 		for (int tree_ndx = 0; tree_ndx < num_trees; tree_ndx++) {
-			Parameter tree_base = species_base.push("tree").push(Integer.toString(sp_ndx));
+			Parameter tree_base = species_base.push("tree").push(Integer.toString(tree_ndx));
 			String sr_name = state.parameters.getString(tree_base.push("sr"), null);
 			@SuppressWarnings("unchecked")
 			Class<? extends StimulusResponse> sr_class = (Class<? extends StimulusResponse>) Class.forName(sr_name);
+			System.err.println("@@" + sr_class.getCanonicalName());
 			sr_classes[tree_ndx] = sr_class;
 		}
 		return sr_classes;
@@ -152,10 +160,10 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 	 * @throws InvocationTargetException
 	 */
 	protected static ECJEvolvableAgent setupAgent(Constructor<ECJEvolvableAgent> constructor,
-			ECSimpleMarketSimulation model)
+			OligopolySimulation model)
 			throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		ECJEvolvableAgent agent = constructor.newInstance();
-		if (agent instanceof ECJSimpleFirm) {
+		if (agent instanceof Firm) {
 			model.setupFirm((Firm) agent);
 		}
 		return agent;
@@ -240,7 +248,7 @@ public class SimpleFirmFactoryEvaluator extends Evaluator {
 	 * @param state
 	 * @param models
 	 */
-	protected static void executeModels(EvolutionState state, ECSimpleMarketSimulation[] models) {
+	protected static void executeModels(EvolutionState state, OligopolySimulation[] models) {
 		Parameter base = new Parameter("agency");
 		int num_threads = state.parameters.getIntWithDefault(base.push("threads"), null, 1);
 		int thread_timeout = state.parameters.getIntWithDefault(base.push("thread_timeout"), null, 20);

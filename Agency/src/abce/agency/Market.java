@@ -13,9 +13,11 @@ import evoict.reflection.*;
 
 
 public class Market implements Serializable {
-
 	private static final long	serialVersionUID	= 1L;
 
+	private static int idSequence = 0;
+	public final int id;
+	
 	// Markets are for exactly one good.
 	public final Good			good;
 
@@ -25,6 +27,8 @@ public class Market implements Serializable {
 
 
 	public Market(Good good) {
+		id = idSequence++;
+		
 		if (good == null)
 			throw new RuntimeException("Cannot have a market for a null good");
 		this.good = good;

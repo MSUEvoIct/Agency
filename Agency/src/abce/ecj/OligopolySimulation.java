@@ -1,4 +1,4 @@
-package abce.io.simple;
+package abce.ecj;
 
 
 import java.io.*;
@@ -9,12 +9,11 @@ import abce.agency.engine.*;
 import abce.agency.firm.*;
 import abce.agency.goods.*;
 import abce.agency.production.*;
-import abce.io.simple.ecj.*;
+import evoict.ep.*;
 
 
 
-public class ECSimpleMarketSimulation extends MarketSimulation
-{
+public class OligopolySimulation extends MarketSimulation {
 
 	private static final long			serialVersionUID	= 1L;
 
@@ -22,32 +21,24 @@ public class ECSimpleMarketSimulation extends MarketSimulation
 	private final Market				m;
 	private final ProductionFunction	pf;
 
-	protected SimpleAgencyConfig		_config;
-	protected Integer					_chunk				= null;
-	protected Integer					_generation			= null;
+	protected OligopolyConfig			_config;
 
 
 
-	public ECSimpleMarketSimulation(long seed, String config_path, int chunk, int gen) {
-		this(seed, null, null, config_path, chunk, gen);
-	}
+	public OligopolySimulation(long seed, String config_path, int chunk, int gen) {
 
-
-
-	public ECSimpleMarketSimulation(long seed, Integer generation, Integer simulationID, String config_path,
-			int chunk, int gen) {
 		super(seed);
 
 		loadConfiguration(config_path);
 
+		// Have to set this here because configuration needs to load after the
+		// call to the parent constructor.
 		super.setStepsToRun(_config.steps_to_run);
+		super.generation = gen;
 
 		good = new DurableGood("testgood");
 		m = new Market(good);
 		pf = new ConstantCostProductionFunction(_config.cost_constant);
-
-		_chunk = chunk;
-		_generation = gen;
 
 		addMarket(m);
 
@@ -64,12 +55,21 @@ public class ECSimpleMarketSimulation extends MarketSimulation
 
 
 
-	public void setupFirm(Firm firm) {
-		firm.grantEndowment(_config.firm_endowment);
-		firm.startProducing(good, pf);
-		((ECJSimpleFirm) firm).setPrice(_config.firm_initial_price);
-		forceMarketEntry(firm, m);
-		addFirm(firm);
+	public void setupEvents(EventProcedureDescription[] events) {
+		for (EventProcedureDescription desc : events) {
+			addEventProcedure(desc);
+		}
+	}
+
+
+
+	public void setupFirm(Firm f) {
+		f.grantEndowment(_config.firm_endowment);
+		f.startProducing(good, pf);
+		f.setPrice(good, _config.firm_initial_price);
+		f.setLastProduction(good, _config.firm_initial_production);
+		forceMarketEntry(f, m);
+		addFirm(f);
 	}
 
 
@@ -77,7 +77,7 @@ public class ECSimpleMarketSimulation extends MarketSimulation
 	public void loadConfiguration(String config_path) {
 		_config = null;
 		try {
-			_config = new SimpleAgencyConfig(config_path);
+			_config = new OligopolyConfig(config_path);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -89,7 +89,7 @@ public class ECSimpleMarketSimulation extends MarketSimulation
 
 
 
-	public SimpleAgencyConfig getConfig() {
+	public OligopolyConfig getConfig() {
 		return _config;
 	}
 
@@ -97,9 +97,6 @@ public class ECSimpleMarketSimulation extends MarketSimulation
 
 	@Override
 	public void run() {
-		// SimpleConsumerReporter scr = new SimpleConsumerReporter(new
-		// PrintWriter(System.out), false, 1, this);
-		// this.addEvent(scr);
 		super.run();
 	}
 }

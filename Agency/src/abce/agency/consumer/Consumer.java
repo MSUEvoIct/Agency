@@ -12,34 +12,34 @@ import abce.agency.goods.*;
 
 public abstract class Consumer extends Agent {
 
-	private static final long			serialVersionUID		= 1L;
+	private static final long					serialVersionUID		= 1L;
 
 	/*
 	 * State Variables
 	 */
-	private final double				population;														// how
-																											// many
-																											// individuals
-																											// does
-																											// this
-																											// agent
-																											// represent?
+	private final double						population;																// how
+																															// many
+																															// individuals
+																															// does
+																															// this
+																															// agent
+																															// represent?
 
-	protected Map<Good, Double>			wilingnessToPay			= new LinkedHashMap<Good, Double>();
-	protected Map<Good, Set<Market>>	markets					= new LinkedHashMap<Good, Set<Market>>();
+	protected Map<Good, Double>					wilingnessToPay			= new LinkedHashMap<Good, Double>();
+	protected Map<Good, LinkedHashSet<Market>>	markets					= new LinkedHashMap<Good, LinkedHashSet<Market>>();
 
 	/*
 	 * Tracking Variables
 	 */
 	// Long-term tracking
-	private final Map<Good, Double>		totalQuantityOfGoods	= new LinkedHashMap<Good, Double>();
-	private final Map<Good, Double>		totalPaidForGoods		= new LinkedHashMap<Good, Double>();
-	private final Map<Good, Double>		totalConsumerSurplus	= new LinkedHashMap<Good, Double>();
+	private final Map<Good, Double>				totalQuantityOfGoods	= new LinkedHashMap<Good, Double>();
+	private final Map<Good, Double>				totalPaidForGoods		= new LinkedHashMap<Good, Double>();
+	private final Map<Good, Double>				totalConsumerSurplus	= new LinkedHashMap<Good, Double>();
 
 	// Short-term tracking
-	private final Map<Good, double[]>	shortQuantityOfGoods	= new LinkedHashMap<Good, double[]>();
-	private final Map<Good, double[]>	shortPaidForGoods		= new LinkedHashMap<Good, double[]>();
-	private final Map<Good, double[]>	shortConsumerSurplus	= new LinkedHashMap<Good, double[]>();
+	private final Map<Good, double[]>			shortQuantityOfGoods	= new LinkedHashMap<Good, double[]>();
+	private final Map<Good, double[]>			shortPaidForGoods		= new LinkedHashMap<Good, double[]>();
+	private final Map<Good, double[]>			shortConsumerSurplus	= new LinkedHashMap<Good, double[]>();
 
 
 
@@ -87,7 +87,7 @@ public abstract class Consumer extends Agent {
 	 *         non-zero
 	 *         willingness to pay.
 	 */
-	protected List<Good> allDesiredGoods() {
+	public List<Good> allDesiredGoods() {
 		List<Good> goods = new ArrayList<Good>();
 		for (Good g : this.wilingnessToPay.keySet()) {
 			Double wtp = this.wilingnessToPay.get(g);
@@ -439,7 +439,7 @@ public abstract class Consumer extends Agent {
 	 * good, initialize it and set it to zero.
 	 */
 	private void addMarket(Good g, Market m) {
-		Set<Market> currentMarkets = markets.get(g);
+		LinkedHashSet<Market> currentMarkets = markets.get(g);
 		if (currentMarkets == null) { // We haven't entered any markets for this
 										// good
 			currentMarkets = new LinkedHashSet<Market>();

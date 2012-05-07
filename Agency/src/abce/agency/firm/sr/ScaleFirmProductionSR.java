@@ -3,7 +3,6 @@ package abce.agency.firm.sr;
 
 import abce.agency.*;
 import abce.agency.consumer.*;
-import abce.agency.ec.*;
 import abce.agency.finance.*;
 import abce.agency.firm.*;
 import abce.agency.goods.*;
@@ -11,16 +10,16 @@ import evoict.reflection.*;
 
 
 
-public class ECJSimpleFirmPriceSR implements StimulusResponse {
+public class ScaleFirmProductionSR implements FirmProductionSR {
 
 	static final Class<?>[]					allowed_classes	= { Integer.class, int.class, Double.class, double.class };
 	static final RestrictedMethodDictionary	static_dict		=
 																	new RestrictedMethodDictionary(
-																			ECJSimpleFirmPriceSR.class, 3,
+																			ScaleFirmProductionSR.class, 3,
 																			allowed_classes);
 
 	@Stimulus(name = "Firm")
-	public ECJSimpleFirm					_firm;
+	public ECFirm							_firm;
 
 	@Stimulus(name = "Account")
 	public Accounts							_account;
@@ -33,18 +32,45 @@ public class ECJSimpleFirmPriceSR implements StimulusResponse {
 
 
 
-	public ECJSimpleFirmPriceSR(ECJSimpleFirm firm, Market m, Good g) {
-		_firm = firm;
-		_account = firm.getAccounts();
-		_good = g;
+	public ScaleFirmProductionSR() {
+	}
+
+
+
+	@Override
+	public void setup(ECFirm f, Market m, Good g) {
+		_firm = f;
 		_market = m;
+		_good = g;
+		_account = f.getAccounts();
 	}
 
 
 
 	@Response
-	public void adjustPrice(double price_perc) {
-		_firm.adjustPrice(price_perc);
+	public void scaleProduction(double proc_perc) {
+		System.err.println("Scaling");
+		_firm.scaleProduction(_market, _good, proc_perc);
+	}
+
+
+
+	@Stimulus(name = "LastProduction")
+	public double lastProduction() {
+		return _firm.getLastProduction(_good);
+	}
+
+
+
+	@Stimulus(name = "TotalMarketInventory")
+	public double totalInventory() {
+		double total = 0.0;
+		for (Firm f : _market.getFirms()) {
+			if (f.produces(_good)) {
+				total += f.getInventory(_good);
+			}
+		}
+		return total;
 	}
 
 
@@ -52,6 +78,13 @@ public class ECJSimpleFirmPriceSR implements StimulusResponse {
 	@Stimulus(name = "Inventory")
 	public double inventory() {
 		return _firm.getInventory(_good);
+	}
+
+
+
+	@Stimulus(name = "Price")
+	public double getPrice() {
+		return _firm.getPrice(_good, null);
 	}
 
 
@@ -76,7 +109,6 @@ public class ECJSimpleFirmPriceSR implements StimulusResponse {
 		}
 
 		double retval = (num_firms != 0) ? total_price / num_firms : 0.0;
-		// System.err.println(retval);
 
 		return retval;
 	}
