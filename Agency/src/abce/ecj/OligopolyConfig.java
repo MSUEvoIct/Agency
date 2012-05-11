@@ -21,6 +21,7 @@ public class OligopolyConfig extends Properties {
 	public double				willingness_to_pay;
 	public double				cost_constant;
 	public int					steps_to_run;
+	public String				simulation_root;
 
 
 
@@ -43,6 +44,7 @@ public class OligopolyConfig extends Properties {
 		willingness_to_pay = D("willingness_to_pay");
 		cost_constant = D("cost_constant");
 		steps_to_run = I("steps_to_run");
+		simulation_root = S("simulation_root");
 	}
 
 

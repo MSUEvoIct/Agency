@@ -58,7 +58,7 @@ public class MarketSimulation extends SimState implements Runnable {
 	public Integer							generation;
 	public final Long						simulationID;
 
-	public final File						simulationRoot;
+	public File								simulationRoot;
 
 	protected MSEventProcedureManager		event_manager			= new MSEventProcedureManager();
 
@@ -171,6 +171,21 @@ public class MarketSimulation extends SimState implements Runnable {
 	 */
 	public void setStepsToRun(long steps) {
 		stepsToRun = steps;
+	}
+
+
+
+	/**
+	 * Set the file simulation root
+	 */
+	public void setSimulationRoot(File root) {
+		simulationRoot = root;
+		if (!simulationRoot.exists()) {
+			simulationRoot.mkdir();
+		} else if (simulationRoot.exists() && !simulationRoot.isDirectory()) {
+			System.err.println("Simulation root path already exists; unable to use as root directory.");
+			System.exit(1);
+		}
 	}
 
 

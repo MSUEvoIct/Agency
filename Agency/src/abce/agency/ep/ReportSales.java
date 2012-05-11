@@ -31,9 +31,10 @@ public class ReportSales implements Procedure {
 	@Override
 	public void process(Object... context) throws Exception {
 		MarketSimulation sim = (MarketSimulation) context[0];
+		String dir = sim.simulationRoot.getPath();
 		if (untriggered) {
 			untriggered = false;
-			String path = prefix + "-" + sim.generation + "-" + sim.simulationID + ".csv.gz";
+			String path = dir + "/" + prefix + "-" + sim.generation + "-" + sim.simulationID + ".csv.gz";
 			out = new DelimitedOutFile(path, format);
 		}
 		for (Consumer c : sim.getConsumers()) {

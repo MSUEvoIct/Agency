@@ -33,9 +33,10 @@ public class ReportPrice implements Procedure {
 	@Override
 	public void process(Object... context) throws Exception {
 		MarketSimulation state = (MarketSimulation) context[0];
+		String dir = state.simulationRoot.getPath();
 		if (untriggered) {
 			untriggered = false;
-			String path = prefix + "-" + state.generation + "-" + state.simulationID + ".csv.gz";
+			String path = dir + "/" + prefix + "-" + state.generation + "-" + state.simulationID + ".csv.gz";
 			out = new DelimitedOutFile(path, format);
 		}
 		for (Market m : state.getMarkets()) {

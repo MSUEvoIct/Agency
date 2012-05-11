@@ -35,6 +35,7 @@ public class OligopolySimulation extends MarketSimulation {
 		// call to the parent constructor.
 		super.setStepsToRun(_config.steps_to_run);
 		super.generation = gen;
+		super.setSimulationRoot(new File(_config.simulation_root));
 
 		good = new DurableGood("testgood");
 		m = new Market(good);
