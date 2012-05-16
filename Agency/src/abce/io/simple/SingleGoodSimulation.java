@@ -77,7 +77,11 @@ public class SingleGoodSimulation extends MarketSimulation {
 		SingleGoodSimulation sgs = new SingleGoodSimulation(testSeed);
 		SimpleConsumerReporter scr = new SimpleConsumerReporter(new PrintWriter(System.out), false, 1, sgs);
 		sgs.addEvent(scr);
-		sgs.run();
+		try {
+			sgs.call();
+		} catch (Exception e) {
+			System.exit(1);
+		}
 	}
 
 }

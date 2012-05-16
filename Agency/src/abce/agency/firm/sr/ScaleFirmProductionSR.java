@@ -19,7 +19,7 @@ public class ScaleFirmProductionSR implements FirmProductionSR {
 																			allowed_classes);
 
 	@Stimulus(name = "Firm")
-	public ECProdPriceFirm							_firm;
+	public ECProdPriceFirm					_firm;
 
 	@Stimulus(name = "Account")
 	public Accounts							_account;
@@ -117,4 +117,5 @@ public class ScaleFirmProductionSR implements FirmProductionSR {
 	public MethodDictionary dictionary() {
 		return static_dict;
 	}
+
 }

@@ -8,6 +8,7 @@ import ec.*;
 
 public interface ECJEvolvableAgent extends EvolvableAgent {
 
-	public void register(EvolutionState state, AgencyGPIndividual ind, Class<? extends StimulusResponse>[] sr);
+	public void register(EvolutionState state, int threadnum, AgencyGPIndividual ind,
+			Class<? extends StimulusResponse>[] sr);
 
 }

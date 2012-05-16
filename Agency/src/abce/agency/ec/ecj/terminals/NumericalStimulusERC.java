@@ -12,14 +12,14 @@ import evoict.reflection.*;
 
 
 
-public class NumericalStimulusERC extends ERC implements Cloneable {
+public class NumericalStimulusERC extends ERC implements Cloneable, SRStimulable {
 
 	/**
 	 * 
 	 */
 	private static final long	serialVersionUID	= 1L;
 	String						path				= null;
-	RestrictedMethodDictionary	dict				= null;
+	// RestrictedMethodDictionary dict = null;
 	boolean						was_cloned			= false;
 
 
@@ -59,10 +59,13 @@ public class NumericalStimulusERC extends ERC implements Cloneable {
 
 		// Always reset the dictionary to avoid references to really old
 		// dictionary references
-		dict = (RestrictedMethodDictionary) sr.dictionary();
+		RestrictedMethodDictionary dict = (RestrictedMethodDictionary) sr.dictionary();
 
 		if (path == null) {
-			resetNode(state, thread);
+			System.err
+					.println("This should never happen; paths need to be set *prior* to execution by the Evaluator/Problem.");
+			Thread.dumpStack();
+			System.exit(1);
 		}
 
 		// System.err.println("About to evaluate path: " + path);
@@ -106,13 +109,7 @@ public class NumericalStimulusERC extends ERC implements Cloneable {
 
 	@Override
 	public void resetNode(EvolutionState state, int thread) {
-		if (dict == null) {
-			return;
-		} else {
-			String[] possible = dict.enumerate();
-			int len = possible.length;
-			path = possible[state.random[thread].nextInt(len)];
-		}
+		path = null;
 	}
 
 
@@ -156,5 +153,21 @@ public class NumericalStimulusERC extends ERC implements Cloneable {
 	public String encode() {
 		String to_encode = (this.path == null) ? "unbound" : this.path;
 		return Code.encode(to_encode);
+	}
+
+
+
+	@Override
+	public String getStimulusPath() {
+		return path;
+	}
+
+
+
+	@Override
+	public void setStimulusPath(EvolutionState state, int thread, RestrictedMethodDictionary dict) {
+		String[] possible = dict.enumerate();
+		int ndx = state.random[thread].nextInt(possible.length);
+		path = possible[ndx];
 	}
 }

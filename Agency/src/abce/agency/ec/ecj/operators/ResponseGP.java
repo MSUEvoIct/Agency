@@ -3,6 +3,7 @@ package abce.agency.ec.ecj.operators;
 
 import java.lang.reflect.*;
 
+import abce.agency.ec.*;
 import abce.agency.ec.ecj.*;
 import abce.agency.ec.ecj.types.*;
 import ec.*;
@@ -18,7 +19,7 @@ import evoict.reflection.*;
  * @author ruppmatt
  * 
  */
-public class ResponseGP extends GPNode {
+public class ResponseGP extends GPNode implements SRResponsive {
 
 	private static final long	serialVersionUID	= 1L;
 	Method						m					= null;
@@ -54,25 +55,20 @@ public class ResponseGP extends GPNode {
 	public void eval(EvolutionState state, int thread, GPData input, ADFStack stack, GPIndividual individual,
 			Problem problem) {
 
+		StimulusResponse sr = ((StimulusResponseProblem) problem).retrieve();
+
 		BooleanGP should_execute = new BooleanGP();
 		this.children[0].eval(state, thread, should_execute, stack, individual, problem);
 
 		if (should_execute.value) {
 
 			// System.err.println("Triggering response: " + m.getName());
-			
-			try {
-				m = ResponseUtils
-						.findResponse(((StimulusResponseProblem) problem)
-								.retrieve());
-				arg_types = m.getParameterTypes();
-			} catch (BadConfiguration e) {
-				System.err.println("Unable to find a response method: "
-						+ e.getMessage());
-				e.printStackTrace();
-				System.exit(1);
+
+			// TOOD: why must this be evaluated every time?
+			if (m == null || arg_types == null) {
+				setResponse(state, sr);
 			}
-			
+
 			Object[] actual_args = new Object[arg_types.length];
 
 			for (int k = 0; k < actual_args.length; k++) {
@@ -110,6 +106,28 @@ public class ResponseGP extends GPNode {
 			return new DoubleGP();
 		} else {
 			return null;
+		}
+	}
+
+
+
+	@Override
+	public Method getResponse() {
+		return this.m;
+	}
+
+
+
+	@Override
+	public void setResponse(EvolutionState state, StimulusResponse sr) {
+		try {
+			m = ResponseUtils.findResponse(sr);
+			arg_types = m.getParameterTypes();
+		} catch (BadConfiguration e) {
+			System.err.println("Unable to find a response method: "
+					+ e.getMessage());
+			e.printStackTrace();
+			state.output.fatal("Aborting.");
 		}
 	}
 }

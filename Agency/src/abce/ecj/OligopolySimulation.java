@@ -25,7 +25,7 @@ public class OligopolySimulation extends MarketSimulation {
 
 
 
-	public OligopolySimulation(long seed, String config_path, int chunk, int gen) {
+	public OligopolySimulation(long seed, String config_path, int gen) {
 
 		super(seed);
 
@@ -99,7 +99,7 @@ public class OligopolySimulation extends MarketSimulation {
 
 
 	@Override
-	public void run() {
-		super.run();
+	public Integer call() throws Exception {
+		return super.call();
 	}
 }

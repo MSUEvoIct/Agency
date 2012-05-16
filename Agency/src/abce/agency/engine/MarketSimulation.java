@@ -3,6 +3,7 @@ package abce.agency.engine;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
 
 import sim.engine.*;
@@ -15,7 +16,7 @@ import evoict.ep.*;
 
 
 
-public class MarketSimulation extends SimState implements Runnable {
+public class MarketSimulation extends SimState implements Callable {
 
 	private static final long				serialVersionUID		= 1L;
 
@@ -218,7 +219,7 @@ public class MarketSimulation extends SimState implements Runnable {
 
 
 	@Override
-	public void run() {
+	public Integer call() throws Exception {
 		for (int i = 0; i < stepsToRun; i++) {
 			// Time Step Starts
 
@@ -230,6 +231,7 @@ public class MarketSimulation extends SimState implements Runnable {
 		}
 		event_manager.process(MSEventProcedureManager.EVENT_STEP, Interval.ATEND, this);
 		event_manager.finish();
+		return 0;
 	}
 
 
