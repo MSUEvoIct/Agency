@@ -15,34 +15,34 @@ import evoict.ep.*;
 
 public class OligopolySimulation extends MarketSimulation {
 
-	private static final long			serialVersionUID	= 1L;
+	private static final long	serialVersionUID	= 1L;
 
-	public final Good					good;
-	private final Market				m;
-	private final ProductionFunction	pf;
+	public final Good			good;
+	public final Market			m;
+	public ProductionFunction	pf;
 
-	protected OligopolyConfig			_config;
+	protected OligopolyConfig	_config;
 
 
 
 	public OligopolySimulation(long seed, String config_path, int gen) {
-
 		super(seed);
-
-		loadConfiguration(config_path);
-
-		// Have to set this here because configuration needs to load after the
-		// call to the parent constructor.
-		super.setStepsToRun(_config.steps_to_run);
-		super.generation = gen;
-		super.setSimulationRoot(new File(_config.simulation_root));
 
 		good = new DurableGood("testgood");
 		m = new Market(good);
+
+		loadConfiguration(config_path);
+	}
+
+
+
+	public void initialize() {
+		_config.register();
+		super.setStepsToRun(_config.steps_to_run);
+		super.setSimulationRoot(new File(_config.simulation_root));
+
 		pf = new ConstantCostProductionFunction(_config.cost_constant);
-
 		addMarket(m);
-
 		// Add consumers
 		for (int i = 0; i < _config.number_of_customers; i++) {
 			Consumer c = new PerfectlyRationalConsumer(_config.persons_per_consumer_agent);

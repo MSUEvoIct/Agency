@@ -6,7 +6,7 @@ import evoict.ep.*;
 
 
 
-public class ECJValuedEventProcedure extends ValuedEventProcedure {
+public class ECJEventProcedure extends ValuedEventProcedure {
 
 	/**
 	 * 
@@ -24,7 +24,7 @@ public class ECJValuedEventProcedure extends ValuedEventProcedure {
 	 *            The event description describing the event
 	 * @throws BadConfiguration
 	 */
-	public ECJValuedEventProcedure(byte type, EventProcedureDescription desc) throws BadConfiguration {
+	public ECJEventProcedure(byte type, EventProcedureDescription desc) throws BadConfiguration {
 		super(type, desc);
 	}
 

@@ -18,7 +18,7 @@ import evoict.ep.*;
  * @author ruppmatt
  * 
  */
-public class ECJEventProceedureManager extends EventProcedureManager {
+public class ECJEventProcedureManager extends EventProcedureManager {
 
 	/**
 	 * 
@@ -36,7 +36,7 @@ public class ECJEventProceedureManager extends EventProcedureManager {
 	 * Construct an empty procedure manager for ECJ. All event types should be
 	 * declared in this constructor to create an empty container for each.
 	 */
-	public ECJEventProceedureManager() {
+	public ECJEventProcedureManager() {
 		event_procedures.put(EVENT_PRE_EVALUATION, new ValuedEventProcedureQueue());
 		event_procedures.put(EVENT_POST_EVALUATION, new ValuedEventProcedureQueue());
 		event_procedures.put(EVENT_POST_BREEDING, new ValuedEventProcedureQueue());
@@ -71,10 +71,10 @@ public class ECJEventProceedureManager extends EventProcedureManager {
 	public void addEvent(EventProcedureDescription desc) throws BadConfiguration {
 		String event_type = desc.getEventType();
 		if (event_type.toUpperCase().equals("PRE_EVALUATION")) {
-			ValuedEventProcedure vea = new ECJValuedEventProcedure(EVENT_PRE_EVALUATION, desc);
+			ValuedEventProcedure vea = new ECJEventProcedure(EVENT_PRE_EVALUATION, desc);
 			event_procedures.get(EVENT_PRE_EVALUATION).add(vea);
 		} else if (event_type.toUpperCase().equals("POST_EVALUATION")) {
-			ValuedEventProcedure vea = new ECJValuedEventProcedure(EVENT_POST_EVALUATION, desc);
+			ValuedEventProcedure vea = new ECJEventProcedure(EVENT_POST_EVALUATION, desc);
 			event_procedures.get(EVENT_POST_EVALUATION).add(vea);
 		} else if (event_type.toUpperCase().equals("GENERATION")) {
 			event_procedures.get(EVENT_DOMAIN).add(buildDomainEvent(desc));
@@ -127,7 +127,7 @@ public class ECJEventProceedureManager extends EventProcedureManager {
 	 * @return
 	 * @throws BadConfiguration
 	 */
-	protected ECJValuedEventProcedure buildDomainEvent(EventProcedureDescription desc) throws BadConfiguration {
+	protected ECJEventProcedure buildDomainEvent(EventProcedureDescription desc) throws BadConfiguration {
 		String[] event_toks = desc.getEventValue().split("\\s+", 2);
 		String event_domain = event_toks[1];
 		String ep_proc = desc.getProcedureClass().getCanonicalName() + " " + desc.getProcedureArguments().toString();
@@ -137,8 +137,7 @@ public class ECJEventProceedureManager extends EventProcedureManager {
 		EventProcedureDescription domain_desc = new EventProcedureDescription(desc.getEventType(),
 				desc.getEventValue(),
 				AddDomainEP.class, domain_args);
-		System.err.println(domain_desc);
-		return new ECJValuedEventProcedure(EVENT_DOMAIN, domain_desc);
+		return new ECJEventProcedure(EVENT_DOMAIN, domain_desc);
 	}
 
 
@@ -149,6 +148,30 @@ public class ECJEventProceedureManager extends EventProcedureManager {
 			epc.finish();
 		}
 
+	}
+
+
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ECJEventProcedureManager\n");
+		sb.append("------------------------\n");
+		for (byte qid : event_procedures.keySet()) {
+			if (qid == EVENT_PRE_EVALUATION) {
+				sb.append("PREEVALUATION queue\n");
+			} else if (qid == EVENT_POST_EVALUATION) {
+				sb.append("POSTEVALUATION queue\n");
+			} else if (qid == EVENT_POST_BREEDING) {
+				sb.append("POSTBREEDING queue\n");
+			} else if (qid == EVENT_DOMAIN) {
+				sb.append("DOMAIN (GENERATION) queue\n");
+			}
+			for (EventProcedure ep : event_procedures.get(qid).get()) {
+				sb.append("   " + ep.toString() + "\n");
+			}
+		}
+		return sb.toString();
 	}
 
 }

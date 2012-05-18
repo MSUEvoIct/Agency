@@ -8,15 +8,23 @@ import abce.agency.ec.ecj.*;
 import abce.agency.firm.*;
 import ec.*;
 import ec.simple.*;
+import evoict.ep.*;
 
 
 
-public class OligopolyProblem extends GPMASProblem implements CallableGroupProblemForm {
+public class OligopolyProblem extends GPMASProblem {
 
 	/**
 	 * 
 	 */
 	private static final long	serialVersionUID	= 1L;
+
+
+
+	@Override
+	public void preprocessPopulation(EvolutionState state, int threadnum) {
+		super.preprocessPopulation(state, threadnum);
+	}
 
 
 
@@ -33,7 +41,10 @@ public class OligopolyProblem extends GPMASProblem implements CallableGroupProbl
 		int seed = epstate.random[threadnum].nextInt();
 
 		OligopolySimulation model = new OligopolySimulation(seed, domain_config, epstate.generation);
+		configureModel(epstate, model);
+		model.initialize();
 		populateModel(epstate, threadnum, group.ind, group.subpops, model, agents);
+		configureEvents(epstate, model);
 
 		// Run the model
 		Integer status = model.call();
@@ -137,6 +148,37 @@ public class OligopolyProblem extends GPMASProblem implements CallableGroupProbl
 			Class<? extends StimulusResponse>[] sr_classes) {
 		AgencyGPIndividual ind = (AgencyGPIndividual) i;
 		agent.register(state, thread, ind, sr_classes);
+	}
+
+
+
+	/**
+	 * Adjust any of the default model configurations.
+	 * 
+	 * @param state
+	 *            EPSimpleEvolutionState instance containing adjustments
+	 * @param model
+	 *            The domain model to adjust
+	 */
+	protected static void configureModel(EPSimpleEvolutionState state, OligopolySimulation model) {
+		for (String key : state.domain_config_overrides.keySet()) {
+			model._config.setProperty(key, state.domain_config_overrides.get(key));
+		}
+		model._config.register();
+	}
+
+
+
+	/**
+	 * Configure the EventProcedures of the domain model
+	 * 
+	 * @param state
+	 *            EPSimpleEvolutionState instance containing event procedures
+	 * @param model
+	 *            Model to add the EventProcedures to
+	 */
+	protected static void configureEvents(EPSimpleEvolutionState state, OligopolySimulation model) {
+		model.setupEvents(state.domain_events.toArray(new EventProcedureDescription[state.domain_events.size()]));
 	}
 
 }

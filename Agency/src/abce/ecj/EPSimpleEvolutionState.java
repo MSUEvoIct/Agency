@@ -5,8 +5,6 @@ import java.util.*;
 
 import ec.simple.*;
 import ec.util.*;
-import ec.util.Parameter;
-import evoict.*;
 import evoict.ep.*;
 
 
@@ -51,13 +49,15 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 	/**
 	 * 
 	 */
-	private static final long					serialVersionUID	= 1L;
+	private static final long					serialVersionUID		= 1L;
 
-	public ECJEventProceedureManager			event_manager		= new ECJEventProceedureManager();
+	public ECJEventProcedureManager				event_manager			= new ECJEventProcedureManager();
 
-	public boolean								first_run			= true;
+	public ArrayList<EventProcedureDescription>	domain_events			= new ArrayList<EventProcedureDescription>();
 
-	public ArrayList<EventProcedureDescription>	domain_events		= new ArrayList<EventProcedureDescription>();
+	public LinkedHashMap<String, String>		domain_config_overrides	= new LinkedHashMap<String, String>();
+
+	public boolean								first_run				= true;
 
 
 
@@ -66,12 +66,9 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 		updateParameterDatabase();
 		try {
 			event_manager.buildFromFile(this.parameters.getString(new Parameter("event_file"), null));
-		} catch (BadParameterException e) {
-			System.exit(1);
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (BadConfiguration e) {
-			System.exit(1);
-			e.printStackTrace();
+			this.output.fatal("Unable to build event manager.");
 		}
 		super.startFresh();
 	}
@@ -80,6 +77,45 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 
 	public void updateParameterDatabase() {
 
+		String tok = null; // current token
+		String path = null; // holds parameter database path
+		String setting = null; // holds parameter database setting
+		int ndx = 0;
+		int nargs = this.runtimeArguments.length;
+		final String[] args = this.runtimeArguments;
+
+		// Just to see what's been passed
+		StringBuilder sb = new StringBuilder();
+		sb.append("Runtime Arguments: ");
+		for (String s : args) {
+			sb.append(s + " ");
+		}
+		this.output.message(sb.toString());
+
+		while (ndx < nargs) {
+			tok = args[ndx];
+			if (tok.equals("-eset")) {
+				if (ndx + 2 < nargs) {
+					path = args[ndx + 1];
+					setting = args[ndx + 2];
+					this.parameters.set(new Parameter(path), setting);
+					ndx += 3;
+				} else {
+					this.output.fatal("Invalid parameter database setting.  Should be in form -eset Path Value");
+				}
+			} else if (tok.equals("-dset")) {
+				if (ndx + 2 < nargs) {
+					path = args[ndx + 1];
+					setting = args[ndx + 2];
+					domain_config_overrides.put(path, setting);
+					ndx += 3;
+				} else {
+					this.output.fatal("Invalid domain configuration setting.  Should be in form -sset Path Value");
+				}
+			} else {
+				ndx++;
+			}
+		}
 	}
 
 
@@ -98,15 +134,14 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 		// current generation
 		domain_events.clear();
 
-		if (first_run) {
-			updateArguments();
-		}
-
 		if (generation > 0)
 			output.message("Generation " + generation);
 
 		// Process procedures prior to evaluation
-		event_manager.process(ECJEventProceedureManager.EVENT_PRE_EVALUATION, generation, this);
+		event_manager.process(ECJEventProcedureManager.EVENT_PRE_EVALUATION, (double) generation, this);
+
+		// Prepare any Problem domain events
+		event_manager.process(ECJEventProcedureManager.EVENT_DOMAIN, (double) generation, this);
 
 		// EVALUATION
 		statistics.preEvaluationStatistics(this);
@@ -114,7 +149,7 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 		statistics.postEvaluationStatistics(this);
 
 		// Process procedures after evaluation
-		event_manager.process(ECJEventProceedureManager.EVENT_POST_EVALUATION, generation, this);
+		event_manager.process(ECJEventProcedureManager.EVENT_POST_EVALUATION, (double) generation, this);
 
 		// SHOULD WE QUIT?
 		if (evaluator.runComplete(this) && quitOnRunComplete)
@@ -125,8 +160,7 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 		}
 
 		// SHOULD WE QUIT?
-		// @MRR Allows for numGernations + 1
-		if (generation == numGenerations)
+		if (generation == numGenerations - 1)
 		{
 			event_manager.finish();
 			return R_FAILURE;
@@ -165,7 +199,7 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 		statistics.postBreedingStatistics(this);
 
 		// Evaluate procedures after breeding
-		event_manager.process(event_manager.EVENT_POST_BREEDING, generation, this);
+		event_manager.process(event_manager.EVENT_POST_BREEDING, (double) generation, this);
 
 		// POST-BREEDING EXCHANGING
 		statistics.prePostBreedingExchangeStatistics(this);
