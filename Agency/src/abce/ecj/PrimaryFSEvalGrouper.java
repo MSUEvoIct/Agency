@@ -16,7 +16,7 @@ import ec.util.*;
  * @author ruppmatt
  * 
  */
-public class PrimarySPFixedSizeEvalGrouper extends EvaluationGrouper {
+public class PrimaryFSEvalGrouper extends EvaluationGrouper {
 
 	/**
 	 * 
@@ -81,7 +81,7 @@ public class PrimarySPFixedSizeEvalGrouper extends EvaluationGrouper {
 
 	@Override
 	public Object clone() {
-		PrimarySPFixedSizeEvalGrouper cl = (PrimarySPFixedSizeEvalGrouper) (super.clone());
+		PrimaryFSEvalGrouper cl = (PrimaryFSEvalGrouper) (super.clone());
 		cl.reset();
 		return cl;
 
