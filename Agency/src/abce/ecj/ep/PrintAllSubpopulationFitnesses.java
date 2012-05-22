@@ -1,6 +1,7 @@
 package abce.ecj.ep;
 
 
+import abce.ecj.*;
 import ec.*;
 import ec.util.Parameter;
 import evoict.*;
@@ -15,16 +16,14 @@ public class PrintAllSubpopulationFitnesses implements Procedure {
 	 * 
 	 */
 	private static final long	serialVersionUID	= 1L;
-	boolean						untriggered			= true;
-	DelimitedOutFile			out					= null;
-	String						prefix;
+	String						name;
 	final String				format				= "Generation%d,Subpopulation%d,GridRows%d,GridColumns%d,Fitnesses%s";
 
 
 
 	@Override
 	public void setup(EventProcedureArgs args) throws BadConfiguration {
-		prefix = (args.containsKey("prefix")) ? args.get("prefix") : "ecj";
+		name = (args.containsKey("name")) ? args.get("name") : "ecj";
 
 	}
 
@@ -32,16 +31,9 @@ public class PrintAllSubpopulationFitnesses implements Procedure {
 
 	@Override
 	public void process(Object... context) throws Exception {
-		EvolutionState state = (EvolutionState) context[0];
-		if (untriggered) {
-			untriggered = false;
-			String dir = state.parameters.getString(new Parameter("output_dir"), null);
-			if (!evoict.io.PathUtil.makeDirectory(dir)) {
-				throw new RuntimeException("Unable to create output dirctory");
-			}
-			String path = dir + "/" + prefix + "-subpop_fitness.csv.gz";
-			out = new DelimitedOutFile(path, format);
-		}
+		EPSimpleEvolutionState state = (EPSimpleEvolutionState) context[0];
+		String path = name + ".csv.gz";
+		DelimitedOutFile out = state.file_manager.getDelimitedOutFile(path, format);
 
 		Subpopulation[] subpops = state.population.subpops;
 		for (int sp = 0; sp < subpops.length; sp++) {
@@ -71,11 +63,6 @@ public class PrintAllSubpopulationFitnesses implements Procedure {
 
 	@Override
 	public void finish() {
-		System.err.println("Flushing and closing.");
-		if (out != null) {
-			out.getWriter().flush();
-			out.close();
-		}
 	}
 
 }

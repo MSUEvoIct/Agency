@@ -42,6 +42,7 @@ public class OligopolyProblem extends GPMASProblem {
 
 		OligopolySimulation model = new OligopolySimulation(seed, domain_config, epstate.generation);
 		configureModel(epstate, model);
+		model.file_manager = epstate.file_manager;
 		model.initialize();
 		populateModel(epstate, threadnum, group.ind, group.subpops, model, agents);
 		configureEvents(epstate, model);

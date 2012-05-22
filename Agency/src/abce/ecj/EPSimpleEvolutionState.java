@@ -59,6 +59,29 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 
 	public boolean								first_run				= true;
 
+	public transient FileManager				file_manager;
+
+
+
+	@Override
+	public void startFromCheckpoint() {
+		// The file manager wasn't serialized. It needs to be re-created.
+		file_manager = new FileManager();
+		try {
+			file_manager.initialize(this.getString(new Parameter("output_dir"), null));
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.output.fatal("Unable to initialize file manager.");
+		}
+	}
+
+
+
+	private String getString(Parameter parameter, Object object) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 
 	@Override
@@ -69,6 +92,13 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.output.fatal("Unable to build event manager.");
+		}
+		file_manager = new FileManager();
+		try {
+			file_manager.initialize(this.parameters.getString(new Parameter("output_dir"), null));
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.output.fatal("Unable to intiailize file manager.");
 		}
 		super.startFresh();
 	}
@@ -116,6 +146,12 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 				ndx++;
 			}
 		}
+	}
+
+
+
+	public void finish() {
+		file_manager.closeAll();
 	}
 
 
@@ -217,16 +253,6 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 		}
 
 		return R_NOTDONE;
-	}
-
-
-
-	/**
-	 * Checks the command line arguments passed into main and updates the
-	 * parameter database
-	 */
-	public void updateArguments() {
-
 	}
 
 }

@@ -1,6 +1,7 @@
 package abce.ecj;
 
 
+import java.io.*;
 import java.util.*;
 
 import abce.ecj.ep.*;
@@ -51,8 +52,9 @@ public class ECJEventProcedureManager extends EventProcedureManager {
 	 * @param path
 	 *            Path to event procedure file.
 	 * @throws BadConfiguration
+	 * @throws FileNotFoundException
 	 */
-	public void buildFromFile(String path) throws BadConfiguration {
+	public void buildFromFile(String path) throws BadConfiguration, FileNotFoundException {
 		EventProcedureDescription[] desc = EventProcedureManager.processFromFile(path);
 		for (EventProcedureDescription d : desc) {
 			addEvent(d);

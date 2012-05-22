@@ -31,13 +31,14 @@ import evoict.ep.*;
  */
 public class OligopolySimulation extends MarketSimulation {
 
-	private static final long	serialVersionUID	= 1L;
+	private static final long		serialVersionUID	= 1L;
 
-	public final Good			good;
-	public final Market			m;
-	public ProductionFunction	pf;
+	public final Good				good;
+	public final Market				m;
+	public ProductionFunction		pf;
 
-	protected OligopolyConfig	_config;
+	protected OligopolyConfig		_config;
+	public transient FileManager	file_manager;
 
 
 

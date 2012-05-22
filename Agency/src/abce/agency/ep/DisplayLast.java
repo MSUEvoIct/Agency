@@ -11,6 +11,13 @@ import evoict.ep.*;
 
 public class DisplayLast implements Procedure {
 
+	/**
+	 * 
+	 */
+	private static final long	serialVersionUID	= 1L;
+
+
+
 	@Override
 	public void setup(EventProcedureArgs args) throws BadConfiguration {
 		// TODO Auto-generated method stub

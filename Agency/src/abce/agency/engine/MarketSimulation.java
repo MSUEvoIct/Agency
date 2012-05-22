@@ -11,6 +11,7 @@ import abce.agency.*;
 import abce.agency.consumer.*;
 import abce.agency.ep.*;
 import abce.agency.firm.*;
+import abce.ecj.*;
 import evoict.*;
 import evoict.ep.*;
 
@@ -62,6 +63,7 @@ public class MarketSimulation extends SimState implements Callable {
 	public File								simulationRoot;
 
 	protected MSEventProcedureManager		event_manager			= new MSEventProcedureManager();
+	public static FileManager				fm						= new FileManager();
 
 
 

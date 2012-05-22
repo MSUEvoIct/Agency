@@ -2,8 +2,8 @@ package abce.agency.ep;
 
 
 import abce.agency.*;
-import abce.agency.engine.*;
 import abce.agency.firm.*;
+import abce.ecj.*;
 import evoict.*;
 import evoict.ep.*;
 import evoict.io.*;
@@ -16,29 +16,24 @@ public class ReportPrice implements Procedure {
 	 * 
 	 */
 	private static final long	serialVersionUID	= 1L;
-	boolean						untriggered			= true;
-	DelimitedOutFile			out					= null;
-	final String				format				= "Generation%d,SimulationID%d,Step%f,GoodID%d,MarketID%d,FirmID%d,Price%0.2f";
-	String						prefix				= null;
+	final String				format				= "Generation%d,SimulationID%d,Step%.1f,GoodID%d,MarketID%d,FirmID%d,Price%.2f";
+	String						name				= null;
 
 
 
 	@Override
 	public void setup(EventProcedureArgs args) throws BadConfiguration {
-		prefix = (args.containsKey("prefix")) ? args.get("prefix") : "price";
+		name = (args.containsKey("name")) ? args.get("name") : "price";
 	}
 
 
 
 	@Override
 	public void process(Object... context) throws Exception {
-		MarketSimulation state = (MarketSimulation) context[0];
+		OligopolySimulation state = (OligopolySimulation) context[0];
 		String dir = state.simulationRoot.getPath();
-		if (untriggered) {
-			untriggered = false;
-			String path = dir + "/" + prefix + "-" + state.generation + "-" + state.simulationID + ".csv.gz";
-			out = new DelimitedOutFile(path, format);
-		}
+		String path = dir + "/" + name + ".csv.gz";
+		DelimitedOutFile out = state.file_manager.getDelimitedOutFile(path, format);
 		for (Market m : state.getMarkets()) {
 			for (Firm f : m.getFirms()) {
 				// Price
@@ -55,10 +50,6 @@ public class ReportPrice implements Procedure {
 
 	@Override
 	public void finish() {
-		if (out != null) {
-			out.close();
-		}
-
 	}
 
 }
