@@ -15,7 +15,7 @@ public class MSEventProcedureManager extends EventProcedureManager {
 	 */
 	private static final long								serialVersionUID	= 1L;
 
-	public static byte										EVENT_STEP			= 0;
+	public final static byte								EVENT_STEP			= 0;
 
 	protected LinkedHashMap<Byte, EventProcedureContainer>	events				= new LinkedHashMap<Byte, EventProcedureContainer>();
 
