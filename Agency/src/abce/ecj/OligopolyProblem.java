@@ -7,6 +7,7 @@ import abce.agency.ec.*;
 import abce.agency.ec.ecj.*;
 import abce.agency.firm.*;
 import ec.*;
+import ec.gp.*;
 import ec.simple.*;
 import evoict.ep.*;
 
@@ -56,7 +57,7 @@ public class OligopolyProblem extends GPMASProblem {
 			group.fitness[k] = new SimpleFitness();
 			((SimpleFitness) group.fitness[k]).setFitness(state, (float) agents[k].getFitness(), false);
 			if (group.evaluate_fitness[k]) {
-				AgencyGPIndividual i = ((AgencyGPIndividual) group.ind[k]);
+				GPIndividual i = ((GPIndividual) group.ind[k]);
 				SimpleFitness f = ((SimpleFitness) i.fitness);
 				f.setFitness(state, group.fitness[k].fitness(), false);
 				i.evaluated = true;
@@ -149,7 +150,7 @@ public class OligopolyProblem extends GPMASProblem {
 	protected static void bindSR(EvolutionState state, int thread, int subpop_ndx, Individual i,
 			ECJEvolvableAgent agent,
 			Class<? extends StimulusResponse>[] sr_classes) {
-		AgencyGPIndividual ind = (AgencyGPIndividual) i;
+		GPIndividual ind = (GPIndividual) i;
 		agent.register(state, thread, ind, sr_classes);
 	}
 

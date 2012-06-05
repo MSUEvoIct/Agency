@@ -4,6 +4,7 @@ package abce.agency.firm;
 import abce.agency.ec.*;
 import abce.agency.ec.ecj.*;
 import ec.*;
+import ec.gp.*;
 
 
 
@@ -22,7 +23,7 @@ public class ECJProdPriceFirm extends ECProdPriceFirm implements ECJEvolvableAge
 	 */
 	private static final long			serialVersionUID	= 1L;
 	Class<? extends StimulusResponse>[]	stimulus_responses	= null;
-	AgencyGPIndividual					individual;
+	GPIndividual						individual;
 
 	// TODO: Move these to MarketSimulation [would require passing it around,
 	// though, because it needs to get to emit() ]
@@ -52,7 +53,7 @@ public class ECJProdPriceFirm extends ECProdPriceFirm implements ECJEvolvableAge
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void register(EvolutionState state, int threadnum, AgencyGPIndividual ind,
+	public void register(EvolutionState state, int threadnum, GPIndividual ind,
 			Class<? extends StimulusResponse>[] sr) {
 		this.state = state;
 		this.threadnum = threadnum;

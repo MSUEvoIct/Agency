@@ -53,7 +53,7 @@ public class FileManager implements Serializable {
 
 
 	public synchronized void initialize(String root_dir_path) throws IOException {
-		if (root_directory != null) {
+		if (root_directory == null) {
 			root_directory = new File(root_dir_path);
 			if (root_directory.exists() && !root_directory.isDirectory()) {
 				throw new IOException("Root directory " + root_directory + " exists as a regular file.");

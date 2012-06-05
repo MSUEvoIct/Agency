@@ -24,17 +24,19 @@ public class GroupedEvaluator extends Evaluator {
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= 1L;
+	private static final long		serialVersionUID	= 1L;
 
 	// How long should the evaluator let the problem threads run?
-	public long					lifetime_minutes;
+	public long						lifetime_minutes;
 
 	// The grouper produces sets of agents to be evaluated together by the
 	// problem.
-	public EvaluationGrouper	grouper;
+	public EvaluationGrouper		grouper;
 
-	public static final String	P_TIMEOUT			= "timeout_sec";
-	public static final String	P_GROUPER			= "grouper";
+	public static final String		P_TIMEOUT			= "timeout_sec";
+	public static final String		P_GROUPER			= "grouper";
+
+	ArrayList<EvaluationGroup>[]	last_results		= null;
 
 
 
@@ -49,9 +51,16 @@ public class GroupedEvaluator extends Evaluator {
 
 
 
+	public void reset() {
+		last_results = null;
+	}
+
+
+
 	@Override
 	public void evaluatePopulation(EvolutionState state) {
 
+		reset();
 		int nthreads = state.evalthreads;
 
 		@SuppressWarnings("unchecked")
@@ -79,6 +88,7 @@ public class GroupedEvaluator extends Evaluator {
 			thr = (thr + 1) % state.evalthreads;
 		}
 		evaluate(state, to_eval);
+		last_results = to_eval;
 	}
 
 
