@@ -25,7 +25,10 @@ public class EvaluationGroup {
 	public boolean[]	evaluate_fitness;
 
 	// The next index to store information
-	public int			ndx;
+	public int			actual_size;
+
+	// Fitness information (even if not stored in the individual)
+	public Fitness[]	fitness;
 
 
 
@@ -39,7 +42,8 @@ public class EvaluationGroup {
 		ind = new Individual[size];
 		subpops = new int[size];
 		evaluate_fitness = new boolean[size];
-		ndx = 0;
+		fitness = new Fitness[size];
+		actual_size = 0;
 	}
 
 
@@ -53,11 +57,12 @@ public class EvaluationGroup {
 	 * @throws RuntimeException
 	 */
 	public void add(Individual i, int subpop, boolean eval_fit) throws RuntimeException {
-		if (ndx < ind.length) {
-			ind[ndx] = i;
-			subpops[ndx] = subpop;
-			evaluate_fitness[ndx] = eval_fit;
-			ndx++;
+		if (actual_size < ind.length) {
+			ind[actual_size] = i;
+			subpops[actual_size] = subpop;
+			evaluate_fitness[actual_size] = eval_fit;
+			fitness[actual_size] = null;
+			actual_size++;
 		} else {
 			throw new RuntimeException("Index out of bounds.");
 		}

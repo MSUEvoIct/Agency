@@ -39,6 +39,15 @@ public abstract class MASProblem extends Problem implements CallableGroupProblem
 
 
 
+	@Override
+	public Object clone() {
+		MASProblem obj = (MASProblem) super.clone();
+		obj.reset();
+		return obj;
+	}
+
+
+
 	/**
 	 * Reset all non-prototype fields.
 	 */

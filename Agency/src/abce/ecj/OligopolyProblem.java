@@ -53,10 +53,12 @@ public class OligopolyProblem extends GPMASProblem {
 		// Set the fitness
 
 		for (int k = 0; k < num_ind; k++) {
+			group.fitness[k] = new SimpleFitness();
+			((SimpleFitness) group.fitness[k]).setFitness(state, (float) agents[k].getFitness(), false);
 			if (group.evaluate_fitness[k]) {
 				AgencyGPIndividual i = ((AgencyGPIndividual) group.ind[k]);
 				SimpleFitness f = ((SimpleFitness) i.fitness);
-				f.setFitness(state, (float) agents[k].getFitness(), false);
+				f.setFitness(state, group.fitness[k].fitness(), false);
 				i.evaluated = true;
 			}
 

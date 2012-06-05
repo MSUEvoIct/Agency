@@ -17,14 +17,14 @@ import evoict.io.*;
  * @author ruppmatt
  * 
  */
-public class FileManager {
+public class FileManager implements Serializable {
 
 	/**
 	 * 
 	 */
-	private static final long				serialVersionUID	= 1L;
-	protected LinkedHashMap<File, OutFile>	active_files		= new LinkedHashMap<File, OutFile>();
-	protected File							root_directory;
+	private static final long							serialVersionUID	= 1L;
+	protected transient LinkedHashMap<File, OutFile>	active_files		= new LinkedHashMap<File, OutFile>();
+	protected File										root_directory		= null;
 
 
 
@@ -40,14 +40,27 @@ public class FileManager {
 
 
 
-	public void initialize(String root_dir_path) throws IOException {
-		root_directory = new File(root_dir_path);
-		if (root_directory.exists() && !root_directory.isDirectory()) {
-			throw new IOException("Root directory " + root_directory + " exists as a regular file.");
-		} else if (!root_directory.exists()) {
-			root_directory.mkdirs();
-		}
+	public synchronized File root() {
+		return root_directory;
+	}
 
+
+
+	public synchronized String makePath(String suffix) {
+		return root_directory.getPath() + "/" + suffix;
+	}
+
+
+
+	public synchronized void initialize(String root_dir_path) throws IOException {
+		if (root_directory != null) {
+			root_directory = new File(root_dir_path);
+			if (root_directory.exists() && !root_directory.isDirectory()) {
+				throw new IOException("Root directory " + root_directory + " exists as a regular file.");
+			} else if (!root_directory.exists()) {
+				root_directory.mkdirs();
+			}
+		}
 	}
 
 
@@ -117,6 +130,13 @@ public class FileManager {
 			sb.append(String.format("\t%.30s %s\n", active_files.get(f).getClass(), f.getAbsolutePath()));
 		}
 		return sb.toString();
+	}
+
+
+
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		active_files = new LinkedHashMap<File, OutFile>();
 	}
 
 }

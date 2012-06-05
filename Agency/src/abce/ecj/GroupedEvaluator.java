@@ -55,11 +55,11 @@ public class GroupedEvaluator extends Evaluator {
 		int nthreads = state.evalthreads;
 
 		@SuppressWarnings("unchecked")
-		LinkedList<EvaluationGroup> to_eval[] = new LinkedList[nthreads];
+		ArrayList<EvaluationGroup> to_eval[] = new ArrayList[nthreads];
 		boolean done[] = new boolean[nthreads];
 
 		for (int thr = 0; thr < state.evalthreads; thr++) {
-			to_eval[thr] = new LinkedList<EvaluationGroup>();
+			to_eval[thr] = new ArrayList<EvaluationGroup>();
 			done[thr] = false;
 		}
 
@@ -91,7 +91,7 @@ public class GroupedEvaluator extends Evaluator {
 	 *            An array of queues containing evaluation groups. One queue
 	 *            gets assigned to each evaluation thread.
 	 */
-	public void evaluate(final EvolutionState state, Queue<EvaluationGroup>[] q) {
+	public void evaluate(final EvolutionState state, ArrayList<EvaluationGroup>[] q) {
 
 		int qlen = q.length;
 		((CallableGroupProblemForm) p_problem).preprocessPopulation(state, 0);
@@ -171,8 +171,9 @@ public class GroupedEvaluator extends Evaluator {
 		final EvolutionState		state;
 		final int					threadnum;
 		CallableGroupProblemForm	prob;
-		Queue<EvaluationGroup>		groups;
+		ArrayList<EvaluationGroup>	groups;
 		final long					timeout;
+		int							cur_ndx	= 0;
 
 
 
@@ -190,7 +191,7 @@ public class GroupedEvaluator extends Evaluator {
 		 *            The maximum time the evaluator should wait for a problem
 		 *            to finish.
 		 */
-		public GroupedEvaluatorAssistant(final EvolutionState state, Queue<EvaluationGroup> groups,
+		public GroupedEvaluatorAssistant(final EvolutionState state, ArrayList<EvaluationGroup> groups,
 				int threadnum,
 				CallableGroupProblemForm prob, long timeout) {
 			this.state = state;
