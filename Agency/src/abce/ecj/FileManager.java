@@ -1,10 +1,14 @@
 package abce.ecj;
 
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+import java.util.LinkedHashMap;
 
-import evoict.io.*;
+import evoict.io.DelimitedOutFile;
+import evoict.io.OutFile;
 
 
 
@@ -32,9 +36,17 @@ public class FileManager implements Serializable {
 		return new File(src.getPath() + to_add);
 	}
 
-
-
 	public FileManager() {
+
+		// Ensure all files are closed when the VM exits
+		final FileManager fm = this;
+		Runtime r = Runtime.getRuntime();
+		r.addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				fm.closeAll();
+			}
+		});
 
 	}
 
