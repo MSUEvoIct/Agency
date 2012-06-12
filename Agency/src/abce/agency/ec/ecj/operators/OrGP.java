@@ -2,6 +2,7 @@ package abce.agency.ec.ecj.operators;
 
 
 import abce.agency.ec.ecj.types.*;
+import abce.ecj.*;
 import ec.*;
 import ec.gp.*;
 
@@ -27,17 +28,21 @@ public class OrGP extends GPNode {
 		result.value = false;
 
 		this.children[0].eval(state, thread, result, stack, individual, problem);
-		if (result.value) // if one returns true
-			return; // we don't need to evaluate the other, and the result
-		// already contains true
-
-		// if we're here, the first child returned false
-		this.children[1].eval(state, thread, result, stack, individual, problem);
+		if (!result.value) {
+			// if we're here, the first child returned false
+			this.children[1].eval(state, thread, result, stack, individual, problem);
+		}
 
 		// if the second child returns false, both are false, and the OR returns
 		// false, result will already contain that. likewise, if second child
 		// returns true, one child is true, so the OR returns true, and the
 		// result already contains that.
+
+		// This is debug code and should not be enabled in most production-style
+		// experiments
+		if (Debugger.DEBUG_NODE_VALUES)
+			GPNodeDebug.debug(state, thread, input, this, "bool");
+
 	}
 
 

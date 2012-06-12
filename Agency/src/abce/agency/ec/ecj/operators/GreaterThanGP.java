@@ -2,6 +2,7 @@ package abce.agency.ec.ecj.operators;
 
 
 import abce.agency.ec.ecj.types.*;
+import abce.ecj.*;
 import ec.*;
 import ec.gp.*;
 
@@ -28,6 +29,12 @@ public class GreaterThanGP extends GPNode {
 			result.value = true;
 		else
 			result.value = false;
+
+		// This is debug code and should not be enabled in most production-style
+		// experiments
+		if (Debugger.DEBUG_NODE_VALUES)
+			GPNodeDebug.debug(state, thread, input, this, "bool");
+
 	}
 
 

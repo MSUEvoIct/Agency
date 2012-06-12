@@ -31,7 +31,6 @@ public abstract class EvaluationGrouper implements Prototype {
 	 * 
 	 */
 	private static final long	serialVersionUID	= 1L;
-	public final static String	P_GROUPBUILDER		= "grouper";
 
 
 
@@ -54,7 +53,7 @@ public abstract class EvaluationGrouper implements Prototype {
 
 	@Override
 	public Parameter defaultBase() {
-		return new Parameter(P_GROUPBUILDER);
+		return EvaluationGrouperDefaults.base();
 	}
 
 

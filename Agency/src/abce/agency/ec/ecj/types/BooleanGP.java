@@ -23,4 +23,11 @@ public class BooleanGP extends GPData implements Valuable {
 		return new Boolean(value);
 	}
 
+
+
+	@Override
+	public String toString() {
+		return String.valueOf(value);
+	}
+
 }

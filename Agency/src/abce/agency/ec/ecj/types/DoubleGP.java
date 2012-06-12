@@ -23,4 +23,10 @@ public class DoubleGP extends GPData implements Valuable {
 		return new Double(value);
 	}
 
+
+
+	@Override
+	public String toString() {
+		return String.valueOf(value);
+	}
 }

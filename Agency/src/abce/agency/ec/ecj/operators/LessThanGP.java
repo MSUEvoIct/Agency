@@ -29,6 +29,10 @@ public class LessThanGP extends GPNode {
 		else
 			result.value = false;
 
+		// This is debug code and should not be enabled in most production-style
+		// experiments
+		GPNodeDebug.debug(state, thread, input, this, "bool");
+
 	}
 
 

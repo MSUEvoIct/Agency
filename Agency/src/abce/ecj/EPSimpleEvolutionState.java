@@ -61,6 +61,8 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 
 	public transient FileManager				file_manager;
 
+	public Debugger								debug;
+
 	public static final String					P_OUTPUT_DIR			= "output_dir";
 	public static final String					P_EVENT_FILE			= "event_file";
 
@@ -70,12 +72,16 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 	public void startFromCheckpoint() {
 		// The file manager wasn't serialized. It needs to be re-created.
 		file_manager = new FileManager();
+
 		try {
 			file_manager.initialize(this.getString(new Parameter(P_OUTPUT_DIR), null));
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.output.fatal("Unable to initialize file manager.");
 		}
+
+		debug = new Debugger();
+		debug.setup(this, null);
 	}
 
 
@@ -97,6 +103,7 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 			this.output.fatal("Unable to build event manager.");
 		}
 		file_manager = new FileManager();
+		;
 		try {
 			String dir = this.parameters.getString(new Parameter(P_OUTPUT_DIR), null);
 			file_manager.initialize(dir);
@@ -104,6 +111,10 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 			e.printStackTrace();
 			this.output.fatal("Unable to intiailize file manager.");
 		}
+
+		debug = new Debugger();
+		debug.setup(this, null);
+
 		super.startFresh();
 	}
 

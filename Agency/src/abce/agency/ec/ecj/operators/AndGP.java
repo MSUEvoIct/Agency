@@ -2,6 +2,7 @@ package abce.agency.ec.ecj.operators;
 
 
 import abce.agency.ec.ecj.types.*;
+import abce.ecj.*;
 import ec.*;
 import ec.gp.*;
 
@@ -27,16 +28,17 @@ public class AndGP extends GPNode {
 
 		this.children[0].eval(state, thread, result, stack, individual, problem);
 
-		// if the first child is false, there's no way we can be true
-		if (!result.value)
-			return; // result will already contain false, return it
+		// if the first child is true, then evaluate the second child
+		// otherwise skip the evaluation of the second child and keep result as
+		// being false
+		if (result.value) {
+			this.children[1].eval(state, thread, result, stack, individual, problem);
+		}
 
-		// only here if the first child returned true
-		this.children[1].eval(state, thread, result, stack, individual, problem);
-
-		// so if second child returns true, the AND is true, and if the second
-		// child returns false, the AND is false. So just pass on the second
-		// child's result
+		// This is debug code and should not be enabled in most production-style
+		// experiments
+		if (Debugger.DEBUG_NODE_VALUES)
+			GPNodeDebug.debug(state, thread, result, this, "bool");
 
 	}
 

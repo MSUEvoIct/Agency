@@ -2,6 +2,7 @@ package abce.agency.ec.ecj.operators;
 
 
 import abce.agency.ec.ecj.types.*;
+import abce.ecj.*;
 import ec.*;
 import ec.gp.*;
 
@@ -28,16 +29,21 @@ public class NotAndGP extends GPNode {
 		this.children[0].eval(state, thread, result, stack, individual, problem);
 		if (result.value) { // if one was true,
 			result.value = false; // the NOT is false
-			return;
-		}
-		this.children[1].eval(state, thread, result, stack, individual, problem);
-		if (result.value) { // if one was true,
-			result.value = false; // the NOT is false
-			return;
+		} else {
+			this.children[1].eval(state, thread, result, stack, individual, problem);
+			if (result.value) { // if one was true,
+				result.value = false; // the NOT is false
+			} else {
+				// We only get here if both children were false
+				result.value = true;
+			}
 		}
 
-		// We only get here if both children were false
-		result.value = true;
+		// This is debug code and should not be enabled in most production-style
+		// experiments
+		if (Debugger.DEBUG_NODE_VALUES)
+			GPNodeDebug.debug(state, thread, input, this, "bool");
+
 	}
 
 

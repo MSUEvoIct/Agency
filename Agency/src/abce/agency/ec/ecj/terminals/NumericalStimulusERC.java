@@ -3,7 +3,9 @@ package abce.agency.ec.ecj.terminals;
 
 import abce.agency.ec.*;
 import abce.agency.ec.ecj.*;
+import abce.agency.ec.ecj.operators.*;
 import abce.agency.ec.ecj.types.*;
+import abce.ecj.*;
 import ec.*;
 import ec.gp.*;
 import ec.util.*;
@@ -88,6 +90,13 @@ public class NumericalStimulusERC extends ERC implements Cloneable, SRStimulable
 						+ " from path "
 						+ path);
 			}
+
+			// This is debug code and should not be enabled in most
+			// production-style
+			// experiments
+			if (Debugger.DEBUG_NODE_VALUES)
+				GPNodeDebug.debug(state, thread, input, this, "real");
+
 		} catch (UnresolvableException e) {
 			System.err.println("Unable to resolve method path: " + path + " with root object "
 					+ problem.getClass().getCanonicalName());

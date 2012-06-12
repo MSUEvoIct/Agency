@@ -2,6 +2,7 @@ package abce.agency.ec.ecj.operators;
 
 
 import abce.agency.ec.ecj.types.*;
+import abce.ecj.*;
 import ec.*;
 import ec.gp.*;
 
@@ -20,6 +21,12 @@ public class NotGP extends GPNode {
 
 		this.children[0].eval(state, thread, result, stack, individual, problem);
 		result.value = (result.value) ? false : true;
+
+		// This is debug code and should not be enabled in most production-style
+		// experiments
+		if (Debugger.DEBUG_NODE_VALUES)
+			GPNodeDebug.debug(state, thread, input, this, "bool");
+
 	}
 
 
