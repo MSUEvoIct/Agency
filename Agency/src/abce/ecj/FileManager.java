@@ -1,14 +1,10 @@
 package abce.ecj;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
-import java.util.LinkedHashMap;
+import java.io.*;
+import java.util.*;
 
-import evoict.io.DelimitedOutFile;
-import evoict.io.OutFile;
+import evoict.io.*;
 
 
 
@@ -32,9 +28,11 @@ public class FileManager implements Serializable {
 
 
 
-	public static File appendPath(File src, String to_add) {
-		return new File(src.getPath() + to_add);
+	public static File appendPath(File base, String to_add) {
+		return new File(base.getPath() + to_add);
 	}
+
+
 
 	public FileManager() {
 
@@ -42,6 +40,7 @@ public class FileManager implements Serializable {
 		final FileManager fm = this;
 		Runtime r = Runtime.getRuntime();
 		r.addShutdownHook(new Thread() {
+
 			@Override
 			public void run() {
 				fm.closeAll();
