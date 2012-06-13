@@ -78,7 +78,6 @@ public class FileManager implements Serializable {
 
 	public synchronized DelimitedOutFile getDelimitedOutFile(String path, String format) throws IOException {
 		File f = appendPath(root_directory, path);
-		System.err.println(f.toString());
 		if (active_files.containsKey(f)) {
 			if (active_files.get(f) instanceof DelimitedOutFile) {
 				return (DelimitedOutFile) active_files.get(f);
