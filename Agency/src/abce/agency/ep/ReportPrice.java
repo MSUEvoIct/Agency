@@ -31,8 +31,7 @@ public class ReportPrice implements Procedure {
 	@Override
 	public void process(Object... context) throws Exception {
 		OligopolySimulation state = (OligopolySimulation) context[0];
-		String dir = state.simulationRoot.getPath();
-		String path = dir + "/" + name + ".csv.gz";
+		String path = name + ".csv.gz";
 		DelimitedOutFile out = state.file_manager.getDelimitedOutFile(path, format);
 		for (Market m : state.getMarkets()) {
 			for (Firm f : m.getFirms()) {

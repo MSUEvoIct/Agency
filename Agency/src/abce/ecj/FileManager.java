@@ -29,7 +29,7 @@ public class FileManager implements Serializable {
 
 
 	public static File appendPath(File base, String to_add) {
-		return new File(base.getPath() + to_add);
+		return new File(base.getPath() + File.separator + to_add);
 	}
 
 
@@ -78,6 +78,7 @@ public class FileManager implements Serializable {
 
 	public synchronized DelimitedOutFile getDelimitedOutFile(String path, String format) throws IOException {
 		File f = appendPath(root_directory, path);
+		System.err.println(f.toString());
 		if (active_files.containsKey(f)) {
 			if (active_files.get(f) instanceof DelimitedOutFile) {
 				return (DelimitedOutFile) active_files.get(f);
@@ -85,7 +86,7 @@ public class FileManager implements Serializable {
 				throw new IOException("File is already open, but it is the wrong type.");
 			}
 		} else {
-			DelimitedOutFile out = new DelimitedOutFile(path, format);
+			DelimitedOutFile out = new DelimitedOutFile(f.toString(), format);
 			active_files.put(f, out);
 			return out;
 		}
@@ -102,7 +103,7 @@ public class FileManager implements Serializable {
 				throw new IOException("File is already open, but it is the wrong type.");
 			}
 		} else {
-			DelimitedOutFile out = new DelimitedOutFile(path, format, delim);
+			DelimitedOutFile out = new DelimitedOutFile(f.toString(), format, delim);
 			active_files.put(f, out);
 			return out;
 		}
