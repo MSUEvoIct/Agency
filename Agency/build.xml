@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="Agency">
+    <property environment="env"/>
+    <property name="Simternet.location" value="../Simternet"/>
+    <property name="ECLIPSE_HOME" value="../../../../../../../Applications/eclipse"/>
+    <property name="workspace_loc:Agency" value="."/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="ECJ.location" value="../../ECJ"/>
+    <property name="Mason.location" value="../../Mason"/>
+    <property name="EvoICT.location" value="../../EvoICT"/>
+    <property name="EvoMan.location" value="../../EvoMan"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="Mason.classpath">
+        <pathelement location="${Mason.location}/bin"/>
+        <pathelement location="${Mason.location}/lib/itext-1.2.jar"/>
+        <pathelement location="${Mason.location}/lib/jcommon-1.0.0.jar"/>
+        <pathelement location="${Mason.location}/lib/jfreechart-1.0.1.jar"/>
+        <pathelement location="${Mason.location}/lib/jmf.jar"/>
+        <pathelement location="${Mason.location}/lib/quaqua-colorchooser-only.jar"/>
+        <pathelement location="${Simternet.location}/lib/j3d-core-1.3.1.jar"/>
+        <pathelement location="${Simternet.location}/lib/vecmath-1.3.1.jar"/>
+        <pathelement location="${Mason.location}/lib/j3dutils.jar"/>
+    </path>
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+    </path>
+    <path id="ECJ.classpath">
+        <pathelement location="${ECJ.location}/bin"/>
+        <pathelement location="${Simternet.location}/lib/iText-2.1.5.jar"/>
+        <pathelement location="${Simternet.location}/lib/j3d-core-1.3.1.jar"/>
+        <pathelement location="${Simternet.location}/lib/jfreechart-1.0.13.jar"/>
+        <pathelement location="${Simternet.location}/lib/jcommon-1.0.16.jar"/>
+    </path>
+    <path id="EvoICT.classpath">
+        <pathelement location="${EvoICT.location}/bin"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+        <path refid="Mason.classpath"/>
+        <path refid="ECJ.classpath"/>
+    </path>
+    <path id="EvoMan.classpath">
+        <pathelement location="${EvoMan.location}/bin"/>
+        <path refid="ECJ.classpath"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+        <path refid="EvoICT.classpath"/>
+    </path>
+    <path id="Agency.classpath">
+        <pathelement location="bin"/>
+        <path refid="Mason.classpath"/>
+        <path refid="EvoICT.classpath"/>
+        <path refid="EvoMan.classpath"/>
+        <path refid="ECJ.classpath"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall">
+        <ant antfile="build.xml" dir="${ECJ.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${Mason.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${EvoICT.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${EvoMan.location}" inheritAll="false" target="clean"/>
+    </target>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects">
+        <ant antfile="build.xml" dir="${ECJ.location}" inheritAll="false" target="build-project">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${Mason.location}" inheritAll="false" target="build-project">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${EvoICT.location}" inheritAll="false" target="build-project">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${EvoMan.location}" inheritAll="false" target="build-project">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+    </target>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="Agency.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="ExamineECJSimpleFirmSR">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit dir="${workspace_loc:Agency}/test" fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="abce.test.ExamineECJSimpleFirmSR" todir="${junit.output.dir}"/>
+            <classpath refid="Agency.classpath"/>
+        </junit>
+    </target>
+    <target name="Oligopoly (mass-priceprod)">
+        <java classname="ec.Evolve" failonerror="true" fork="yes">
+            <arg line="-file etc/mass-priceprod-evolve.cfg"/>
+            <classpath refid="Agency.classpath"/>
+        </java>
+    </target>
+    <target name="SingleGoodSimulation">
+        <java classname="abce.io.simple.SingleGoodSimulation" failonerror="true" fork="yes">
+            <classpath refid="Agency.classpath"/>
+        </java>
+    </target>
+    <target name="SomeTests">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="abce.test.SomeTests" todir="${junit.output.dir}"/>
+            <classpath refid="Agency.classpath"/>
+        </junit>
+    </target>
+    <target name="TestInstantiateEPSES">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="abce.test.TestInstantiateEPSES" todir="${junit.output.dir}"/>
+            <classpath refid="Agency.classpath"/>
+        </junit>
+    </target>
+    <target name="Iterated Cournot GA">
+        <java classname="ec.Evolve" failonerror="true" fork="yes">
+            <jvmarg line="-Xmx8192m"/>
+            <arg line="-file etc/evolve.properties"/>
+            <classpath refid="Agency.classpath"/>
+        </java>
+    </target>
+    <target name="Agency Simple EC Market Simulation">
+        <java classname="ec.Evolve" failonerror="true" fork="yes">
+            <jvmarg line="-Xmx4096m"/>
+            <arg line="-file etc/price-evolve.cfg"/>
+            <classpath refid="Agency.classpath"/>
+        </java>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+</project>
