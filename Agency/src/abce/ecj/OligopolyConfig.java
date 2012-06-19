@@ -18,7 +18,8 @@ public class OligopolyConfig extends Properties {
 	public double				firm_endowment;
 	public int					number_of_customers;
 	public int					persons_per_consumer_agent;
-	public double				willingness_to_pay;
+	public double				demand_intercept;
+	public double				demand_slope;
 	public double				cost_constant;
 	public int					steps_to_run;
 	public String				simulation_root;
@@ -41,7 +42,8 @@ public class OligopolyConfig extends Properties {
 		firm_endowment = D("firm_endowment");
 		number_of_customers = I("number_of_customers");
 		persons_per_consumer_agent = I("persons_per_consumer_agent");
-		willingness_to_pay = D("willingness_to_pay");
+		demand_intercept = D("demand_intercept");
+		demand_slope = D("demand_slope");
 		cost_constant = D("cost_constant");
 		steps_to_run = I("steps_to_run");
 		simulation_root = S("simulation_root");

@@ -74,7 +74,10 @@ public class OligopolySimulation extends MarketSimulation {
 			// Consumer c = new
 			// ReluctantSwitcher(_config.persons_per_consumer_agent);
 			c.enterMarket(m);
-			c.setWTP(good, _config.willingness_to_pay);
+			
+			// changed willingness to pay to be a function of the # of consumer agents,
+			// representing a demand curve.  --kk
+			c.setWTP(good, _config.demand_intercept + (_config.demand_slope * i) );
 			addConsumer(c);
 		}
 	}
