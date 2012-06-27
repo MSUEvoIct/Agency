@@ -28,8 +28,7 @@ public class ReportSales implements Procedure {
 	@Override
 	public void process(Object... context) throws Exception {
 		OligopolySimulation sim = (OligopolySimulation) context[0];
-		String dir = sim.simulationRoot.getPath();
-		String path = dir + "/" + name + ".csv.gz";
+		String path = name + ".csv.gz";
 		DelimitedOutFile out = sim.file_manager.getDelimitedOutFile(path, format);
 
 		for (Consumer c : sim.getConsumers()) {

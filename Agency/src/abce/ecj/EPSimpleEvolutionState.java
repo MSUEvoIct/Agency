@@ -139,16 +139,7 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 
 		while (ndx < nargs) {
 			tok = args[ndx];
-			if (tok.equals("-eset")) {
-				if (ndx + 2 < nargs) {
-					path = args[ndx + 1];
-					setting = args[ndx + 2];
-					this.parameters.set(new Parameter(path), setting);
-					ndx += 3;
-				} else {
-					this.output.fatal("Invalid parameter database setting.  Should be in form -eset Path Value");
-				}
-			} else if (tok.equals("-dset")) {
+			if (tok.equals("-dset")) {
 				if (ndx + 2 < nargs) {
 					path = args[ndx + 1];
 					setting = args[ndx + 2];

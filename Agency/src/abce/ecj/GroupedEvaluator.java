@@ -136,9 +136,11 @@ public class GroupedEvaluator extends Evaluator {
 				}
 				StringBuilder msg = new StringBuilder();
 				msg.append("Number of evaluations:   " + total_evals + "\n");
-				msg.append("Average evaluation time: " + String.format("%.3f", total_sec / 1000.0) + " sec\n");
+				msg.append("Average evaluation time: " + String.format("%.3f", total_sec / 1000.0 / total_evals)
+						+ " sec\n");
 				msg.append("Minimum evaluation time: " + String.format("%.3f", min_prob_time / 1000.0) + " sec\n");
 				msg.append("Maximum evaluation time: " + String.format("%.3f", max_prob_time / 1000.0) + " sec\n");
+				msg.append("Avg Thread Time:         " + String.format("%.3f", total_sec / 1000.0 / qlen) + " sec\n");
 				state.output.message(msg.toString());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -234,7 +236,7 @@ public class GroupedEvaluator extends Evaluator {
 
 				long task_time = System.currentTimeMillis() - start_time;
 
-				stats.total_time = task_time;
+				stats.total_time += task_time;
 				stats.maximum_time = (stats.maximum_time < task_time) ? task_time : stats.maximum_time;
 				stats.minimum_time = (stats.minimum_time > task_time) ? task_time : stats.minimum_time;
 				stats.num_evaluations++;
