@@ -1,5 +1,9 @@
 package abce.io.iterated.cournot;
 
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import ec.Evaluator;
 import ec.EvolutionState;
 import ec.Subpopulation;
@@ -10,6 +14,17 @@ import ec.vector.BitVectorIndividual;
 public class IteratedCournotEvaluator extends Evaluator {
 
 	boolean							inStep				= false;
+	private static ThreadPoolExecutor threadPool;
+	private static LinkedBlockingQueue<Runnable>	tasks				= new LinkedBlockingQueue<Runnable>();
+	private static boolean waiting = false;
+	
+	static {
+		Runtime r = Runtime.getRuntime();
+		int numThreads = r.availableProcessors();
+		threadPool = new ThreadPoolExecutor(numThreads, numThreads+2, 10, TimeUnit.SECONDS, tasks);
+		threadPool.prestartAllCoreThreads();
+	}
+	
 
 	@Override
 	public void evaluatePopulation(EvolutionState state) {
@@ -39,17 +54,30 @@ public class IteratedCournotEvaluator extends Evaluator {
 			}
 		}
 		
+		waiting = true;
+		
 		for(int i = 0; i < icsArray.length; i++) {
 			IteratedCournotSimulation ics = icsArray[i];
-			ics.run(numSteps);
-			SimpleFitness f1 = (SimpleFitness) ics.first.getFitness();
-			f1.setFitness(state, (float) ics.first.getTotalRevenue(), false);
-			ics.first.getIndividual().evaluated = true;
-			SimpleFitness f2 = (SimpleFitness) ics.first.getFitness();
-			f2.setFitness(state, (float) ics.second.getTotalRevenue(), false);
-			ics.second.getIndividual().evaluated = true;
+			ics.steps = numSteps;
+			
+			Runnable r = new IteratedCournotRunner(state, ics);
+			threadPool.execute(r);
 		}
+		
+		threadPool.execute(new Runnable() {
+			public void run() {
+				waiting = false;
+			}
+		});
 
+		while(waiting == true) {
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		
 		

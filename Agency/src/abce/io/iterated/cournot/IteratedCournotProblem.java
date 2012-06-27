@@ -12,8 +12,6 @@ public class IteratedCournotProblem extends Problem implements SimpleProblemForm
 	public void evaluate(EvolutionState state, Individual ind,
 			int subpopulation, int threadnum) {
 		SimpleFitness f = ((SimpleFitness) ind.fitness);
-		
-		
 	}
 
 }

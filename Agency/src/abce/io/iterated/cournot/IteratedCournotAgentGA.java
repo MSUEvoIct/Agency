@@ -35,7 +35,7 @@ public class IteratedCournotAgentGA extends Firm implements
 		this.ind = ind;
 		// test to see if initial production quantities change things...
 		for (int i = 0; i < production.length; i++)
-			production[i] = 35;
+			production[i] = 45;
 	}
 	
 	@Override
