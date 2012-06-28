@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sim.engine.SimState;
+import abce.agency.MarketSimulation;
 import abce.agency.consumer.Consumer;
-import abce.agency.engine.MarketSimulation;
 import abce.agency.goods.Good;
 
 public class SalesReporter extends CSVReporter {

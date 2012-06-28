@@ -1,10 +1,11 @@
 package abce.agency.firm;
 
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import abce.agency.async.*;
-import abce.agency.goods.*;
+import abce.agency.async.AsyncUpdate;
+import abce.agency.goods.Good;
 
 
 

@@ -1,8 +1,8 @@
 package abce.agency.ec.ecj;
 
 
-import ec.*;
-import evoict.reflection.*;
+import abce.agency.reflection.RestrictedMethodDictionary;
+import ec.EvolutionState;
 
 
 

@@ -8,8 +8,7 @@ import java.util.List;
 
 import sim.engine.SimState;
 import abce.agency.Market;
-import abce.agency.Offer;
-import abce.agency.engine.MarketSimulation;
+import abce.agency.MarketSimulation;
 import abce.agency.firm.Firm;
 
 public class PriceReporter extends CSVReporter {

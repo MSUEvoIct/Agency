@@ -1,8 +1,9 @@
 package abce.ecj;
 
 
-import ec.*;
-import ec.util.*;
+import ec.EvolutionState;
+import ec.Setup;
+import ec.util.Parameter;
 
 
 

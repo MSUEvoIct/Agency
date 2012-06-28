@@ -1,12 +1,7 @@
 package abce.agency.actions;
 
-import java.io.Serializable;
-
-import abce.agency.Market;
 import abce.agency.Offer;
 import abce.agency.consumer.Consumer;
-import abce.agency.firm.Firm;
-import abce.agency.goods.Good;
 
 public class SaleOfGoods extends SimulationAction {
 	private static final long serialVersionUID = 1L;

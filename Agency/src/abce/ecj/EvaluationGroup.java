@@ -1,7 +1,8 @@
 package abce.ecj;
 
 
-import ec.*;
+import ec.Fitness;
+import ec.Individual;
 
 
 

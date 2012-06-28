@@ -1,9 +1,12 @@
 package abce.ecj.ep;
 
 
-import ec.*;
-import evoict.ep.*;
-import evoict.io.*;
+import abce.agency.events.EventProcedureArgs;
+import abce.agency.events.Procedure;
+import abce.agency.util.io.DelimitedOutFile;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.Subpopulation;
 
 
 

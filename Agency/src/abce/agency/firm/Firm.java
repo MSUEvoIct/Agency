@@ -1,17 +1,27 @@
 package abce.agency.firm;
 
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
-import sim.engine.*;
-import abce.agency.*;
-import abce.agency.actions.*;
-import abce.agency.async.*;
-import abce.agency.consumer.*;
-import abce.agency.finance.*;
-import abce.agency.goods.*;
-import abce.agency.production.*;
-import evoict.*;
+import sim.engine.SimState;
+import abce.agency.Agent;
+import abce.agency.Market;
+import abce.agency.Offer;
+import abce.agency.actions.MarketEntry;
+import abce.agency.actions.ProductionAction;
+import abce.agency.actions.SaleOfGoods;
+import abce.agency.actions.SetPriceAction;
+import abce.agency.async.AsyncUpdate;
+import abce.agency.consumer.Consumer;
+import abce.agency.finance.Accounts;
+import abce.agency.goods.Good;
+import abce.agency.production.ProductionFunction;
+import abce.agency.util.FitnessFunction;
+import abce.agency.util.NamedFitness;
 
 
 

@@ -1,8 +1,9 @@
 package abce.ecj;
 
 
-import evoict.*;
-import evoict.ep.*;
+import abce.agency.events.EventProcedureDescription;
+import abce.agency.events.ValuedEventProcedure;
+import abce.agency.util.BadConfiguration;
 
 
 

@@ -1,11 +1,15 @@
 package abce.agency.ec.ecj.operators;
 
 
-import abce.agency.ec.ecj.types.*;
-import abce.ecj.*;
-import ec.*;
-import ec.gp.*;
-import ec.util.*;
+import abce.agency.ec.ecj.types.BooleanGP;
+import abce.ecj.Debugger;
+import ec.EvolutionState;
+import ec.Problem;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+import ec.util.Parameter;
 
 
 

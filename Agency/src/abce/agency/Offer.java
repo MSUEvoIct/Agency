@@ -1,7 +1,6 @@
 package abce.agency;
 
 import abce.agency.firm.Firm;
-import abce.agency.goods.Good;
 
 public class Offer implements Comparable {
 	

@@ -1,8 +1,10 @@
 package abce.ecj;
 
 
-import ec.*;
-import ec.util.*;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.Subpopulation;
+import ec.util.Parameter;
 
 
 

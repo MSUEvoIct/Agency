@@ -1,9 +1,9 @@
 package abce.ecj;
 
 
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
 
-import ec.*;
+import ec.EvolutionState;
 
 
 

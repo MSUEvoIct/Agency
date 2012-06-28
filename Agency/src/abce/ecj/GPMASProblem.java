@@ -1,14 +1,18 @@
 package abce.ecj;
 
 
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
 
-import abce.agency.ec.*;
-import abce.agency.ec.ecj.*;
-import ec.*;
-import ec.gp.*;
-import ec.util.*;
-import evoict.reflection.*;
+import abce.agency.ec.StimulusResponse;
+import abce.agency.ec.ecj.ECJEvolvableAgent;
+import abce.agency.ec.ecj.SRResponsive;
+import abce.agency.ec.ecj.SRStimulable;
+import abce.agency.reflection.RestrictedMethodDictionary;
+import ec.EvolutionState;
+import ec.Subpopulation;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+import ec.util.Parameter;
 
 
 

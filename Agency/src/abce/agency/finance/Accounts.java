@@ -1,20 +1,21 @@
 package abce.agency.finance;
 
-import java.io.*;
-import java.util.*;
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import sim.engine.*;
-import abce.agency.*;
-import abce.agency.actions.*;
-import abce.agency.firm.*;
-import abce.agency.goods.*;
-import evoict.reflection.*;
+import sim.engine.SimState;
+import sim.engine.Steppable;
+import abce.agency.Agent;
+import abce.agency.actions.ProductionAction;
+import abce.agency.firm.Firm;
+import abce.agency.goods.Good;
+import abce.agency.reflection.Stimulus;
 
 /**
  * 
  * Tracks financial condition and performance for entities representing business
- * firms. Regularizes and consolidates code otherwise shared for both
- * application and network service providers.
+ * firms.
  * 
  * @author kkoning
  * 

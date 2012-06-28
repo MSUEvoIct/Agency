@@ -1,8 +1,8 @@
 package abce.agency.ec.ecj;
 
 
-import abce.agency.ec.*;
-import ec.*;
+import abce.agency.ec.StimulusResponse;
+import ec.Problem;
 
 
 

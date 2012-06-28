@@ -1,10 +1,11 @@
 package abce.agency.firm;
 
 
-import abce.agency.ec.*;
-import abce.agency.ec.ecj.*;
-import ec.*;
-import ec.gp.*;
+import abce.agency.ec.StimulusResponse;
+import abce.agency.ec.ecj.ECJEvolvableAgent;
+import abce.agency.ec.ecj.StimulusResponseProblem;
+import ec.EvolutionState;
+import ec.gp.GPIndividual;
 
 
 

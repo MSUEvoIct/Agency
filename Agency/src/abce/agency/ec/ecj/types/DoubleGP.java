@@ -1,7 +1,7 @@
 package abce.agency.ec.ecj.types;
 
 
-import ec.gp.*;
+import ec.gp.GPData;
 
 
 

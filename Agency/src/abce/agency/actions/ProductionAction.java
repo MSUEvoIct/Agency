@@ -1,8 +1,8 @@
 package abce.agency.actions;
 
 
-import abce.agency.firm.*;
-import abce.agency.goods.*;
+import abce.agency.firm.Firm;
+import abce.agency.goods.Good;
 
 
 

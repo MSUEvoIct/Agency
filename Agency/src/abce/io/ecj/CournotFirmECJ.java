@@ -1,7 +1,7 @@
 package abce.io.ecj;
 
 
-import abce.agency.firm.*;
+import abce.agency.firm.ProducingPricingFirm;
 
 
 

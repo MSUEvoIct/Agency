@@ -1,16 +1,23 @@
 package abce.agency.ec.ecj.terminals;
 
 
-import abce.agency.ec.*;
-import abce.agency.ec.ecj.*;
-import abce.agency.ec.ecj.operators.*;
-import abce.agency.ec.ecj.types.*;
-import abce.ecj.*;
-import ec.*;
-import ec.gp.*;
-import ec.util.*;
-import evoict.*;
-import evoict.reflection.*;
+import abce.agency.ec.StimulusResponse;
+import abce.agency.ec.ecj.SRStimulable;
+import abce.agency.ec.ecj.StimulusResponseProblem;
+import abce.agency.ec.ecj.operators.GPNodeDebug;
+import abce.agency.ec.ecj.types.DoubleGP;
+import abce.agency.reflection.RestrictedMethodDictionary;
+import abce.agency.util.UnresolvableException;
+import abce.ecj.Debugger;
+import ec.EvolutionState;
+import ec.Problem;
+import ec.gp.ADFStack;
+import ec.gp.ERC;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+import ec.util.Code;
+import ec.util.DecodeReturn;
 
 
 

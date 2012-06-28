@@ -1,8 +1,8 @@
 package abce.ecj;
 
 
-import ec.*;
-import ec.util.*;
+import ec.DefaultsForm;
+import ec.util.Parameter;
 
 
 

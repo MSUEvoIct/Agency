@@ -1,9 +1,9 @@
 package abce.ecj;
 
 
-import ec.*;
-import ec.gp.*;
-import ec.util.*;
+import ec.EvolutionState;
+import ec.gp.GPIndividual;
+import ec.util.Parameter;
 
 
 

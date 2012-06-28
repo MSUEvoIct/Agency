@@ -1,15 +1,18 @@
 package abce.agency.firm;
 
 
-import java.util.*;
+import java.util.ArrayList;
 
-import sim.engine.*;
-import abce.agency.*;
-import abce.agency.actions.*;
-import abce.agency.ec.*;
-import abce.agency.firm.sr.*;
-import abce.agency.goods.*;
-import evoict.reflection.*;
+import sim.engine.SimState;
+import abce.agency.Market;
+import abce.agency.actions.ProductionAction;
+import abce.agency.actions.SetPriceAction;
+import abce.agency.ec.EvolvableAgent;
+import abce.agency.ec.StimulusResponse;
+import abce.agency.firm.sr.FirmPricingSR;
+import abce.agency.firm.sr.FirmProductionSR;
+import abce.agency.goods.Good;
+import abce.agency.reflection.Stimulus;
 
 
 

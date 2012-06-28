@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sim.engine.SimState;
+import abce.agency.MarketSimulation;
 import abce.agency.consumer.Consumer;
-import abce.agency.engine.MarketSimulation;
 
 public class ConsumerReporter extends CSVReporter {
 	private static final long serialVersionUID = 1L;

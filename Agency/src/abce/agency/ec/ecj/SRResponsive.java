@@ -1,10 +1,10 @@
 package abce.agency.ec.ecj;
 
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 
-import abce.agency.ec.*;
-import ec.*;
+import abce.agency.ec.StimulusResponse;
+import ec.EvolutionState;
 
 
 

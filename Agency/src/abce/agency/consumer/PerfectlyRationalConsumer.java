@@ -1,6 +1,5 @@
 package abce.agency.consumer;
 
-import abce.agency.goods.Good;
 import sim.engine.SimState;
 
 /**

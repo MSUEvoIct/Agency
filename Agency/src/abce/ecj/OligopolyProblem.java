@@ -1,15 +1,17 @@
 package abce.ecj;
 
 
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
-import abce.agency.ec.*;
-import abce.agency.ec.ecj.*;
-import abce.agency.firm.*;
-import ec.*;
-import ec.gp.*;
-import ec.simple.*;
-import evoict.ep.*;
+import abce.agency.ec.StimulusResponse;
+import abce.agency.ec.ecj.ECJEvolvableAgent;
+import abce.agency.events.EventProcedureDescription;
+import abce.agency.firm.Firm;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.gp.GPIndividual;
+import ec.simple.SimpleFitness;
 
 
 

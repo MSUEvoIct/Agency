@@ -1,11 +1,16 @@
 package abce.agency.ec.ecj;
 
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
-import ec.*;
-import ec.gp.*;
-import ec.util.*;
+import ec.EvolutionState;
+import ec.gp.GPFunctionSet;
+import ec.gp.GPInitializer;
+import ec.gp.GPNode;
+import ec.gp.GPType;
+import ec.util.Parameter;
 
 
 

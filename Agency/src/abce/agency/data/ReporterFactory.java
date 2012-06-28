@@ -5,13 +5,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Map;
 
 import sim.engine.Steppable;
-
-import abce.agency.engine.MarketSimulation;
+import abce.agency.MarketSimulation;
 
 public abstract class ReporterFactory {
 

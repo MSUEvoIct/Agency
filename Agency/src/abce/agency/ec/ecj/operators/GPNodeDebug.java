@@ -1,12 +1,13 @@
 package abce.agency.ec.ecj.operators;
 
 
-import java.io.*;
+import java.io.IOException;
 
-import abce.ecj.*;
-import ec.*;
-import ec.gp.*;
-import evoict.io.*;
+import abce.agency.util.io.DelimitedOutFile;
+import abce.ecj.EPSimpleEvolutionState;
+import ec.EvolutionState;
+import ec.gp.GPData;
+import ec.gp.GPNode;
 
 
 

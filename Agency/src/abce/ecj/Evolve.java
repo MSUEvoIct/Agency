@@ -13,10 +13,16 @@
 package abce.ecj;
 
 
-import java.io.*;
+import java.io.File;
+import java.io.PrintWriter;
 
-import ec.*;
-import ec.util.*;
+import ec.EvolutionState;
+import ec.util.Checkpoint;
+import ec.util.MersenneTwisterFast;
+import ec.util.Output;
+import ec.util.Parameter;
+import ec.util.ParameterDatabase;
+import ec.util.Version;
 
 
 

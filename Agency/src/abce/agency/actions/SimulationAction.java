@@ -1,7 +1,8 @@
 package abce.agency.actions;
 
-import java.io.*;
-import abce.agency.engine.TraceConfig;
+import java.io.Serializable;
+
+import abce.agency.TraceConfig;
 
 /**
  * All actions peformed by agents should be implemented using an extension of

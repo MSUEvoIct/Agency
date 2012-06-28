@@ -1,9 +1,6 @@
 package abce.agency.ec;
 
-
-import evoict.reflection.*;
-
-
+import abce.agency.reflection.MethodDictionary;
 
 /**
  * StimulusResponse provides a method dictionary object to evaluate string paths

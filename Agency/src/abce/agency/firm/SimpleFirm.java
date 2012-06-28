@@ -1,10 +1,10 @@
 package abce.agency.firm;
 
 
-import sim.engine.*;
-import abce.agency.*;
-import abce.agency.actions.*;
-import abce.agency.goods.*;
+import sim.engine.SimState;
+import abce.agency.Market;
+import abce.agency.actions.ProductionAction;
+import abce.agency.goods.Good;
 
 
 

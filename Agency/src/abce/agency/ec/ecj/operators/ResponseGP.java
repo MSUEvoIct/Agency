@@ -1,15 +1,22 @@
 package abce.agency.ec.ecj.operators;
 
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 
-import abce.agency.ec.*;
-import abce.agency.ec.ecj.*;
-import abce.agency.ec.ecj.types.*;
-import ec.*;
-import ec.gp.*;
-import evoict.*;
-import evoict.reflection.*;
+import abce.agency.ec.StimulusResponse;
+import abce.agency.ec.ecj.SRResponsive;
+import abce.agency.ec.ecj.StimulusResponseProblem;
+import abce.agency.ec.ecj.types.BooleanGP;
+import abce.agency.ec.ecj.types.DoubleGP;
+import abce.agency.ec.ecj.types.Valuable;
+import abce.agency.reflection.ResponseUtils;
+import abce.agency.util.BadConfiguration;
+import ec.EvolutionState;
+import ec.Problem;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
 
 
 

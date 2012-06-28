@@ -1,9 +1,10 @@
 package abce.agency.ec.ecj;
 
 
-import abce.agency.ec.*;
-import ec.*;
-import ec.gp.*;
+import abce.agency.ec.EvolvableAgent;
+import abce.agency.ec.StimulusResponse;
+import ec.EvolutionState;
+import ec.gp.GPIndividual;
 
 
 

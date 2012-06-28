@@ -1,12 +1,15 @@
 package abce.agency.consumer;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import sim.engine.*;
-import abce.agency.*;
-import abce.agency.actions.*;
-import abce.agency.goods.*;
+import sim.engine.SimState;
+import abce.agency.Offer;
+import abce.agency.actions.SaleOfGoods;
+import abce.agency.goods.Good;
 
 
 

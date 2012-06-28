@@ -1,7 +1,8 @@
 package abce.agency.ec.ecj;
 
 
-import ec.*;
+import ec.Evaluator;
+import ec.EvolutionState;
 
 
 

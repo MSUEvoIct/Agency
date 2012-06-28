@@ -1,11 +1,19 @@
 package abce.ecj;
 
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
-import ec.*;
-import ec.util.*;
+import ec.Evaluator;
+import ec.EvolutionState;
+import ec.util.Parameter;
 
 
 
