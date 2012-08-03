@@ -24,9 +24,9 @@ import abce.agency.util.BadConfiguration;
 public class EventProcedureDescription implements Serializable {
 
 	private static final long	serialVersionUID	= 1L;
-	String						_event_type;
-	String						_event_value;
-	Class<? extends Procedure>	_action_class;
+	String						_event_type = null;
+	String						_event_value = null;
+	Class<? extends Procedure>	_action_class = null;
 	EventProcedureArgs			_arguments			= new EventProcedureArgs();
 
 
@@ -163,9 +163,9 @@ public class EventProcedureDescription implements Serializable {
 		try {
 			c = Class.forName(name);
 			if (!Procedure.class.isAssignableFrom(c))
-				throw new BadConfiguration("Unable to find valid class: " + _action_class.getName());
+				throw new BadConfiguration("Unable to find valid class: " + name);
 		} catch (ClassNotFoundException e) {
-			throw new BadConfiguration("Unable to find class: " + _action_class.getName());
+			throw new BadConfiguration("Unable to find class: " + name);
 		}
 		return (Class<? extends Procedure>) c;
 	}
