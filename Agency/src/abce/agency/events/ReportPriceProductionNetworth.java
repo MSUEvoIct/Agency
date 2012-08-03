@@ -16,7 +16,7 @@ public class ReportPriceProductionNetworth implements Procedure {
 	 */
 	private static final long	serialVersionUID	= 1L;
 	String						name				= "price+prod";
-	final String				format				= "Generation%d,SimulationID%d,Step%f,ConsumerID%d,GoodID%d,Price%f,LastProduction%f,Networth%f";
+	final String				format				= "Generation%d,SimulationID%d,Step%f,FirmID%d,GoodID%d,Price%f,LastProduction%f,Networth%f";
 	boolean						untriggered			= true;
 
 
