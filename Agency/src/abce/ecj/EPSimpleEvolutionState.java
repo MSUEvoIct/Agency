@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import abce.agency.events.EventProcedureDescription;
+import abce.agency.events.Interval;
 import ec.simple.SimpleEvolutionState;
 import ec.util.Checkpoint;
 import ec.util.Parameter;
@@ -177,15 +178,17 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 		// Always reset the domain model events prior to the start of the
 		// current generation
 		domain_events.clear();
+		
+		double generation_cxt = (generation == numGenerations - 1) ? Interval.ATEND : generation;
 
 		if (generation > 0)
 			output.message("Generation " + generation);
 
 		// Process procedures prior to evaluation
-		event_manager.process(ECJEventProcedureManager.EVENT_PRE_EVALUATION, (double) generation, this);
+		event_manager.process(ECJEventProcedureManager.EVENT_PRE_EVALUATION, generation_cxt, this);
 
 		// Prepare any Problem domain events
-		event_manager.process(ECJEventProcedureManager.EVENT_DOMAIN, (double) generation, this);
+		event_manager.process(ECJEventProcedureManager.EVENT_DOMAIN, generation_cxt, this);
 
 		// EVALUATION
 		statistics.preEvaluationStatistics(this);
@@ -193,7 +196,7 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 		statistics.postEvaluationStatistics(this);
 
 		// Process procedures after evaluation
-		event_manager.process(ECJEventProcedureManager.EVENT_POST_EVALUATION, (double) generation, this);
+		event_manager.process(ECJEventProcedureManager.EVENT_POST_EVALUATION, generation_cxt, this);
 
 		// SHOULD WE QUIT?
 		if (evaluator.runComplete(this) && quitOnRunComplete)
@@ -243,7 +246,7 @@ public class EPSimpleEvolutionState extends SimpleEvolutionState {
 		statistics.postBreedingStatistics(this);
 
 		// Evaluate procedures after breeding
-		event_manager.process(event_manager.EVENT_POST_BREEDING, (double) generation, this);
+		event_manager.process(event_manager.EVENT_POST_BREEDING, generation_cxt, this);
 
 		// POST-BREEDING EXCHANGING
 		statistics.prePostBreedingExchangeStatistics(this);
