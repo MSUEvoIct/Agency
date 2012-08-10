@@ -2,7 +2,7 @@ package abce.models.io.investment;
 
 import abce.agency.ec.StimulusResponse;
 import abce.agency.finance.Accounts;
-import abce.agency.reflection.MethodDictionary;
+import abce.util.reflection.MethodDictionary;
 
 public class BasicInvestmentFirm implements InvestmentFirm {
 

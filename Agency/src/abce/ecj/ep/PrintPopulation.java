@@ -3,9 +3,9 @@ package abce.ecj.ep;
 
 import java.io.IOException;
 
-import abce.agency.events.EventProcedureArgs;
-import abce.agency.events.Procedure;
-import abce.agency.util.io.GZOutFile;
+import abce.util.io.GZOutFile;
+import abce.util.events.EventProcedureArgs;
+import abce.util.events.Procedure;
 import ec.EvolutionState;
 import ec.util.Parameter;
 

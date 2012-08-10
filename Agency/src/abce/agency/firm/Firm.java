@@ -20,8 +20,8 @@ import abce.agency.consumer.Consumer;
 import abce.agency.finance.Accounts;
 import abce.agency.goods.Good;
 import abce.agency.production.ProductionFunction;
-import abce.agency.util.FitnessFunction;
-import abce.agency.util.NamedFitness;
+import abce.util.FitnessFunction;
+import abce.util.NamedFitness;
 
 
 

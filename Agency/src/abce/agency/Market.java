@@ -14,7 +14,7 @@ import abce.agency.actions.SaleOfGoods;
 import abce.agency.consumer.Consumer;
 import abce.agency.firm.Firm;
 import abce.agency.goods.Good;
-import abce.agency.reflection.Stimulus;
+import abce.util.reflection.Stimulus;
 
 
 

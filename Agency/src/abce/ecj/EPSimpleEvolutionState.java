@@ -4,8 +4,9 @@ package abce.ecj;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import abce.agency.events.EventProcedureDescription;
-import abce.agency.events.Interval;
+import abce.util.events.EventProcedureDescription;
+import abce.util.events.Interval;
+import abce.util.io.FileManager;
 import ec.simple.SimpleEvolutionState;
 import ec.util.Checkpoint;
 import ec.util.Parameter;

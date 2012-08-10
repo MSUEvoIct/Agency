@@ -1,7 +1,7 @@
 package abce.agency.ec.ecj;
 
 
-import abce.agency.reflection.RestrictedMethodDictionary;
+import abce.util.reflection.RestrictedMethodDictionary;
 import ec.EvolutionState;
 
 

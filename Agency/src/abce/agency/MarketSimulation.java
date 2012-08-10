@@ -12,12 +12,12 @@ import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import abce.agency.consumer.Consumer;
-import abce.agency.events.EventProcedureDescription;
-import abce.agency.events.Interval;
 import abce.agency.events.MSEventProcedureManager;
 import abce.agency.firm.Firm;
-import abce.agency.util.BadConfiguration;
-import abce.ecj.FileManager;
+import abce.util.events.EventProcedureDescription;
+import abce.util.events.Interval;
+import abce.util.BadConfiguration;
+import abce.util.io.FileManager;
 
 
 

@@ -1,9 +1,9 @@
 package abce.ecj;
 
 
-import abce.agency.events.EventProcedureDescription;
-import abce.agency.events.ValuedEventProcedure;
-import abce.agency.util.BadConfiguration;
+import abce.util.events.EventProcedureDescription;
+import abce.util.events.ValuedEventProcedure;
+import abce.util.BadConfiguration;
 
 
 

@@ -1,9 +1,9 @@
 package abce.ecj.ep;
 
 
-import abce.agency.events.EventProcedureArgs;
-import abce.agency.events.Procedure;
-import abce.agency.util.io.DelimitedOutFile;
+import abce.util.io.DelimitedOutFile;
+import abce.util.events.EventProcedureArgs;
+import abce.util.events.Procedure;
 import ec.EvolutionState;
 import ec.Individual;
 import ec.Subpopulation;

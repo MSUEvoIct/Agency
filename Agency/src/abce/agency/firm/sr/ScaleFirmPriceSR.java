@@ -8,10 +8,10 @@ import abce.agency.finance.Accounts;
 import abce.agency.firm.ECProdPriceFirm;
 import abce.agency.firm.Firm;
 import abce.agency.goods.Good;
-import abce.agency.reflection.MethodDictionary;
-import abce.agency.reflection.Response;
-import abce.agency.reflection.RestrictedMethodDictionary;
-import abce.agency.reflection.Stimulus;
+import abce.util.reflection.MethodDictionary;
+import abce.util.reflection.Response;
+import abce.util.reflection.RestrictedMethodDictionary;
+import abce.util.reflection.Stimulus;
 
 
 

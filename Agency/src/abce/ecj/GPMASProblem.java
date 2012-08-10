@@ -7,7 +7,7 @@ import abce.agency.ec.StimulusResponse;
 import abce.agency.ec.ecj.ECJEvolvableAgent;
 import abce.agency.ec.ecj.SRResponsive;
 import abce.agency.ec.ecj.SRStimulable;
-import abce.agency.reflection.RestrictedMethodDictionary;
+import abce.util.reflection.RestrictedMethodDictionary;
 import ec.EvolutionState;
 import ec.Subpopulation;
 import ec.gp.GPIndividual;

@@ -4,15 +4,15 @@ package abce.ecj;
 import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 
-import abce.agency.events.EventProcedure;
-import abce.agency.events.EventProcedureArgs;
-import abce.agency.events.EventProcedureContainer;
-import abce.agency.events.EventProcedureDescription;
-import abce.agency.events.EventProcedureManager;
-import abce.agency.events.ValuedEventProcedure;
-import abce.agency.events.ValuedEventProcedureQueue;
-import abce.agency.util.BadConfiguration;
 import abce.ecj.ep.AddDomainEP;
+import abce.util.events.EventProcedure;
+import abce.util.events.EventProcedureArgs;
+import abce.util.events.EventProcedureContainer;
+import abce.util.events.EventProcedureDescription;
+import abce.util.events.EventProcedureManager;
+import abce.util.events.ValuedEventProcedure;
+import abce.util.events.ValuedEventProcedureQueue;
+import abce.util.BadConfiguration;
 
 
 

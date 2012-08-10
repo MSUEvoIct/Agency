@@ -12,7 +12,7 @@ import abce.agency.ec.StimulusResponse;
 import abce.agency.firm.sr.FirmPricingSR;
 import abce.agency.firm.sr.FirmProductionSR;
 import abce.agency.goods.Good;
-import abce.agency.reflection.Stimulus;
+import abce.util.reflection.Stimulus;
 
 
 

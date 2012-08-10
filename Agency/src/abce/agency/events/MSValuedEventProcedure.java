@@ -1,7 +1,9 @@
 package abce.agency.events;
 
 
-import abce.agency.util.BadConfiguration;
+import abce.util.events.EventProcedureDescription;
+import abce.util.events.ValuedEventProcedure;
+import abce.util.BadConfiguration;
 
 
 

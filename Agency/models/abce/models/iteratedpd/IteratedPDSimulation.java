@@ -5,8 +5,8 @@ import java.util.Map;
 
 import sim.engine.SimState;
 import abce.agency.Agent;
-import abce.agency.util.io.DelimitedOutFile;
-import abce.ecj.FileManager;
+import abce.util.io.DelimitedOutFile;
+import abce.util.io.FileManager;
 
 public class IteratedPDSimulation extends SimState implements Runnable {
 	private static final long serialVersionUID = 1L;

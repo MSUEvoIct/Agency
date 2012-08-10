@@ -10,7 +10,7 @@ import abce.agency.Agent;
 import abce.agency.actions.ProductionAction;
 import abce.agency.firm.Firm;
 import abce.agency.goods.Good;
-import abce.agency.reflection.Stimulus;
+import abce.util.reflection.Stimulus;
 
 /**
  * 

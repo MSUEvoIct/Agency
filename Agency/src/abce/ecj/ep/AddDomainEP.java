@@ -1,11 +1,11 @@
 package abce.ecj.ep;
 
 
-import abce.agency.events.EventProcedureArgs;
-import abce.agency.events.EventProcedureDescription;
-import abce.agency.events.Procedure;
-import abce.agency.util.BadConfiguration;
 import abce.ecj.EPSimpleEvolutionState;
+import abce.util.events.EventProcedureArgs;
+import abce.util.events.EventProcedureDescription;
+import abce.util.events.Procedure;
+import abce.util.BadConfiguration;
 
 
 
