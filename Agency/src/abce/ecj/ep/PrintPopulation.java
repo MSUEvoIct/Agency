@@ -3,6 +3,7 @@ package abce.ecj.ep;
 
 import java.io.IOException;
 
+import abce.ecj.EPSimpleEvolutionState;
 import abce.util.io.GZOutFile;
 import abce.util.events.EventProcedureArgs;
 import abce.util.events.Procedure;
@@ -26,11 +27,12 @@ public class PrintPopulation implements Procedure {
 
 	@Override
 	public void process(Object... context) {
-		EvolutionState state = (EvolutionState) context[0];
-		String dir = state.parameters.getString(new Parameter("outdir"), null) + "/";
-		String filename = prefix + "-" + String.valueOf(state.generation) + ".pop.gz";
+		EPSimpleEvolutionState state = (EPSimpleEvolutionState) context[0];
+		String filename =  state.file_manager.makePath("Generation-" + String.valueOf(state.generation) + ".pop.gz");
 		try {
-			fot = new GZOutFile(dir + filename);
+			fot = new GZOutFile(filename);
+			state.population.printPopulation(state, fot.getWriter());
+			fot.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);

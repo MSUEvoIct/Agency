@@ -47,7 +47,7 @@ public class Debugger implements Setup {
 		if (DEBUG_NODE_VALUES) {
 			V_NODE_MODULO = state.parameters.getInt(getDefaultBase().push(P_NODE).push(P_NODE_MODULO), null);
 			V_NODE_PROB = state.parameters.getDouble(getDefaultBase().push(P_NODE).push(P_NODE_PROB), null);
-			System.err.println("Modulo:" + V_NODE_MODULO + " prob:" + V_NODE_PROB);
+			//System.err.println("Modulo:" + V_NODE_MODULO + " prob:" + V_NODE_PROB);
 
 		}
 	}
