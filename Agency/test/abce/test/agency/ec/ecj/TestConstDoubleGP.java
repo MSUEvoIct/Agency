@@ -1,4 +1,4 @@
-package abce.agency.ec.ecj.test;
+package abce.test.agency.ec.ecj;
 
 import static org.junit.Assert.*;
 

@@ -1,4 +1,4 @@
-package abce.agency.ec.ecj.test;
+package abce.test.agency.ec.ecj;
 
 import abce.agency.ec.ecj.types.DoubleGP;
 import ec.EvolutionState;
