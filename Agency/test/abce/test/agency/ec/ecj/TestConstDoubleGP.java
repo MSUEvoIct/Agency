@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import abce.agency.ec.ecj.terminals.Const0DoubleGP;
 import abce.agency.ec.ecj.terminals.Const100DoubleGP;
 import abce.agency.ec.ecj.terminals.Const10DoubleGP;
 import abce.agency.ec.ecj.terminals.Const1DoubleGP;
@@ -17,6 +18,7 @@ public class TestConstDoubleGP {
 
 	@Test
 	public void test() {
+		Const0DoubleGP t_0 = new Const0DoubleGP();
 		Const1DoubleGP t_1 = new Const1DoubleGP();
 		Const2DoubleGP t_2 = new Const2DoubleGP();
 		Const5DoubleGP t_5 = new Const5DoubleGP();
@@ -26,6 +28,9 @@ public class TestConstDoubleGP {
 		Const100DoubleGP t_100 = new Const100DoubleGP();
 		
 		DoubleGP input = new DoubleGP();
+		
+		t_0.eval(null, 9, input, null, null, null);
+		assertEquals(input.value, 0.0, 0.0);
 		
 		t_1.eval(null, 0, input, null, null, null);
 		assertEquals(input.value, 1.0, 0.0);
