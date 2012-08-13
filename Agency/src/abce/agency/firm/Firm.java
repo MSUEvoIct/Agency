@@ -36,7 +36,7 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	/**
 	 * Describes the financial condition of the firm
 	 */
-	protected Accounts						accounts				= new Accounts();
+	protected Accounts						accounts				= new Accounts(this);
 
 	protected Map<Good, Double>				inventory				= new LinkedHashMap<Good, Double>();
 

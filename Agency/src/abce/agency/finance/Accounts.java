@@ -76,7 +76,8 @@ public class Accounts extends Agent implements Serializable, Steppable {
 
 
 
-	public Accounts() {
+	public Accounts(Firm firm) {
+		owner =  firm;
 	}
 
 
@@ -187,15 +188,6 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	}
 
 	
-
-
-
-	
-
-
-
-	
-
 
 	/*
 	 * Various ways of booking revenue.  Some track what that
@@ -376,8 +368,15 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	 * @param cost
 	 */
 	public void spend(Good good, double qty, double cost) {
-		// XXX: TODO implement tracking
-		throw new RuntimeException("Not Implemented");
+		if (cash > cost) {
+			cash -= cost;
+		} else {
+			// Allow firms to borrow for production
+			double remainingCost = cash - cost;
+			cash = 0.0;
+			borrow(remainingCost);
+		}
+		
 	}
 
 
