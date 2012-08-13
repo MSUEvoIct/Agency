@@ -33,17 +33,19 @@ public class GPNodeDebug {
 	 * @param type
 	 */
 	public static void debug(EvolutionState state, int thread, GPData result, GPNode node, String type) {
-		EPSimpleEvolutionState eps = (EPSimpleEvolutionState) state;
-		if (eps.debug.V_NODE_PROB > 0.0 && eps.generation % eps.debug.V_NODE_MODULO == 0) {
-			if (state.random[thread].nextBoolean(eps.debug.V_NODE_PROB)) {
-				try {
-					DelimitedOutFile fout = eps.file_manager.getDelimitedOutFile(eps.debug.V_NODE_FILEPATH,
-							V_NODE_FORMAT);
-					fout.write(eps.generation, type, node.toString(), result.toString());
-				} catch (IOException e) {
-					state.output.warning("Unable to write node data to file.");
+		if (state != null){
+			EPSimpleEvolutionState eps = (EPSimpleEvolutionState) state;
+			if (eps.debug.V_NODE_PROB > 0.0 && eps.generation % eps.debug.V_NODE_MODULO == 0) {
+				if (state.random[thread].nextBoolean(eps.debug.V_NODE_PROB)) {
+					try {
+						DelimitedOutFile fout = eps.file_manager.getDelimitedOutFile(eps.debug.V_NODE_FILEPATH,
+								V_NODE_FORMAT);
+						fout.write(eps.generation, type, node.toString(), result.toString());
+					} catch (IOException e) {
+						state.output.warning("Unable to write node data to file.");
+					}
+	
 				}
-
 			}
 		}
 	}

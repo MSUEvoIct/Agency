@@ -30,18 +30,17 @@ public class NotAndGP extends GPNode {
 			Problem problem) {
 		BooleanGP result = (BooleanGP) input;
 
-		this.children[0].eval(state, thread, result, stack, individual, problem);
-		if (result.value) { // if one was true,
-			result.value = false; // the NOT is false
-		} else {
-			this.children[1].eval(state, thread, result, stack, individual, problem);
-			if (result.value) { // if one was true,
-				result.value = false; // the NOT is false
-			} else {
-				// We only get here if both children were false
-				result.value = true;
+		boolean retval = true;
+		
+		children[0].eval(state, thread, result, stack, individual, problem);
+		if (result.value == true){
+			children[1].eval(state, thread, result, stack, individual, problem);
+			if (result.value == true){
+				retval = false;
 			}
 		}
+		
+		result.value = retval;
 
 		// This is debug code and should not be enabled in most production-style
 		// experiments

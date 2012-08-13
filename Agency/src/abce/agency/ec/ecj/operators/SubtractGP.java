@@ -24,11 +24,11 @@ public class SubtractGP extends GPNode {
 		DoubleGP result = (DoubleGP) input;
 
 		this.children[0].eval(state, thread, result, stack, individual, problem);
-		double first = result.value;
+		double lhs = result.value;
 
 		this.children[1].eval(state, thread, result, stack, individual, problem);
 
-		result.value -= first;
+		result.value = lhs - result.value;
 
 		// This is debug code and should not be enabled in most production-style
 		// experiments

@@ -42,7 +42,7 @@ public class DivideGP extends GPNode {
 				result.value = Double.POSITIVE_INFINITY;
 			if (result.value < 0.0)
 				result.value = Double.NEGATIVE_INFINITY;
-			result.value = 1.0;
+			result.value = 0.0;
 			return;
 		}
 		result.value /= first;
