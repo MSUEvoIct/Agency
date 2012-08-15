@@ -180,7 +180,7 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	public void startProducing(Good good, ProductionFunction pf) {
 		goods.add(good);
 		productionFunctions.put(good, pf);
-		last_production.put(good, 0.0);
+		
 
 		// Initialize inventory of good.
 		Double invQty = inventory.get(good);
@@ -217,6 +217,14 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	}
 
 
+	/**
+	 * Set the last production.  This is used usually at initialization time.
+	 * @param good
+	 * @param value
+	 */
+	public void setLastProduction(Good good, double value){
+		last_production.put(good, value);
+	}
 
 	/**
 	 * The firm will stop producing the specified good. It may still retain an
@@ -399,8 +407,9 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 
 	public boolean verify(ProductionAction productionAction) {
 		ProductionFunction pf = productionFunctions.get(productionAction.good);
+		boolean allowed = productionAction.qty >= 0;
 		double cost = pf.costOfProducing(productionAction.qty);
-		boolean allowed = accounts.verify(productionAction, cost);
+		allowed = allowed && accounts.verify(productionAction, cost);
 		return allowed;
 	}
 
@@ -413,6 +422,7 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 * @param productionAction
 	 */
 	public void actualize(ProductionAction productionAction) {
+		
 		ProductionFunction pf = productionFunctions.get(productionAction.good);
 		double cost = pf.costOfProducing(productionAction.qty);
 		accounts.spend(productionAction.good, productionAction.qty, cost);
@@ -505,5 +515,6 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 			return 0.0;
 		return shortQtyArray[shortIndex(stepsAgo)];
 	}
+	
 
 }

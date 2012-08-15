@@ -61,7 +61,7 @@ public class ScaleFirmProductionSR implements FirmProductionSR {
 
 	@Stimulus(name = "MyProduction(t-1)")
 	public double productionLastPeriod() {
-		return _firm.getPastQtyProduced(_good, 1);
+		return _firm.getLastProduction(_good);
 	}
 
 

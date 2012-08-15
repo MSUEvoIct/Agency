@@ -44,7 +44,11 @@ public class SetPriceAction extends SimulationAction {
 	@Override
 	protected void actualize() {
 		firm.actualize(this);
-		
+	}
+	
+	@Override
+	protected void reject() {
+		//Do nothing
 	}
 
 }

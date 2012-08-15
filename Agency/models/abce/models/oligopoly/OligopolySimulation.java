@@ -112,9 +112,7 @@ public class OligopolySimulation extends MarketSimulation {
 		f.grantEndowment(_config.firm_endowment);
 		f.startProducing(good, pf);
 		f.setPrice(good, _config.firm_initial_price);
-
-		// TODO: How should last production be seeded?
-		// f.setLastProduction(good, _config.firm_initial_production);
+		f.setLastProduction(good, _config.firm_initial_production);
 		forceMarketEntry(f, m);
 		addFirm(f);
 	}

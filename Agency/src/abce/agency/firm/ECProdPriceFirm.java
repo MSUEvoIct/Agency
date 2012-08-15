@@ -2,6 +2,7 @@ package abce.agency.firm;
 
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import sim.engine.SimState;
 import abce.agency.Market;
@@ -30,17 +31,11 @@ public abstract class ECProdPriceFirm extends Firm implements ProducingPricingFi
 	 */
 	private static final long						serialVersionUID	= 1L;
 
-	/**
-	 * 
-	 */
-	@Stimulus(name = "LastPriceScaling")
-	double											last_price_scale	= 1.0;
-
-	@Stimulus(name = "LastProduction")
-	Double											production			= null;
-
 	ArrayList<Class<? extends FirmPricingSR>>		sr_pricing			= new ArrayList<Class<? extends FirmPricingSR>>();
 	ArrayList<Class<? extends FirmProductionSR>>	sr_production		= new ArrayList<Class<? extends FirmProductionSR>>();
+	
+	LinkedHashMap<Good,Double> next_price = new LinkedHashMap<Good,Double>();
+	LinkedHashMap<Good,Double> next_production = new LinkedHashMap<Good,Double>();
 
 
 
@@ -65,8 +60,15 @@ public abstract class ECProdPriceFirm extends Firm implements ProducingPricingFi
 
 	@Override
 	public void price() {
+		
+		//Setup the next price for all goods in all markets
+		next_price.clear();
 		for (Market m : this.markets) {
 			Good g = m.good;
+			//Setup base price for next adjustment
+			if (!next_price.containsKey(g)){
+				next_price.put(g, prices.get(g));
+			}
 			try {
 				FirmPricingSR sr;
 				for (Class<? extends FirmPricingSR> cl : sr_pricing) {
@@ -80,17 +82,30 @@ public abstract class ECProdPriceFirm extends Firm implements ProducingPricingFi
 				System.exit(1);
 			}
 		}
+		
+		//Try to actualize the price for all goods in all markets
+		for (Market m : this.markets){
+			Good g = m.good;
+			SetPriceAction spa = new SetPriceAction(this, g, next_price.get(g));
+			spa.process();
+		}
 	}
 
 
 
 	@Override
 	public void produce() {
+		
+		next_production.clear();
+		
+		//Setup the production for all goods
 		for (Market m : this.markets) {
 			Good g = m.good;
+			//Setup base price for next adjustment based on last production
+			if (!next_production.containsKey(g)){
+				next_production.put(g, last_production.get(g));
+			}
 			try {
-				if (production == null)
-					production = m.getNumberOfPeople() / m.getNumberOfFirms();
 				FirmProductionSR sr;
 				for (Class<? extends FirmProductionSR> cl : sr_production) {
 
@@ -104,37 +119,33 @@ public abstract class ECProdPriceFirm extends Firm implements ProducingPricingFi
 				System.exit(1);
 			}
 		}
+		
+		//Try to actualize the production of all goods
+		for (Market m: this.markets){
+			Good g = m.good;
+			ProductionAction pa = new ProductionAction(this, g, next_production.get(g));
+			pa.process();
+		}
 	}
 
 
 
 	public void scalePrice(Market m, Good g, double perc) {
 		double scale = 1.0 + (perc / 100.0);
-		if (scale < 0.0) {
-			last_price_scale = 1.0;
-			return;
-		} else {
-			last_price_scale = scale;
-			double current_price = prices.get(g);
-			SetPriceAction spa = new SetPriceAction(this, g, current_price * scale);
-			actualize(spa);
-		}
+		double current = next_price.get(g);
+		next_price.put(g,  current*scale);
+		
+	
 	}
 
 
 
 	public void scaleProduction(Market m, Good g, double perc) {
 		double scale = 1.0 + (perc / 100.0);
-
 		if (scale < 0.0) {
 			scale = 1.0;
 		}
-
-		double new_production = production * scale;
-		ProductionAction pa = new ProductionAction(this, g, new_production);
-		pa.process();
-		actualize(pa);
-		production = new_production;
+		double new_production = next_production.get(g) * scale;
 	}
 
 
