@@ -146,6 +146,7 @@ public abstract class ECProdPriceFirm extends Firm implements ProducingPricingFi
 			scale = 1.0;
 		}
 		double new_production = next_production.get(g) * scale;
+		next_production.put(g, new_production);
 	}
 
 
