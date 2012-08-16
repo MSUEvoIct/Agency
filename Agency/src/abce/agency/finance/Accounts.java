@@ -265,17 +265,10 @@ public class Accounts extends Agent implements Serializable, Steppable {
 	 *         false otherwise.
 	 */
 	public boolean verify(ProductionAction productionAction, double cost) {
-		double availableFinancing = getAvailableFinancing();
-		double cashOnHand = getCashOnHand();
-		double maxToSpend;
-		if (availableFinancing > cashOnHand)
-			maxToSpend = availableFinancing;
-		else
-			maxToSpend = cashOnHand;
-	
-		if (cost <= maxToSpend)
+		double maxToSpend = getCashOnHand() + getAvailableFinancing();
+		if (cost <= maxToSpend){
 			return true;
-		else {
+		}else {
 			return false;
 		}
 	}
@@ -372,9 +365,10 @@ public class Accounts extends Agent implements Serializable, Steppable {
 			cash -= cost;
 		} else {
 			// Allow firms to borrow for production
-			double remainingCost = cash - cost;
-			cash = 0.0;
+			double remainingCost = cost-cash;
+			double avail = getAvailableFinancing();
 			borrow(remainingCost);
+			cash = 0.0;
 		}
 		
 	}
@@ -453,7 +447,8 @@ public class Accounts extends Agent implements Serializable, Steppable {
 		double averageShortRevenue = getMovingAverage(shortRevenue, 5);
 
 		// can borrow up to 2x assets + 10x short term revenue
-		return 2 * totalAssets + 10 * averageShortRevenue - debt;
+		double retval= 2 * totalAssets + 10 * averageShortRevenue - debt;
+		return retval;
 	}
 
 
