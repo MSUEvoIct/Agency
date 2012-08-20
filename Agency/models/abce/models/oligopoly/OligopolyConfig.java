@@ -25,6 +25,7 @@ public class OligopolyConfig extends Properties {
 	public double				cost_constant;
 	public int					steps_to_run;
 	public String				simulation_root;
+	public double				good_spoilage_frac;
 
 
 
@@ -49,6 +50,7 @@ public class OligopolyConfig extends Properties {
 		cost_constant = D("cost_constant");
 		steps_to_run = I("steps_to_run");
 		simulation_root = S("simulation_root");
+		good_spoilage_frac = D("good_spoilage_frac");
 	}
 
 
