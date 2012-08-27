@@ -113,8 +113,8 @@ public class OligopolySimulation extends MarketSimulation {
 	public void setupFirm(Firm f) {
 		f.grantEndowment(_config.firm_endowment);
 		f.startProducing(good, pf);
-		f.setPrice(good, _config.firm_initial_price);
-		f.setLastProduction(good, _config.firm_initial_production);
+		f.setInitialPrice(good, _config.firm_initial_price);
+		f.setInitialProduction(good, _config.firm_initial_production);
 		forceMarketEntry(f, m);
 		addFirm(f);
 	}

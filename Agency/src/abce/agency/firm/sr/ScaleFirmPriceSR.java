@@ -36,7 +36,6 @@ public class ScaleFirmPriceSR implements FirmPricingSR {
 	public Market							_market;
 
 
-
 	public ScaleFirmPriceSR() {
 	}
 
@@ -54,14 +53,13 @@ public class ScaleFirmPriceSR implements FirmPricingSR {
 
 	@Response
 	public void scalePrice(double price_perc) {
-		_firm.scalePrice(_market, _good, price_perc);
+		_firm.scalePriceCarrying(_market, _good, price_perc);
 	}
 
 
-
-	@Stimulus(name = "MyProduction(t-1)")
+	@Stimulus(name = "LastProduction")
 	public double productionLastPeriod() {
-		return _firm.getLastProduction(_good);
+		return _firm.getProduction(_good, 1);
 	}
 
 
@@ -70,8 +68,8 @@ public class ScaleFirmPriceSR implements FirmPricingSR {
 	public double totalInventory() {
 		double total = 0.0;
 		for (Firm f : _market.getFirms()) {
-			if (f.produces(_good)) {
-				total += f.getInventory(_market);
+			if (f.hasProduced(_good)) {
+				total += f.getInventory(_good,1);
 			}
 		}
 		return total;
@@ -81,14 +79,14 @@ public class ScaleFirmPriceSR implements FirmPricingSR {
 
 	@Stimulus(name = "Inventory")
 	public double inventory() {
-		return _firm.getInventory(_market);
+		return _firm.getInventory(_good,1);
 	}
 
 
 
-	@Stimulus(name = "Price")
+	@Stimulus(name = "LastPrice")
 	public double getPrice() {
-		return _firm.getPrice(_market, null);
+		return _firm.getPrice(_good, null, 1);
 	}
 
 

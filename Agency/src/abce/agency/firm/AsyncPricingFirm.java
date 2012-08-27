@@ -21,7 +21,7 @@ public abstract class AsyncPricingFirm extends Firm implements AsyncUpdate {
 	public void update() {
 		// Update all the current prices with the (possibly) changed versions
 		for (Good good : futurePrices.keySet()) {
-			prices.put(good, futurePrices.get(good));
+			setPrice(good, futurePrices.get(good));
 		}
 	}
 
