@@ -32,9 +32,9 @@ import ec.vector.BitVectorIndividual;
  * @author kkoning
  * 
  */
-public class IteratedPDAgentGA extends Firm implements IteratedPDAgent {
+public class IteratedPDAgentGA implements IteratedPDAgent {
 
-	public double totalRevenue = 0.0;
+	public double earnings;
 	public BitVectorIndividual ind;
 	
 	public IteratedPDAgentGA(BitVectorIndividual ind) {
@@ -42,88 +42,61 @@ public class IteratedPDAgentGA extends Firm implements IteratedPDAgent {
 	}
 	
 	
-	@Override
-	public void step(SimState state) {
-		super.step(state);
-		
-		// determine whether or not to defect.
-		IteratedPDSimulation sim = (IteratedPDSimulation) state;
-		
-		boolean defections[] = sim.defections.get(this);
+	public boolean defect(IteratedPDSimulation state) {
 		
 		Boolean toDefect = null;
-		
+		boolean[] myDefections = state.getDefections(this);
+		boolean[] opponentDefections = state.getDefections(state.getOtherAgent(this));
 		
 		// if step 1, just take our decision directly from the genome.
-		if (this.numSteps() == 0) {
+		if (state.step == 0) {
 			toDefect = ind.genome[0x54];
 		}
 		
-		if (this.numSteps() == 1) {
+		if (state.step == 1) {
 			int position = 0x50;
-			if (sim.getOtherAgent(this).defected(state, 1))
+			if (opponentDefections[0])
 				position += 0x1;
-			if (this.defected(state, 1))
+			if (myDefections[0])
 				position += 0x2;
 			toDefect = ind.genome[position];
 		}
 		
-		if (this.numSteps() == 2) {
+		if (state.step == 2) {
 			int position = 0x40;
-			if (sim.getOtherAgent(this).defected(state, 1))
+			if (opponentDefections[1])
 				position += 0x1;
-			if (sim.getOtherAgent(this).defected(state, 2))
+			if (opponentDefections[0])
 				position += 0x2;
-			if (this.defected(state, 1))
+			if (myDefections[1])
 				position += 0x4;
-			if (this.defected(state, 2))
+			if (myDefections[0])
 				position += 0x8;
 			toDefect = ind.genome[position];
 		}
 		
-		if (this.numSteps() >= 3) {
+		if (state.step >= 3) {
 			int position = 0x0;
 			
-			if (sim.getOtherAgent(this).defected(state, 1))
+			if (opponentDefections[state.step - 1])
 				position += 0x1;
-			if (sim.getOtherAgent(this).defected(state, 2))
+			if (opponentDefections[state.step - 2])
 				position += 0x2;
-			if (sim.getOtherAgent(this).defected(state, 3))
+			if (opponentDefections[state.step - 3])
 				position += 0x4;
-			if (this.defected(state, 1))
+			if (myDefections[state.step - 1])
 				position += 0x8;
-			if (this.defected(state, 2))
+			if (myDefections[state.step - 2])
 				position += 0x10;
-			if (this.defected(state, 3))
+			if (myDefections[state.step - 3])
 				position += 0x20;
 			toDefect = ind.genome[position];
 		}
 
 		if (toDefect == null)
 			throw new RuntimeException("Should have made the decision on whether or not to defect by now");
-		
-		// actualize our decision
-		defections[shortIndex()] = toDefect;
-		
-	}
 
-	@Override
-	public boolean defected(SimState state, int stepsAgo) {
-		IteratedPDSimulation sim = (IteratedPDSimulation) state;
-		boolean[] defections = sim.defections.get(this);
-		return defections[shortIndex(stepsAgo)];
-	}
-
-
-	@Override
-	public void earn(double amount) {
-		this.getAccounts().revenue(amount);
-	}
-
-
-	@Override
-	public double getTotalRevenue() {
-		return this.getAccounts().getTotalRevenue();
+		return toDefect;
 	}
 	
 }
