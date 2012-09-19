@@ -15,4 +15,14 @@ public class FixedQuantityAgent extends FloatVectorIndividual implements Investm
 		return genome[1];
 	}
 
+	@Override
+	public boolean equals(Object ind) {
+		if (this == ind)
+			return true;
+		else
+			return false;
+	}
+	
+	
+
 }
