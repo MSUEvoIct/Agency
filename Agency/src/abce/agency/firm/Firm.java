@@ -38,23 +38,12 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 */
 	protected Accounts						accounts				= new Accounts(this);
 
-	protected Map<Good, Double>				inventory				= new LinkedHashMap<Good, Double>();
-
 	/**
 	 * Contains the production functions necessary to determine a cost of for
 	 * a given quantity of production.
 	 */
 	protected Map<Good, ProductionFunction>	productionFunctions		= new LinkedHashMap<Good, ProductionFunction>();
 
-	/**
-	 * A simple map which stores calculated prices for goods produced by this
-	 * firm.
-	 * Derived classes may ignore these values if, e.g., prices are dynamically
-	 * calculated.
-	 */
-	protected Map<Good, Double>				prices					= new LinkedHashMap<Good, Double>();
-
-	protected Map<Good, Double>				last_production			= new LinkedHashMap<Good, Double>();
 
 	/**
 	 * The set of markets in which this firm offers its products
@@ -63,9 +52,11 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 
 	/**
 	 * The set of goods produced by this firm.
+	 * total: goods that were ever produced
+	 * active: goods that are currently produced
 	 */
-	protected Set<Good>						goods					= new LinkedHashSet<Good>();
-
+	protected Set<Good>					total_goods					= new LinkedHashSet<Good>();
+	protected Set<Good>						active_goods			= new LinkedHashSet<Good>();
 	/*
 	 * Tracking Variables
 	 */
@@ -75,7 +66,9 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	private final Map<Good, Double>			totalRevenue			= new HashMap<Good, Double>();
 
 	// Short-term tracking
+	private final Map<Good, double[]>		shortPrice				= new HashMap<Good, double[]>();
 	private final Map<Good, double[]>		shortQuantityProduced	= new HashMap<Good, double[]>();
+	private final Map<Good, double[]>		shortInventory			= new HashMap<Good, double[]>();
 	private final Map<Good, double[]>		shortQuantitySold		= new HashMap<Good, double[]>();
 	private final Map<Good, double[]>		shortRevenue			= new HashMap<Good, double[]>();
 
@@ -97,24 +90,16 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	@Override
 	public void update() {
 		spoilage(); // spoilage happens at the tick of every step.
-
+		
 		// Reset short-term quantities
 		// -------
-		for (Good g : shortQuantityProduced.keySet()) {
-			double[] shortQtyArray = shortQuantityProduced.get(g);
-			shortQtyArray[shortIndex()] = 0.0;
+		for (Good g: active_goods){
+			setCurrent(shortPrice.get(g), getHistoric(shortPrice.get(g),1));
+			setCurrent(shortQuantityProduced.get(g), 0.0);
+			setCurrent(shortInventory.get(g), getHistoric(shortInventory.get(g),1));
+			setCurrent(shortQuantitySold.get(g), 0.0);
+			setCurrent(shortRevenue.get(g), 0.0);
 		}
-
-		for (Good g : shortQuantitySold.keySet()) {
-			double[] shortQtyArray = shortQuantitySold.get(g);
-			shortQtyArray[shortIndex()] = 0.0;
-		}
-
-		for (Good g : shortRevenue.keySet()) {
-			double[] shortQtyArray = shortRevenue.get(g);
-			shortQtyArray[shortIndex()] = 0.0;
-		}
-
 	}
 
 
@@ -122,6 +107,7 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	public void grantEndowment(double amount) {
 		accounts.justGiveCashDontUse(amount);
 	}
+	
 
 	@NamedFitness(name = "NetWorth")
 	protected FitnessFunction	netWorth	= new FitnessFunction() {
@@ -149,8 +135,17 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 *         Note that whether the firm produces a non-zero amount depends on
 	 *         the behavior of the specific firm.
 	 */
-	public boolean produces(Good good) {
-		return goods.contains(good);
+	public boolean hasProduced(Good good) {
+		return total_goods.contains(good);
+	}
+	
+	
+	/**
+	 * @param good
+	 * @return true if the firm currently produces the good, false otherwise.
+	 */
+	public boolean doesProduce(Good good){
+		return active_goods.contains(good);
 	}
 
 
@@ -178,42 +173,44 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 *            The production function for the good
 	 */
 	public void startProducing(Good good, ProductionFunction pf) {
-		goods.add(good);
+		active_goods.add(good);
+		total_goods.add(good);
 		productionFunctions.put(good, pf);
 		
 
-		// Initialize inventory of good.
-		Double invQty = inventory.get(good);
-		if (invQty == null)
-			inventory.put(good, 0.0);
+
 
 		// Initialize tracking data structures for this good.
 		// ----------- Long term tracking
-		Double totalProduction = totalQuantityProduced.get(good);
-		if (totalProduction == null)
+		if (!totalQuantityProduced.containsKey(good))
 			totalQuantityProduced.put(good, 0.0);
-
-		Double totalSold = totalQuantitySold.get(good);
-		if (totalSold == null)
+		if (!totalQuantitySold.containsKey(good))
 			totalQuantitySold.put(good, 0.0);
-
-		Double revenue = totalRevenue.get(good);
-		if (revenue == null)
+		if (!totalRevenue.containsKey(good))
 			totalRevenue.put(good, 0.0);
 
 		// --------- Short Term Tracking
-		double[] shortProductionArray = shortQuantityProduced.get(good);
-		if (shortProductionArray == null)
+		if (!shortPrice.containsKey(good)){
+			shortPrice.put(good, new double[trackingPeriods]);
+			setHistoric(shortPrice.get(good), 1, 0.0);
+		}
+		if (!shortInventory.containsKey(good)){
+			shortInventory.put(good, new double[trackingPeriods]);
+			setHistoric(shortInventory.get(good), 1, 0.0);
+		}
+		if (!shortQuantityProduced.containsKey(good)){
 			shortQuantityProduced.put(good, new double[trackingPeriods]);
-
-		double[] shortQtySold = shortQuantitySold.get(good);
-		if (shortQtySold == null)
+			setHistoric(shortQuantityProduced.get(good), 1, 0.0);
+		}
+		if (!shortQuantitySold.containsKey(good)){
 			shortQuantitySold.put(good, new double[trackingPeriods]);
-
-		double[] shortRevenueArray = shortRevenue.get(good);
-		if (shortRevenueArray == null)
-			shortRevenue.put(good, new double[trackingPeriods]);
-
+			setHistoric(shortQuantitySold.get(good), 1, 0.0);
+		}
+		if (!shortRevenue.containsKey(good)){
+			shortRevenue.put(good,  new double[trackingPeriods]);
+			setHistoric(shortRevenue.get(good), 1, 0.0);
+		}
+	
 	}
 
 
@@ -222,9 +219,21 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 * @param good
 	 * @param value
 	 */
-	public void setLastProduction(Good good, double value){
-		last_production.put(good, value);
+	public void setInitialProduction(Good good, double value){
+		setHistoric(shortQuantityProduced.get(good), 1, value);
 	}
+	
+	/**
+	 * Set the last price for a good.  This is usually used at initialization time.
+	 * @param good
+	 * 	Good to set the last price of
+	 * @param value
+	 * 	The value of the good
+	 */
+	public void setInitialPrice(Good good, double value){
+		setHistoric(shortPrice.get(good), 1, value);
+	}
+	
 
 	/**
 	 * The firm will stop producing the specified good. It may still retain an
@@ -234,7 +243,7 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 *            The good to stop producing
 	 */
 	public void stopProducing(Good good) {
-		goods.remove(good);
+		active_goods.remove(good);
 	}
 
 
@@ -248,61 +257,198 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 *            Which good
 	 * @param consumer
 	 *            Which consumer
+	 * @param back
+	 * 			  How many steps back to go
 	 * @return The price
 	 */
-	public double getPrice(Market m, Consumer consumer) {
-		Double price = prices.get(m.good); // XXX Assumes one price for a good
-											// in all markets
-		if (price != null)
-			return price;
-		else
+	public double getPrice(Good g, Consumer consumer, int back) {
+		if (shortPrice.containsKey(g)){
+			return getHistoric(shortPrice.get(g), back);
+		}else{
 			throw new RuntimeException("Firm " + this
-					+ " asked to price good, " + m.good
+					+ " asked to price good, " + g
 					+ " but has never set a price for it.");
+		}
 	}
 
-
-
-	public double getLastProduction(Good g) {
-		return last_production.containsKey(g) ? last_production.get(g) : 0.0;
+	/**
+	 * Query the production set by the firm for the specified good.
+	 * 
+	 * @param good
+	 *            Which good
+	 * @param back
+	 * 			  How many steps back to go
+	 * @return The price
+	 */
+	public double getProduction(Good g, int back) {
+		if (shortQuantityProduced.containsKey(g)){
+			return getHistoric(shortQuantityProduced.get(g),back);
+		} else {
+			throw new RuntimeException("Firm " + this
+					+ "asked to get the production of"
+					+ " good " + g + " but has never set a "
+					+ "production level for it");
+		} 
 	}
 
+	
+	/**
+	 * Query the inventory of a good
+	 * 
+	 * @param good
+	 *            Which good
+	 * @param back
+	 * 			  How many steps back to go
+	 * @return The price
+	 */
+	public double getInventory(Good g, int back){
+		if (shortInventory.containsKey(g)){
+			return getHistoric(shortInventory.get(g), back);
+		} else {
+			throw new RuntimeException("Firm " + this +
+					" asked to get the inventory of good " + g +
+					" but has no record of it");
+		}
+	}
+	
+	
+	/**
+	 * Query the quantity sold of a good
+	 * 
+	 * @param good
+	 *            Which good
+	 * @param back
+	 * 			  How many steps back to go
+	 * @return The price
+	 */
+	public double getSales(Good g, int back){
+		if (shortQuantitySold.containsKey(g)){
+			return getHistoric(shortQuantitySold.get(g), back);
+		} else {
+			throw new RuntimeException("Firm " + this + 
+					" asked to get the sales of good " + g + 
+					" but has no record of it");
+		}
+	}
+	
+	
+	/**
+	 * Query the revenue gotten for the sale of a good
+	 * 
+	 * @param good
+	 *            Which good
+	 * @param back
+	 * 			  How many steps back to go
+	 * @return The price
+	 */
+	public double getRevenue(Good g, int back){
+		if (shortRevenue.containsKey(g)){
+			return getHistoric(shortRevenue.get(g), back);
+		} else {
+			throw new RuntimeException("Firm " + this + 
+					" asked to get the revune of good " + g+
+					" but has no record of it");
+		}
+	}
 
 
 	/**
-	 * Sets a new price for a particular good
+	 * Sets the current price for a particular good
 	 * 
 	 * @param good
 	 * @param price
 	 */
 	public void setPrice(Good good, double price) {
-		prices.put(good, price);
+		if (shortPrice.containsKey(good))
+			setCurrent(shortPrice.get(good), price);
+		else
+			throw new RuntimeException("Firm " + this + "tried to set"
+					+ " the price of good " + good + ", but this good is "
+					+ "unknown to the firm.");
 	}
 
 
+	/**
+	 * Sets the current production quantity for a particular good
+	 * 
+	 * @param good
+	 * @param price
+	 */
+	public void setProduced(Good good, double qty){
+		if (shortQuantityProduced.containsKey(good)){
+			setCurrent(shortQuantityProduced.get(good), qty);
+		} else {
+			throw new RuntimeException("Firm " + this + " tried to set " 
+					+ "the production quantity of good " + good + " but"
+					+ "the good is unknown to the firm.");
+		}
+	}
+	
+	
+	/**
+	 * Sets the current inventory for a particular good
+	 * 
+	 * @param good
+	 * @param price
+	 */
+	public void setInventory(Good good, double qty){
+		if (shortInventory.containsKey(good)){
+			setCurrent(shortInventory.get(good), qty);
+		} else {
+			throw new RuntimeException("Firm " + this + " tried to set " 
+					+ "the inventory of good " + good + " but"
+					+ "the good is unknown to the firm.");
+		}
+	}
+	
+	
+	/**
+	 * Sets the current quantity sold for a particular good
+	 * 
+	 * @param good
+	 * @param price
+	 */
+	public void setSales(Good good, double qty){
+		if (shortQuantitySold.containsKey(good)){
+			setCurrent(shortQuantitySold.get(good), qty);
+		} else {
+			throw new RuntimeException("Firm " + this + " tried to set " 
+					+ "the quantity sold of good " + good + " but"
+					+ "the good is unknown to the firm.");
+		}
+	}
+	
+	
+	/**
+	 * Sets the current revenue for a particular good
+	 * 
+	 * @param good
+	 * @param price
+	 */
+	public void setRevenue(Good good, double qty){
+		if (shortRevenue.containsKey(good)){
+			setCurrent(shortRevenue.get(good), qty);
+		} else {
+			throw new RuntimeException("Firm " + this + " tried to set " 
+					+ "the revenue earned for good " + good + " but"
+					+ "the good is unknown to the firm.");
+		}
+	}
+	
+	
+	
 
 	public final Offer getOffer(Market m, Consumer consumer) {
-		if (!this.produces(m.good))
+		Good g = m.good;
+		if (!this.hasProduced(g))
 			return null; // this firm does not produce this good; no offer.
-		double qtyAvailable = this.getInventory(m);
+		double qtyAvailable = this.getInventory(g,0);
 
 		// make the offer
-		Offer o = new Offer(this, m, getPrice(m, consumer), qtyAvailable);
+		Offer o = new Offer(this, m, getPrice(g, consumer, 0), qtyAvailable);
 		return o;
 	}
 
-
-
-	public double getInventory(Market m) {
-		Double invQty = inventory.get(m.good); // XXX Assumes a single inventory
-												// across all markets
-		if (invQty != null)
-			return invQty;
-		else
-			throw new RuntimeException("Firm " + this
-					+ " asked for inventory of good " + m.good
-					+ "but has never had one.");
-	}
 
 
 
@@ -311,27 +457,22 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 		if (quantity == null)
 			throw new RuntimeException("Cannot stock a null quantity of good "
 					+ good);
-		if (quantity.isInfinite())
+		if (!quantity.isInfinite() || quantity.isNaN())
 			throw new RuntimeException(
-					"Cannot stock an infinite quantity of good " + good);
-		if (quantity.isNaN())
-			throw new RuntimeException("Cannot stock a NaN quantity of good "
-					+ good);
+					"Cannot stock an non-finite quantity of good " + good);
 		if (good == null)
 			throw new RuntimeException("Cannot stock a null good");
 
 		// Update quantity
-		Double currentQuantity = inventory.get(good);
-		if (currentQuantity == null)
-			currentQuantity = 0.0;
+		Double currentQuantity = getInventory(good, 0);
 		double newQuantity = currentQuantity + quantity;
-		inventory.put(good, newQuantity);
+		setInventory(good, newQuantity);
 	}
 
 
 
 	protected void deplete(Good good, double quantity) {
-		Double existingQuantity = inventory.get(good);
+		Double existingQuantity = getInventory(good, 0);
 		if (existingQuantity == null)
 			throw new RuntimeException("Firm " + this + " doesn't stock good "
 					+ good);
@@ -342,16 +483,16 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 
 		// Update quantity
 		double newQuantity = existingQuantity - quantity;
-		inventory.put(good, newQuantity);
+		setInventory(good, newQuantity);
 	}
 
 
 
 	protected void spoilage() {
-		for (Good good : inventory.keySet()) {
-			double currentQty = inventory.get(good);
+		for (Good good : shortInventory.keySet()) {
+			double currentQty = getInventory(good,0);
 			double newQty = good.spoil(currentQty);
-			inventory.put(good, newQty);
+			setInventory(good, newQty);
 		}
 	}
 
@@ -370,20 +511,21 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 * @param saleOfGoods
 	 */
 	public void actualize(SaleOfGoods saleOfGoods) {
+		Good g = saleOfGoods.offer.market.good;
+		double qty = saleOfGoods.quantity;
+		double price = saleOfGoods.offer.price;
+		
 		// Decrese Inventory
-		deplete(saleOfGoods.offer.market.good, saleOfGoods.quantity);
+		deplete(g, qty);
 
 		// Increase Cash
-		accounts.revenue(saleOfGoods.offer.market.good, saleOfGoods.offer.price
-				* saleOfGoods.quantity);
+		accounts.revenue(g, price * qty);
 
 		// Track long-term sales
-		Double totalSales = totalQuantitySold.get(saleOfGoods.offer.market.good);
-		totalSales += saleOfGoods.quantity;
-		totalQuantitySold.put(saleOfGoods.offer.market.good, totalSales);
+		totalQuantitySold.put(g, totalQuantitySold.get(g) + qty);
 
 		// Track short-term sales
-
+		setSales(g, getSales(g,0) + qty);
 	}
 
 
@@ -422,26 +564,27 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 	 * @param productionAction
 	 */
 	public void actualize(ProductionAction productionAction) {
-		
-		ProductionFunction pf = productionFunctions.get(productionAction.good);
-		double cost = pf.costOfProducing(productionAction.qty);
-		accounts.spend(productionAction.good, productionAction.qty, cost);
+		Good g = productionAction.good;
+		double qty = productionAction.qty;
+		ProductionFunction pf = productionFunctions.get(g);
+		double cost = pf.costOfProducing(qty);
+		accounts.spend(g, qty, cost);
 
-		double currentInventory = inventory.get(productionAction.good);
-		double newInventory = currentInventory + productionAction.qty;
-		inventory.put(productionAction.good, newInventory);
-		last_production.put(productionAction.good, productionAction.qty);
-
+		setInventory(g, getInventory(g,0) + qty);
+		setProduced(g, getProduction(g,0) + qty);
 	}
 
 
 
+	/**
+	 * Set the price for a particular good
+	 * @param setPriceAction
+	 */
 	public void actualize(SetPriceAction setPriceAction) {
-		// Simply update the data structure containing the price for this good
-		prices.put(setPriceAction.good, setPriceAction.price);
+		setPrice(setPriceAction.good, setPriceAction.price);
 	}
 
-
+/*
 
 	/**
 	 * @param good
@@ -486,34 +629,69 @@ public abstract class Firm extends Agent implements AsyncUpdate {
 			return foo;
 	}
 
-
-
-	public double getPastQtyProduced(Good g, int stepsAgo) {
-		verifyShortData(stepsAgo);
-		double[] shortQtyArray = shortQuantityProduced.get(g);
-		if (shortQtyArray == null)
-			return 0.0;
-		return shortQtyArray[shortIndex(stepsAgo)];
+	
+	/**
+	 * Return the current value of a short-term tracking array
+	 * @param short_data
+	 * 	data array
+	 * @return
+	 */
+	protected double getCurrent(double[] short_data){
+		if (short_data == null){
+			throw new RuntimeException("Unable to retrieve current data; array is null");
+		} else {
+			return short_data[shortIndex()];
+		}
 	}
-
-
-
-	public double getPastQtySold(Good g, int stepsAgo) {
-		verifyShortData(stepsAgo);
-		double[] shortQtyArray = shortQuantitySold.get(g);
-		if (shortQtyArray == null)
-			return 0.0;
-		return shortQtyArray[shortIndex(stepsAgo)];
+	
+	
+	
+	/**
+	 * Return a historic value from a short-term tracking array
+	 * @param short_data
+	 * 	data array
+	 * @param back
+	 * 	periods back
+	 * @return
+	 */
+	protected double getHistoric(double[] short_data, int back){
+		if (short_data == null){
+			throw new RuntimeException("Unable to retrieve historic data " + back + " periods back; array is null");
+		} else {
+			return short_data[shortIndex(back)];
+		}
 	}
-
-
-
-	public double getPastRevenue(Good g, int stepsAgo) {
-		verifyShortData(stepsAgo);
-		double[] shortQtyArray = shortQuantityProduced.get(g);
-		if (shortQtyArray == null)
-			return 0.0;
-		return shortQtyArray[shortIndex(stepsAgo)];
+	
+	/**
+	 * Set the current index into a tracking variable to a particular value
+	 * @param short_data
+	 * 	tracking array
+	 * @param value
+	 * 	new value
+	 */
+	protected void setCurrent(double[] short_data, double value){
+		if (short_data == null){
+			throw new RuntimeException("Unable to set the current value of a short term element because the data array is null.");
+		} else {
+			short_data[shortIndex()] = value;
+		}
+	}
+	
+	/**
+	 * Set the a historic index into a tracking variable to a particular value
+	 * @param short_data
+	 * 	tracking array
+	 * @param back
+	 * 	number of periods back
+	 * @param value
+	 * 	new value
+	 */
+	protected void setHistoric(double[] short_data, int back, double value){
+		if (short_data == null){
+			throw new RuntimeException("Unable to set " + back + " steps back of data; the array points to null");
+		} else {
+			short_data[shortIndex(back)] = value;
+		}
 	}
 	
 

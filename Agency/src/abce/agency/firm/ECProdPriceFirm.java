@@ -34,10 +34,25 @@ public abstract class ECProdPriceFirm extends Firm implements ProducingPricingFi
 	ArrayList<Class<? extends FirmPricingSR>>		sr_pricing			= new ArrayList<Class<? extends FirmPricingSR>>();
 	ArrayList<Class<? extends FirmProductionSR>>	sr_production		= new ArrayList<Class<? extends FirmProductionSR>>();
 	
+	protected LinkedHashMap<Good,Double> initial_price = new LinkedHashMap<Good,Double>();
+	protected LinkedHashMap<Good, Double> initial_production = new LinkedHashMap<Good,Double>();
+	
 	LinkedHashMap<Good,Double> next_price = new LinkedHashMap<Good,Double>();
 	LinkedHashMap<Good,Double> next_production = new LinkedHashMap<Good,Double>();
 
 
+	@Override
+	 public void setInitialPrice(Good g, double p){
+		 initial_price.put(g,p);
+		 super.setInitialPrice(g,p);
+	 }
+	 
+	 @Override
+	 public void setInitialProduction(Good g, double p){
+		 initial_production.put(g,p);
+		 super.setInitialProduction(g,p);
+		 
+	 }
 
 	/**
 	 * Add a stimulus response class to the ECFirm; these classes get put into
@@ -63,12 +78,21 @@ public abstract class ECProdPriceFirm extends Firm implements ProducingPricingFi
 		
 		//Setup the next price for all goods in all markets
 		next_price.clear();
+		
+		//Process this tree for each good in the market
 		for (Market m : this.markets) {
 			Good g = m.good;
+			
+			//See if we produce this good
+			if (!doesProduce(g)){
+				continue;
+			}
+			
 			//Setup base price for next adjustment
 			if (!next_price.containsKey(g)){
-				next_price.put(g, prices.get(g));
+				next_price.put(g, null);
 			}
+			
 			try {
 				FirmPricingSR sr;
 				for (Class<? extends FirmPricingSR> cl : sr_pricing) {
@@ -86,7 +110,8 @@ public abstract class ECProdPriceFirm extends Firm implements ProducingPricingFi
 		//Try to actualize the price for all goods in all markets
 		for (Market m : this.markets){
 			Good g = m.good;
-			SetPriceAction spa = new SetPriceAction(this, g, next_price.get(g));
+			double price = (next_price.get(g) == null) ? getPrice(g,null,1) : next_price.get(g);
+			SetPriceAction spa = new SetPriceAction(this, g, price);
 			spa.process();
 		}
 	}
@@ -100,11 +125,18 @@ public abstract class ECProdPriceFirm extends Firm implements ProducingPricingFi
 		
 		//Setup the production for all goods
 		for (Market m : this.markets) {
+			
 			Good g = m.good;
+			
+			//Check to see if the firm is currently producing this good
+			if (!doesProduce(g))
+				continue;
+			
 			//Setup base price for next adjustment based on last production
 			if (!next_production.containsKey(g)){
-				next_production.put(g, last_production.get(g));
+				next_production.put(g,null);
 			}
+			
 			try {
 				FirmProductionSR sr;
 				for (Class<? extends FirmProductionSR> cl : sr_production) {
@@ -123,30 +155,42 @@ public abstract class ECProdPriceFirm extends Firm implements ProducingPricingFi
 		//Try to actualize the production of all goods
 		for (Market m: this.markets){
 			Good g = m.good;
-			ProductionAction pa = new ProductionAction(this, g, next_production.get(g));
+			double qty = (next_production.get(g) == null) ? 0.0 : next_production.get(g);
+			ProductionAction pa = new ProductionAction(this, g, qty);
 			pa.process();
 		}
 	}
 
 
 
-	public void scalePrice(Market m, Good g, double perc) {
-		double scale = 1.0 + (perc / 100.0);
-		double current = next_price.get(g);
-		next_price.put(g,  current*scale);
+	public void scalePriceCarrying(Market m, Good g, double perc) {
+		double cur = (next_price.get(g) == null) ? initial_price.get(g) : next_price.get(g);
+		double scale = Math.abs(perc) / 100.0;
+		if (scale < 0.0 || Double.isInfinite(scale) || Double.isNaN(scale)){
+			scale = 1.0;
+		}
+		double new_price = cur * scale;
+		next_price.put(g,  new_price);
 		
 	
 	}
 
 
-
-	public void scaleProduction(Market m, Good g, double perc) {
-		double scale = 1.0 + (perc / 100.0);
-		if (scale < 0.0) {
+	public void scaleProductionCarrying(Market m, Good g, double perc) {
+		double cur = (next_production.get(g) == null) ? initial_production.get(g) : next_production.get(g);
+		double scale = Math.abs(perc) / 100.0;
+		if (scale < 0.0 || Double.isInfinite(scale) || Double.isNaN(scale)){
 			scale = 1.0;
 		}
-		double new_production = next_production.get(g) * scale;
+		
+		double new_production = cur * scale;
 		next_production.put(g, new_production);
+	}
+	
+	
+	public void setProductionOffsetInit(Market m, Good g, double qty){
+		double cur = initial_production.get(g);
+		next_production.put(g, cur+qty);
 	}
 
 

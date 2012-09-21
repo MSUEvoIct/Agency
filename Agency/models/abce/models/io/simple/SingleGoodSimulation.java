@@ -8,7 +8,7 @@ import abce.agency.MarketSimulation;
 import abce.agency.consumer.Consumer;
 import abce.agency.consumer.ReluctantSwitcher;
 import abce.agency.firm.Firm;
-import abce.agency.firm.SimpleFirm;
+import abce.agency.firm.FixedPricingFirm;
 import abce.agency.goods.DurableGood;
 import abce.agency.goods.Good;
 import abce.agency.production.ConstantCostProductionFunction;
@@ -56,7 +56,7 @@ public class SingleGoodSimulation extends MarketSimulation {
 
 		// Add firms
 		for (int i = 0; i < testNumFirms; i++) {
-			Firm f = new SimpleFirm(testConstantPrice);
+			Firm f = new FixedPricingFirm(testConstantPrice);
 			f.setPrice(good, testConstantPrice);
 			f.grantEndowment(testFirmEndowment);
 			f.startProducing(good, pf);

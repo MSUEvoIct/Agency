@@ -33,7 +33,7 @@ public class DisplayLast implements Procedure {
 		for (Market m : market.getMarkets()) {
 			double total_inventory = 0.0;
 			for (Firm f : market.getFirms()) {
-				System.err.println(f.getLastProduction(m.good) + "@$" + f.getPrice(m, null));
+				System.err.println(f.getProduction(m.good,0) + "@$" + f.getPrice(m.good, null, 0));
 			}
 		}
 

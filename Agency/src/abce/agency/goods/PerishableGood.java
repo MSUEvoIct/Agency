@@ -8,9 +8,24 @@ package abce.agency.goods;
  */
 public class PerishableGood extends Good {
 
+	public double fracSpoil = 0.0;
+	
+	public PerishableGood(String name, double s){
+		setName(name);
+		setFracSpoil(s);
+	}
+	
+	public void setFracSpoil(double s){
+		fracSpoil = s;
+	}
+	
+	public double getFracSpoil(){
+		return fracSpoil;
+	}
+	
 	@Override
 	public double spoil(double currentQty) {
-		return 0;
+		return (1-fracSpoil) * currentQty;
 	}
 
 }

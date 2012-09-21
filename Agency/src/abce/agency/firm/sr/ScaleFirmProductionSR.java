@@ -54,14 +54,14 @@ public class ScaleFirmProductionSR implements FirmProductionSR {
 
 	@Response
 	public void scaleProduction(double proc_perc) {
-		_firm.scaleProduction(_market, _good, proc_perc);
+		_firm.scaleProductionCarrying(_market, _good, proc_perc);
 	}
 
 
 
-	@Stimulus(name = "MyProduction(t-1)")
+	@Stimulus(name = "LastProduction")
 	public double productionLastPeriod() {
-		return _firm.getLastProduction(_good);
+		return _firm.getProduction(_good, 1);
 	}
 
 
@@ -70,8 +70,8 @@ public class ScaleFirmProductionSR implements FirmProductionSR {
 	public double totalInventory() {
 		double total = 0.0;
 		for (Firm f : _market.getFirms()) {
-			if (f.produces(_good)) {
-				total += f.getInventory(_market);
+			if (f.hasProduced(_good)) {
+				total += f.getInventory(_good, 1);
 			}
 		}
 		return total;
@@ -81,14 +81,14 @@ public class ScaleFirmProductionSR implements FirmProductionSR {
 
 	@Stimulus(name = "Inventory")
 	public double inventory() {
-		return _firm.getInventory(_market);
+		return _firm.getInventory(_good, 1);
 	}
 
 
 
 	@Stimulus(name = "Price")
 	public double getPrice() {
-		return _firm.getPrice(_market, null);
+		return _firm.getPrice(_good, null, 1);
 	}
 
 

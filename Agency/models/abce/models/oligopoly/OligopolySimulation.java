@@ -12,6 +12,7 @@ import abce.agency.consumer.PerfectlyRationalConsumer;
 import abce.agency.firm.Firm;
 import abce.agency.goods.DurableGood;
 import abce.agency.goods.Good;
+import abce.agency.goods.PerishableGood;
 import abce.agency.production.ConstantCostProductionFunction;
 import abce.agency.production.ProductionFunction;
 import abce.util.events.EventProcedureDescription;
@@ -51,11 +52,12 @@ public class OligopolySimulation extends MarketSimulation {
 	public OligopolySimulation(long seed, String config_path, int gen) {
 		super(seed);
 		super.generation = gen;
-
-		good = new DurableGood("testgood");
+		loadConfiguration(config_path);
+		
+		good = new PerishableGood("testgood", _config.good_spoilage_frac);
 		m = new Market(good);
 
-		loadConfiguration(config_path);
+		
 	}
 
 
@@ -111,8 +113,8 @@ public class OligopolySimulation extends MarketSimulation {
 	public void setupFirm(Firm f) {
 		f.grantEndowment(_config.firm_endowment);
 		f.startProducing(good, pf);
-		f.setPrice(good, _config.firm_initial_price);
-		f.setLastProduction(good, _config.firm_initial_production);
+		f.setInitialPrice(good, _config.firm_initial_price);
+		f.setInitialProduction(good, _config.firm_initial_production);
 		forceMarketEntry(f, m);
 		addFirm(f);
 	}
