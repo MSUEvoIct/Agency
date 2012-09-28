@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <LINK REL=StyleSheet HREF="style.css" TYPE="text/css" MEDIA=screen>
+<script type="text/javascript" src="generated_toc.js"></script>
 <title>Agency</title>
 </head>
 <body>
@@ -22,6 +23,10 @@
 		paradigm, but we hope not so much that it, or at least parts of it,
 		might be distributed as a contributed module of ECJ.
 	</div>
+
+
+	<div id="generated-toc"></div>
+
 
 	<h1>Overview</h1>
 	<p>Using evolutionary computation in agent-based models requires
@@ -45,20 +50,62 @@
 		translated into actions that are intelligible to the ACE domain model.</p>
 
 
+	<h1>Agent Diversity</h1>
+	<h2>Justification</h2>
+	<p>One of the central features of the Agency is that it allows evolutionary
+		simulation models to use agents not just with heterogenous genomes, but
+		with heterogenous evolutionary representations as well.  The purpose
+		of this feature is to address (and hopefully remediate) results that
+		are driven more by artifacts of the modeling process than the
+		underlying phenomenon.  This should serve to strengthen the external
+		valdity of the ACE model.  Without this kind of diversity, a significantly
+		smaller part of the strategy space can be expressed, which, due to the
+		complexities of evolutionary game theory, can significantly effect 
+		the results.</p>
+		
+	<p>While the strategy space may be effectively infinite, in the sense that
+		it dwarfs available computational resources, using only a single 
+		learning/behavioral algorithm greatly narrows the strategies that
+		can be explored.  The results may be quite different if a classifier
+		system is used as opposed to a genetic algorithm as opposed
+		to reinforcement learning as opposed to a hybrid of one or more
+		learning algorithms and some human intuition of the modeler.  If
+		the results vary based on these arbitrary decisions of model
+		implementation, how can we possibly have any faith in the model's
+		results?  Allowing different evolutionary representations and perhaps
+		even non-EC learning methods allows a more systematic exploration
+		of these different approaches.  Perhaps one set of strategies
+		is strongly dominated by all other strategies?  If all are subject
+		to evolutionary pressure, the 
+
+
+	<h2>Implementation Difficulties</h2>
+	<h3>Suitability of Existing Evolutionary Computation Packages</h3>
+	
+	
+	<h3>Implementation Time for Agents of Different Representations</h3>
+	<p>The mere theoretical ability to allow coevolution of agents with
+	different learning algorithms less meaningful if the difficulty of
+	implementing agents that use these methods and the time required to
+	do so prevents researchers from taking advantage of this capability.
+	Therefore, facilitating the application of these learning methods in
+	the code of ACE agents is of critical practical importance.
+	</p>
+
 
 	<h1>The Interface between ECJ and Agency Models</h1>
 	<p>
 		In many problem domains in evolutionary computation, the calculation
 		of fitness for any one individual is relatively simple. This can be
 		seen in the way ECJ uses its <a
-			href="http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/Problem.html">ec.Problem</a>
+			href="http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/Problem.html"><code>ec.Problem</code></a>
 		interface. The typical case for many EC problems is that each
 		individual can be evaluated in isolation, apart from the other
 		individuals in the population. ECJ does include some facilities for
 		evolution in groups (see the ECJ documentation on <a
-			href="http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/coevolve/GroupedProblemForm.html">GroupedProblemForm</a>,
+			href="http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/coevolve/GroupedProblemForm.html"><code>GroupedProblemForm</code></a>,
 		<a
-			href="http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/coevolve/MultiPopCoevolutionaryEvaluator.html">MultiPopCoevolutionaryEvaluator</a>,
+			href="http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/coevolve/MultiPopCoevolutionaryEvaluator.html"><code>MultiPopCoevolutionaryEvaluator</code></a>,
 		and §7.1 of the <a
 			href="http://cs.gmu.edu/~eclab/projects/ecj/docs/manual/manual.pdf">ECJ
 			Owner's Manual</a>), but it is unclear that the existing system can be
@@ -68,10 +115,10 @@
 		likely that implementing the agent grouping process we intend will be
 		easier to accomplish with code, and the integration of that code with
 		the ECJ interface is, at this point, relatively trivial.
-
 	</p>
 
-	<h2>Agent Diversity</h2>
+	<h2>Agent Diversity: Implementation</h2>
+	
 
 	<h2>Agent Grouping</h2>
 	<p>There are a number of different issues that need to be taken
@@ -160,7 +207,7 @@
 		contribution to the ECJ system, and may be a separate fertile area for
 		research publication as well.</p>
 
-	<p>One mechanistic issue that would need to be addressed in such an
+	<p>One issue that would need to be addressed in such an
 		implementation is that a single ECJ population will, in some cases and
 		including our own ACE domain model, require an additional layer of
 		grouping. For instance, while all NSP individuals should be part of
@@ -173,7 +220,20 @@
 		should be possible relatively easily by using configuration parameters
 		passed through ECJ's evolve.conf to the new/modified ECJ breeder.</p>
 
-	<h2>Threads</h2>
+	<h3>Weighted Sampling from Sub-Populations</h3>
+	<p>If may be appropriate to separate the size of the populations
+		from the frequency for which they are selected for inclusion in
+		domain-model simulations, perhaps to ensure a minimum population size.
+		In that case, pure scaling of the sub-population may not be
+		sufficient. On the other hand, keeping a large population size even
+		when the individuals are infrequently chosen for inclusion in
+		domain-model simulations would make evaluation of the entire
+		sub-population quite difficult; it may require an excessive number of
+		evaluations for other sub-populations or other tricks. It may be
+		appropriate to combine weighted sampling with bounded sub-population
+		scaling, or to simply ignore the issue for now.</p>
+
+	<h2>Threaded Evaluation</h2>
 	<p>ECJ's MultiPopCoevolutionaryEvaluator is single-threaded. Since
 		CPUs have been scaling recently by adding processor cores rather than
 		increasing the clock speed of existing cores, a multi-threaded
@@ -187,7 +247,7 @@
 
 	<p>
 		Unlike ECJ's <a
-			href="http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/simple/SimpleEvaluator.html">SimpleEvaluator</a>,
+			href="http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/simple/SimpleEvaluator.html"><code>SimpleEvaluator</code></a>,
 		which evaluates each individual in the population separately, we
 		cannot simply divide the population into separate subsets for each
 		thread to evaluate independently. Instead, we need to create groups of
@@ -195,7 +255,7 @@
 		be constructed primarily based on characteristics other than the
 		thread that happens to be executing them. Our approach is instead to
 		use the <a
-			href="http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/ThreadPoolExecutor.html">ThreadPoolExecutor</a>
+			href="http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/ThreadPoolExecutor.html"><code>ThreadPoolExecutor</code></a>
 		that was included as of Java 1.5. Instances of the domain model are
 		required to implement the Java Runnable interface, so that they can be
 		scheduled for execution. However, the current threading implementation
@@ -208,6 +268,125 @@
 	</p>
 
 
+	<h1>Patterns for Domain Simulations</h1>
+	<h2>Interfaces for Agents</h2>
+	<p>
+		One of the central features of this package is, as stated above, the
+		ability to co-evolve different representations of individual agents
+		performing the same role within the domain simulation. As Java does
+		not allow <a href="http://en.wikipedia.org/wiki/Multiple_inheritance">Multiple
+			Inheritance</a>, this requires that the domain model and individual
+		agents interact with each other through a Java interface. For example,
+		here are the interfaces and implementation shell of the iterated
+		prisoner's dilemma model and a specific agent representation that uses
+		a genetic algorithm similar to those described in previous work by
+		Axerlrod.
+	</p>
+
+	<pre>
+public interface IteratedPDAgent {
+	public boolean defect(IteratedPDSimulation state);
+}
+</pre>
+
+	<p>
+		Each of the specific agent classes, which in simple cases are likely
+		to inherit from an ECJ
+		<code>Individual</code>
+		class, must then implement that interface. As described in the section
+		below on passing state information, it may not have been the best idea
+		simply to pass the entire simulation state. Instead, the agent could
+		have been passed a pair of binary arrays, each describing either this
+		agent's or its opponents defections in the past <i>n</i> rounds. In
+		any case, the class of the object representing this agent (i.e., the
+		instance of Individual) must implement the interface. Again, from the
+		iterated prisoners dilemma example:
+	</p>
+
+	<pre>
+public class IteratedPDAgentGA implements IteratedPDAgent {
+	...
+	public boolean defect(IteratedPDSimulation state) {
+		
+		Boolean toDefect = null;
+		boolean[] myDefections = state.getDefections(this);
+		boolean[] opponentDefections = state.getDefections(state.getOtherAgent(this));
+		
+		// if step 1, just take our decision directly from the genome.
+		if (state.step == 0) {
+			toDefect = ind.genome[0x54];
+		}
+		...
+	}
+}
+</pre>
+
+
+
+	<p>
+		The interface defines what the agents need to do within the
+		simulation. It has a few advantages over the simple step(state) method
+		used by Mason in the ACE problem domain. Specifically, controlling the
+		order of operations if often an important part of the domain model,
+		and it is not always desirable for all agents to perform all their
+		functions at once. However, when the order in which agents are
+		executed <em>within</em> an action phase is important, care should be
+		taken not to introduce any additional artifacts into the simulation.
+	</p>
+
+
+	<p>Once the agent interface has been defined, the simulation
+		interacts with the agents using that interface. For example, the main
+		loop of the iterated prisoner's dilemma simulation is excerpted below.
+		No matter what internal genetic representation or strategies are used
+		within the agents, as long as they implement the same interfaces for
+		communication with the simulation, they can all act and co-evolve
+		within the same simulation.</p>
+
+	<pre>
+for (int i = 0; i < this.stepsToRun; i++) {
+	// Ask agents whether or not they're defecting
+	boolean firstDefected = firstDefections[step] = first.defect(this);
+	boolean secondDefected = secondDefections[step] = second.defect(this);
+	...
+}
+</pre>
+
+
+	<h2>Separation of State Information</h2>
+
+	<p>It is important that agent-model instance specific information
+		not be stored in the Individual object from ECJ. The reason for this
+		restriction is that the individual is likely to be run in several
+		different simulations, perhaps simultaneously, and state information
+		would become corrupted in this case. There may also be issues with
+		storing that state across generations if the objects for the agents
+		and the ECJ representations are merged. (i.e., as opposed to creating
+		a separate agent object once each domain-model evaluation)The other
+		advantage of this approach is that the state information would be
+		stored in one place so that it would be easier to understand the
+		entire simulation state (i.e., not having state information scattered
+		elsewhere in the object graph)</p>
+
+	<p>Rather, the suggestion is to keep model and agent state within
+		the domain model and in as few separate objects as reasonably
+		possible, to make the state easier to fully understand and document
+		Instead, state information should be passed to individuals through
+		the agent API.</p>
+
+	<p>In the case of relatively simple models, it maybe appropriate to
+		pass in the objects relevent to the decision directly. While this
+		requires the simulation to marshal those resources when calling the
+		agent API, it does make that API more clearly defined. In the case of
+		more complicated models, it may be appropriate to pass in the entire
+		simulation state and have the code within the individual itself handle
+		the task of gathering the appropriate information from the simulation
+		state. At the least, this will probably include some identifier to
+		match the individual with a specific agent within the domain-model
+		simulation. If agents have a more detailed state, it is likely
+		appropriate to create a separate object representing the state of one
+		particular agent. That agent state can then be passed to the
+		individual as part of the agent API.</p>
 
 
 
@@ -258,21 +437,4 @@
 	<p>
 		The main documentation is available <a
 			href="models/oligopolyInvestment.html">here</a>.
-	<h1>Ideas for Future Development</h1>
-	<h2>Separation of State Information</h2>
-	<p>In the past, there have been a few minor issues caused storing
-		state within an individual agent class and that object being shared by
-		multiple simulation threads simultaneously. There may also be issues
-		with storing that state across generations if the objects for the
-		agents and the ECJ representations are merged. (i.e., as opposed to
-		creating a separate agent object multiple times for each evaluation
-		and generation of the same individual.) The alternative would be for
-		agents to ask the simulation object for their own state. The other
-		advantage of this approach is that the state information would be
-		stored in one place so that it would be easier to understand the
-		entire simulation state (i.e., not having state information scattered
-		elsewhere in the object graph)</p>
-
-
-</body>
 </html>

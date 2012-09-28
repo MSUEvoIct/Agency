@@ -1,8 +1,11 @@
+
+
+
 body{
 	counter-reset: section;
 	padding-left: 1.5cm;
 	padding-right: 1.5cm;
-	font-family: Verdana,sans-serif;
+	font-family: "CMU Bright",sans-serif;
 	font-size: 0.875em;
 }
 
@@ -57,6 +60,24 @@ cite {
 	color: #880044;
 }
 
+pre {
+	font-family: "Source Code Pro", "Courier New";
+	margin-left: 1cm;
+	margin-right: 1cm;
+	margin-top: 0.7cm;
+	padding: 0.5cm;
+	background-color: #eeeeee;
+	min-width: 50%;
+}
+
+code {
+	font-family: "Source Code Pro", "Courier New";
+	font-size: 10pt;
+	background-color: #eee;
+	padding: 1px;
+}
+
+
 .fn_text {
 	display: none;
 }
@@ -78,7 +99,6 @@ text-align: left;
 text-indent: -1cm;
 padding-left: 2cm;
 }
-
 
 h1:before {
 	content: counter(section, upper-roman) ". ";
