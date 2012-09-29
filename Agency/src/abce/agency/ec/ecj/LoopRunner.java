@@ -31,8 +31,8 @@ public class LoopRunner implements AgencyRunner {
 
 	@Override
 	public void runSimulations(GroupCreator gc, FitnessListener fl) {
-		// TODO Auto-generated method stub
-
+		int simulationID = 0;
+		
 		while (gc.hasNext()) {
 			Set<Individual> group = gc.nextGroup();
 			AgencyECJSimulation sim = getSim();
@@ -41,6 +41,9 @@ public class LoopRunner implements AgencyRunner {
 			for (Individual ind : group) {
 				sim.addIndividual(ind);
 			}
+			
+			sim.setGeneration(evoState.generation);
+			sim.setSimulationID(simulationID++);
 			
 			sim.run();
 
