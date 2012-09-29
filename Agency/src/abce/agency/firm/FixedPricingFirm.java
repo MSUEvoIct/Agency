@@ -4,6 +4,7 @@ package abce.agency.firm;
 import sim.engine.SimState;
 import abce.agency.Market;
 import abce.agency.actions.ProductionAction;
+import abce.agency.actions.SetPriceAction;
 import abce.agency.goods.Good;
 
 
@@ -16,7 +17,7 @@ import abce.agency.goods.Good;
  * @author kkoning
  * 
  */
-public class SimpleFirm extends Firm {
+public class FixedPricingFirm extends Firm implements ProducingPricingFirm {
 
 	/**
 	 * 
@@ -26,25 +27,30 @@ public class SimpleFirm extends Firm {
 
 
 
-	public SimpleFirm(double price) {
+	public FixedPricingFirm(double price) {
 		this.price = price;
 	}
 
 
 
-	protected void price()
+	public void price()
 	{
-
+			for (Good g: this.active_goods){
+				SetPriceAction pa = new SetPriceAction(this, g, price);
+				pa.process();
+			}	
 	}
 
 
 
-	protected void produce() {
+	public void produce() {
 		/*
 		 * Produce as decribed in the object description...
 		 */
+		
+		// TODO: Is iterating over markets necessary?
 		for (Market m : this.markets) {
-			for (Good g : this.goods) {
+			for (Good g : this.active_goods) {
 				double naturalPersons = m.getNumberOfPeople();
 				ProductionAction pa = new ProductionAction(this, g, naturalPersons / 20.0);
 				pa.process();

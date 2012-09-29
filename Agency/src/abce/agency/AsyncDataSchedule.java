@@ -42,13 +42,15 @@ public class AsyncDataSchedule extends Schedule {
 
 	@Override
 	public synchronized boolean step(SimState state) {
-		// run the schedule as normal.
-		boolean toReturn = super.step(state);
-
 		// Process this step's updates.
 		for (AsyncUpdate updater : asyncUpdaters) {
 			updater.update();
 		}
+		
+		// run the schedule as normal.
+		boolean toReturn = super.step(state);
+
+		
 
 		return toReturn;
 	}

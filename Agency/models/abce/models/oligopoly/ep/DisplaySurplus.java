@@ -33,7 +33,7 @@ public class DisplaySurplus implements Procedure {
 		for (Market m : market.getMarkets()) {
 			double total_inventory = 0.0;
 			for (Firm f : market.getFirms()) {
-				total_inventory = (f.produces(m.good)) ? f.getPastQtyProduced(m.good, 1) : 0.0;
+				total_inventory = (f.hasProduced(m.good)) ? f.getInventory(m.good, 1) : 0.0;
 			}
 			buf.append(m.good.id + "-->" + String.valueOf(total_inventory) + " ");
 			System.err.println(buf.toString());

@@ -187,7 +187,7 @@ public abstract class Consumer extends Agent implements AsyncUpdate {
 				if (o.maxQty <= qtyToConsume) // can be satisfied with first
 												// offer
 					qtyFromThisFirm = o.maxQty;
-				double instantInventory = o.firm.getInventory(o.market);
+				double instantInventory = o.firm.getInventory(o.market.good, 0);
 				if (instantInventory <= qtyToConsume) // can be satisfied with
 														// first offer
 					qtyFromThisFirm = instantInventory;
