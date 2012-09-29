@@ -1,4 +1,4 @@
-package abce.models.io.investment;
+package abce.models.io.iterated.cournot.investment;
 
 import abce.agency.finance.Accounts;
 

@@ -1,4 +1,4 @@
-package abce.models.io.investment;
+package abce.models.io.iterated.cournot.investment;
 
 import ec.vector.FloatVectorIndividual;
 

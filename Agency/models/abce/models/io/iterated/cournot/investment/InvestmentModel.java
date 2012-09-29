@@ -1,4 +1,4 @@
-package abce.models.io.investment;
+package abce.models.io.iterated.cournot.investment;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
