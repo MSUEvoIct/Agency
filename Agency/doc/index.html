@@ -437,4 +437,63 @@ for (int i = 0; i < this.stepsToRun; i++) {
 	<p>
 		The main documentation is available <a
 			href="models/oligopolyInvestment.html">here</a>.
+
+        <h1>Utilities</h1>
+        <h2>File Manager</h2>
+           <p>Because of the large amount of data that can possibily be produced
+           over the course of a set of experimental replicates, there was a
+           tradeoff that needed to be considered between "many small" and "few
+           large" output files.  For example, individual simulation files could be
+           kept separate from one another with a new set of files for each
+           simulation; but for an experiment of any appreciable size, the number of
+           files would quickly become unmanagable, especially with file storage
+           systems not optimized for small files (such as the MSU HPC in many
+           regards).</p>
+
+           <p>On the "few small" side, an extreme would require all data to be
+           put into a centralized database or binary file (HDF5, for example).
+           However, the overhead involved for this type of solution was
+           difficult to justify, and the long-term storage of data also needed
+           to be considered for future readability.  The system that we chose
+           was to have a synchornizing file manager that produces table-like CSV
+           files for output that are shared between evaluation threads and exist
+           over the course of individual replicates.  This allows for (1)
+           replicates to keep their outputs separate, preventing system crashes
+           from corrupting entire experiments, (2) keeps the number of files
+           small, allowing for easier file handling, and (3) keeps the files
+           human readable.  This means that long-term storage would not be a
+           problem, and also frees us from having to rely upon a single data
+           analysis package.</p>
+
+            <p>Because the File Manager needs to synchronize output between
+            evaluation threads, it is a singleton object stored on the EC side
+            of the simulation and accessible by all evaluation simulations.</p>
+
+            <p>More information about the <a href="utils/FileManager.html">File
+              Manager is located here</a>.</p>
+
+        <h2>EventProceedure Manager</h2>
+          <p>One of the first major challenges of this project was to capture
+          just enough data to be useful but not so much that the analysis became
+          an overwhelming (and time consuming) chore.  The simpilest way to
+          implement this type of data restriction, and one that was implemented
+          initially, was to only output data with some set of output methods
+          that got triggered under some conditions, usually when the a
+          particular generation/simulation step modulo some value equaled zero.
+          This reduced the amount of data being produced.  However, this general
+          pattern could be extended in numerous ways to create a system where
+          any set of simulation states could trigger a particular proceedure to
+          be triggered.  We created the EventProcedure Manager to handle the
+          processing of simulation state and the triggering of proceedures when
+          certain conditions are met.</p>
+
+          <p>Unlike the FileManager, the the ECJ side of the system and each
+          individual simulation thread has its own EventProcedure management
+          system.  However, the ECJ side can influence the events and triggers
+          of the individual threads by nesting trigger requirements.</p>
+
+          <p>More information about EventProcedures, and the EventProcedure
+          Managers <a href="utils/EventProcedures.html">can be found here</a>.
+
+
 </html>

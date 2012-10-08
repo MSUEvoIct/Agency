@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<LINK REL=StyleSheet HREF="../style.css" TYPE="text/css" MEDIA=screen>
+<script type="text/javascript" src="generated_toc.js"></script>
+<title>Event Procedure Utilities</title>
+</head>
+<body>
+
+  <h1>Summary</h1>
+
+  <p>Events are places in code that pass state information to an
+  EventManager.  The manager checks to see whether or not the event in
+  combination with a passed piece of state information should cause any
+  objects that implement the Procedure interface to be executed. For example, 
+  ECJ's EPSimpleEvolutionState implements its own event manager that
+  checks generation time at four different points in the code to see if any
+  Procedures need to be triggered.  These events are:</p>
+
+  <table>
+    <tr style="font-weight:bold">
+      <td>EventName</td>
+      <td>State Checked</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td>PREEVALUATION</td>
+      <td>generation</td>
+      <td>Occurs before the evaluator is executed.</td>
+    </tr>
+    <tr>
+      <td>POSTEVALUATION</td>
+      <td>generation</td>
+      <td>Occurs after the evaluator is finished, but before the breeder is
+        executed.</td>
+    </tr>
+    <tr>
+      <td>POSTBREEDING</td>
+      <td>generation</td>
+      <td>Occurs after the breeding is complete; the execution loop ends prior
+        to this location in code if the maximum generation is reached.</td>
+    </tr>
+    <tr>
+      <td>GENERATION</td>
+      <td>generation</td>
+      <td>This event indicates that the EC event manager should prepare what
+        follows as an event procedure configuration for the domain model.  In
+        other words, events can be triggered in the domain model on a
+        per-generation manner, coordinated by the ECJ event manager.</td>
+    </tr> 
+  </table>
+
+  <p>A Procedure is an object that implements the Procedure interface.  Objects
+  which implement this interface are constructed, initialized, and executed
+  by when an event triggers them.</p>
+
+  <p>The figure below shows an overview of the classes used to implement the
+  Event Procedure utilities.  The remainder of this document will describe some
+  of the classes in more detail, and it will provide example uses.</p>
+
+  <div class="image">
+    <img width=1000 src="EP-Diagram.png">
+    <div>A class diagram of the Event Procedure utilities</div>
+  </div>
+
+
+  <h1>Event Procedure Manager</h1>
+
+
+  <p>An event procedure manager creates Event Procedures, provides a byte-value
+  to event mapping, and handles the processing of events.</p>
+
+  <p>It's the responsibility of the Event Procedure Manager to only (1) parse
+  Event Procedure Descriptions and prepare the containers; (2) check to see whether
+  or not the container has a set of events to be triggered after passing state
+  information to the appropriate container as determined by its internal event_type
+  byte to event container mapping; (3) execute the procedures as instructed by
+  the containers; (4) inform all containers to release all Procedure resources.</p>
+
+  <p>Specific parts of the system implement their own event manager.  For
+  example, the ECJ EPSimpleEvolutionState class implements an
+  ECJEventProcedureManager that handles the events mentioned in the summary,
+  and the Oligopoly model uses the MSEventProcedureManager (MarketSimulation)
+  to handle its own internal triggers (currently, only the <tt>STEP</tt> event,
+  which happens at the end of a step).</p>
+
+  <p>Non-abstract (e.g. concrete) instances of the EventManager should handle their
+  own mapping of <tt>EVENT_TYPE</tt> to byte values, provide means of accessing
+  these byte values in a public fashion for objects to send as part of the
+  arguments of a <tt>process(...)</tt> method, set up internal containers to
+  store EventProcedures, read and process strings to create
+  EventProcedureDescriptions, and populate the containers with the resulting
+  EventProcedures described by the aforementioned descriptions.  Processing and
+  finishing must also be handled by any concrete EventProcedureManager.  The
+  base class for the Event Procedure Manager only provides utility static
+  methods for parsing event procedure description files and strings.</p>
+
+
+<h2>Event Procedure Descriptions</h2>
+
+  <p>Event Procedure Descriptions  are objects that are created by the Event
+  Procedure Manager.  Upon creation, they are used to instantiate Event
+  Procedure objects; the original Event Procedure Description is stored along
+  with the Event Procedure.</p>
+
+  <p>Event Procedure Descriptions are configured by a single-line string in the
+  form:</p>
+
+  <pre>
+EVENT_TRIGGER [when] ~ PROCEDURE_CLASS [key0=val0, ...]
+</pre>
+
+  <p>There are two halves to the string configuration: the event side and the
+  procedure side; they are delimited by a tilde. </p>
+
+  <p><tt>EVENT_TRIGGER</tt> is a string literal (e.g. one of the four
+  mentioned in the Summary section of this document), <tt>when</tt> parametrizes
+  the event with state information.  For example, it may be an Interval string
+  in the form of "start:step:start" to describe conditions when the event should
+  trigger.  The tilde separates the two halves of the event procedure
+  description string.  Tildes should not be used anywhere in the first half of
+  the event description, but may be used on the procedure side of the
+  statement.</p>  
+  
+  <p><tt>PROCEDURE_CLASS</tt> is the canonical pathname to a class that
+  implements the <tt>Procedure</tt> interface.  The final set of of values are
+  key/value pairings in the form of <tt>key=value</tt>.  These arguments are
+  passed to Procedures during their initial construction to alter the default
+  behavior of Procedures (e.g. to handle things like changing the default file
+  name).</p>
+
+  <p>The Event Procedure Manager base class has static helper methods to read
+  strings describing EventProcedureDescriptions from a configuration file
+  compatible with <a href="FileManager.html">CommentStrippedInFiles</a> and
+  individual strings.  The Event Manager then converts these
+  EventProcedureDescriptions into EventProcedures and places them in the
+  appropriate container.</p>
+
+  <h2>Triggering Event Procedures</h2>
+  <p>Objects that use the Event Procedure Manager communicate state information
+  with it via the manager's <tt>process(event_id, context, exec_context)</tt>
+  method.  The event_id is a byte that corresponds to a particular event container
+  (these bytes are stored in the EventProcedureManager as final objects), a
+  context to send to the container to see whether the event should be triggered
+  (e.g.  generation time), and a variadic execution context, which allows for
+  additional information to be passed to the procedure (e.g. a list of
+  genotypes or a triggering firm, etc.).</p>
+
+  <p>Before the Event Manager is destroyed (or the simulation ends), all
+  objects which contain an Event Procedure Manager should call its finish()
+  method to inform all Procedures to safely release resources.</p>
+
+  <h1>Event Procedure</h1>
+
+  <p>Event Procedures are simply events (represented by byte ID) paired
+  with an object called an Event Procedure Description.  The description
+  provides information about when to trigger the event, where to locate the
+  Procedure class to trigger, and any configuration information (in the form
+  of key/value maps) that should be passed to the Procedure when it is
+  initialized.<p>
+
+  <h2> Types of Event Procedures </h2>
+
+  <p>Currently, an Event Procedure may be one of two types:<p>
+
+  <ul>
+    <li>ValuedEventProcedure: receives a double as a context and uses an
+    interval object to keep track of what should be triggered.  Contexts are
+    assumed to be monotonic and non-repeating.  An interval object has a
+    start, step, and end values, which are used to create a regular pattern
+    of states.  For example, the pattern 0:5:20 will be triggered when the
+    value passed to the EventProcedure's container is either {0,5,15}, ordered.
+    In configuration files, a single value of the string "end" will cause the
+    event to only be triggered at the end.  "end" is also a valid end value.
+    For example, the interval 0:5:end when generation number 19 is the last
+    generation number for an experiment, for example, would be triggered
+    during generations {0,5,15,19}.</li> <li>ContextFreeEventProcedure: the
+    state information is not checked; any container that implements a context free
+    event procedure always executes all events in the container.</li> </ul>
+
+  <h2>Lifecycle of an Event Procedure</h2>
+
+  <p>Perhaps the best way to describe what an Event Procedure is will be to
+  write out its lifecycle.</p>
+
+  <h3>Creation</h3>
+  <ol>
+    <li>An Event Procedure is described by an Event Procedure Description.  It
+    is a string with the form mentioned in one of the sections above.  The Event
+    Procedure Manager has helper methods to generate Event Procedure
+    Descriptions from strings or files.
+    <li>Event Procedure Descriptions are turned into Event Procedures.  Because
+    <tt>EVENT_TYPE</tt>s are dependent upon their specific usage, it is the
+    responsibility of a concrete Event Procedure Manager to parse the string
+    literal describing the <tt>EVENT_TYPE</tt>, assign it a byte value for later
+    mapping, and appropriately instantiating the Event Procedure.  For example,
+    in the ECJEventProcedureManager, POSTEVALUATION is interpreted by the
+    concrete manager as having a byte mapping of 2 and should be instantiated as
+    a ValuedEventProcedure.
+    <li>The created EventProcedure is stored in the appropriate container.  In
+    the example used in the last point, the EventProcedure would be placed in a
+    ValuedEventProcedureQueue.
+  </ol>
+
+  <h3>Triggering</h3>
+  <ol>
+    
+    <li>In the source code, a statement exists in the form:
+    <tt>process(event_id, event_context, execution_context)</tt>.  For the
+    POSTEVALUATION example, the statement would look like:
+    
+<pre>
+event_manager.process(event_manager.EVENT_POSTEVALUATION, state.generation, state)
+</pre>
+    
+    <li>The event manager would then find the event procedure containers that
+    map to the <tt>EVENT_POSTEVALUATION</tt> event id and pass
+    <tt>state.generation</tt> to the container's processContext method.
+    
+    <li>The event procedure container queries its EventProcedures by calling
+    their examine() method.  examine() returns an EventContext object that
+    informs the container whether or not the event needs to be triggered.
+    Currently, Event Procedures that return a value of <tt>PAST</tt> or
+    <tt>CURRENT</tt> are interpreted as being ready for execution.
+    
+    <li>All event procedures matching (or preceding) the generation state
+    information (in this example) would be removed from the container as they
+    would return a <tt>PAST</tt> or <tt>CURRENT</tt> event context.  These
+    procedures incremented to their next trigger value and replaced in the
+    container (the internal container is a priority queue for
+    ValueEventProcedures) unless they indicate they are done.  The
+    EventProcedures that should be triggered are returned to the Event Manager
+    for further processing.
+    
+    <li>The Event Manager then instructs each returned EventProcedure to execute
+    its Procedure.
+
+    <li>In the EventProcedure's execute method, the Procedure is created via
+    reflection using the EventProcedureDescription if it has not already been
+    created and setup using the Procedure's setup interface method.
+    
+    <li>The Procedure's execute() method is called with the
+    <tt>execution_state</tt> information passed along to the Procedure.  In the
+    example above, this would be the entire evolution state.  Multiple execution
+    context objects may be passed.
+
+    <li>The Procedure created by the EventProcedure is kept in the creating
+    EventProcedure.  Creation occurs only once (or not at all if the
+    EventProcedure is never triggered.)
+
+  </ol>
+
+  <h3>Destruction</h3>
+      <ol>
+        <li>At the end of an Event Manager's life, it should call the finish()
+        method on all containers.
+        <li>All containers call finish() on all EventProcedures
+        <li>The EventProcedures call finish() its Procedure, if it has
+        been instantiated.
+        <li>The Procedure should release any resources it may have acquired over
+        the course of its lifetime
+      </ol>
+  
+  
+  </ol>
+
+
+  <h1>Procedures</h1>
+
+  <p>Procedures are simply objects that implement the Procedure interface:</p>
+
+<pre>
+public interface Procedure extends Serializable {
+
+  public void setup(EventProcedureArgs args) throws BadConfiguration;
+
+  public void process(Object... context) throws Exception;
+
+  public void finish();
+
+}
+</pre>
+
+  <p>where <tt>setup()</tt> is called after the object is created but before it
+  is processed; <tt>process(...)</tt> is the method that is called when the
+  procedure is executed, receiving any <tt>execution_context</tt> sent from the
+  triggering "hook" in the code, and <tt>finish()</tt> is called at the end of
+  a Procedure's life to release any resources.</p>
+
+  <p>Procedures can be custom tailored for particular applications; however, all
+  current Procedures rely upon passing state information to be useful (such as
+  an ECJ EvolutionState or a SimState object) as part of an execution context,
+  rather than keeping a reference to those objects.  Instead, one could imagine
+  a setup where the constructor binds these instances for the entire life of the
+  Procedure</p>
+
+  <p>where <tt>setup()</tt> is called after the object is created but before it
+  is processed; <tt>process(...)</tt> is the method that is called when the
+  procedure is executed, receiving any <tt>execution_context</tt> sent from the
+  triggering "hook" in the code, and <tt>finish()</tt> is called at the end of
+  a Procedure's life to release any resources.</p>
+
+  <p>Procedures can be custom tailored for particular applications; however, all
+  current Procedures rely upon passing state information to be useful (such as
+  an ECJ EvolutionState or a SimState object) as part of an execution context,
+  rather than keeping a reference to those objects.  Instead, one could imagine
+  a setup where the constructor binds these instances for the entire life of the
+  Procedure.  Indeed, one possible way to construct these domain-specific
+  procedures would be to create an abstract class that implements Procedure but
+  includes a more complicated constructor or setup method to perform these
+  bindings.</p>
+
+</body>
+</html>

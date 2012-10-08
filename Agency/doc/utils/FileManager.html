@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<LINK REL=StyleSheet HREF="../style.css" TYPE="text/css" MEDIA=screen>
+<script type="text/javascript" src="../generated_toc.js"></script>
+<title>Agency</title>
+</head>
+
+  <body>
+
+  <div id="generated-toc"></div>
+  <h1>Overview</h1>
+      <p>The FileManager coordinates the opening and closing of files.  It
+      achieves this by keeping a map of file paths to file handles.  If a file
+      path is not present in this mapping, the file is opened; if it is present,
+      the file object is returned.  For conveneicne, the file manager also keeps
+      track of a working directory in which all files are created.</p>
+
+      <p>The file manager and all file types created by the file manager should
+      be synchronized; this is because multiple threads may be writing to the
+      file at once.  For example, a single replicate experiment might be writing
+      pricing and production information every 10 steps; but there might be 100
+      of such threads possible, 10 running at a time.</p>
+
+      <p>Initialization of the filemanager is independent of its creation.  This
+      was a deliberate design decision to keep the constructor of the
+      filemanager consistant with ECJ's style of reflective creation via
+      newInstance().  (Otherwise we'd have to know the signature of the
+      constructor, and do additional checking for its creation.).  However, at
+      the moment, this type of reflective creation is not done, so the design
+      decision is maleable.  Currently, all initialization does is setup the
+      root (working) directory if it does not exist or throw an exception if the
+      directory path points to an extant regular file.</p>
+
+      <p>All file names should be passed as strings; there is no reason to
+      enforce this aside from making sure getter methods only have one type of
+      parameter signature.</p>
+
+      <p>When a file is requested, the method takes the name getFileType(String
+      path, ...).  The working directory is prepended to the path provided.  If
+      the file is already in the map of active files, the file object is
+      returned provided it matches the expected file type.  If it does not match
+      the expected file type, an IOException is thrown.  If the file path is not
+      in the active queue, then the file is opened as if it were new, replacing
+      the file on disk.</p>
+
+      <p><em>TODO: keep inactive list of files to make sure that only new files
+        are created; otherwise they should probably be created in appened rather
+        than truncate mode</em></p>
+
+      <p>Presently both the EC and domain models use the same file manager as to
+      coordinate actions.  I believe this design decision should be a
+      requirement in order to ensure no race conditions are created; a
+      centralized fIO facility is needed to ensure this.</p>
+
+      <p>Eventually, the file manager can handle the automatic closing of files
+      by keeping track of who is in posession of the file through a reference
+      count; at current, the file manager relies upon the user to close files
+      when they arefinished, typically at the end of the experiment.</p>
+
+  <h1>Output FileTypes</h1>
+
+  <p>All output files have synchronized write operations.</p>
+
+  
+  <h2>OutFile</h2>
+  
+  <p>Generic text output file.  It is not compressed.</p>
+
+  <h2>GZOutFile</h2>
+  <p>Compressed (Java gzlib) text output file.</p>
+
+  <h2>DelimitedOutFile</h2>
+    <p>Compressed delimited output file.  It is not a barebones CSV.  Creation
+    of a DelimitedOutFile requires not only a path, but a format string
+    specifying the names <em>and types</em> of the output fields.  This
+    information is used to (1) create a header at the top of the file for
+    automated parsing (shell-style hash comment at column 0), followed by a
+    string-style header delimited header row, followed then by each data
+    row.</p>
+
+  <h3>Example</h3>
+  <pre>
+  //Assuming fm is FileManager instance
+  final String format = "Column1%d,Column2%s,Column3%f";
+  DelimitedOutFile fot = fm.getDelimitedOutFile("foo.csv.gz", format);
+  fot.write(1,"second",3.0);
+  fm.close("foo.csv.gz");
+  </pre>
+
+  <h1>Input File Types</h1>
+  <em>TODO: Input files are not currently handled by the file manager; this was primarly since they don't get re-used in different threads at the same time and therefore didn't require coordination</em>
+
+  <h2>CommentStrippedInFile</h2>
+    <p>Allows for a file to be read using the TextScanner interface.
+    TextScanner allows for the next number, string, and non-blank line to be
+    read from the input file.  For more information about its intended behavior,
+    see java.util.Scanner.</p>
+
+    <p>In general, this file type attempts to strip out (1) blank lines; (2)
+    lines that begin with whitespace followed by a hash; (3) any text on a line
+    (inclusive) following a hash.  This allows for files to be read with more
+    complicated layouts than provided by the propertly list, including those
+    with same-line comments as value/pairs.</p>
+
+    <p>Currently, only events use this style of format.</p>
+
+
+  <h1>Examples</h1>
+      
+  <h2>Creating the FileManager</h2>
+  <p>
+<pre>
+FileManager fm = new FileManager();
+String working_dir = "from/exec/working/dir";
+try{
+  fm.initialize(working_dir);
+} catch (IOException e){
+  System.err.println("Unable to create working dir.");
+}
+</pre>
+  </p>
+
+  <h2>Accessing a file</h2>
+<pre>
+public void testFile(FileManager fm){
+  String file_to_open = "foo.csv.gz";
+  //Delimited files are compressed automatically
+  DelimitedOutFile fot = fm.getDelimitedOutFile(file_to_open);
+  //fot will be new if the filemanager doesn't have it listed
+  //as being active
+  DelimitedOutFile fot2 = fm.getDelimitedOutFile(file_to_open);
+  //fot2 will be the same object as fot  
+}
+</pre>
+

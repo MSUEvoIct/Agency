@@ -37,6 +37,9 @@ public class FileManager implements Serializable {
 
 
 
+	/**
+	 * Create a file manager object.  In the event of a system shutdown, all active files should be closed.
+	 */
 	public FileManager() {
 
 		// Ensure all files are closed when the VM exits
