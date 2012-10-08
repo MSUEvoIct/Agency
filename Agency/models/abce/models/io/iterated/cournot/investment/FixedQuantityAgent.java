@@ -1,4 +1,4 @@
-package abce.models.io.investment;
+package abce.models.io.iterated.cournot.investment;
 
 import ec.vector.FloatVectorIndividual;
 
@@ -14,5 +14,15 @@ public class FixedQuantityAgent extends FloatVectorIndividual implements Investm
 	public double setProduction(InvestmentModel sim, int marketNum) {
 		return genome[1];
 	}
+
+	@Override
+	public boolean equals(Object ind) {
+		if (this == ind)
+			return true;
+		else
+			return false;
+	}
+	
+	
 
 }

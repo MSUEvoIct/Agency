@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<LINK REL=StyleSheet HREF="../style.css" TYPE="text/css" MEDIA=screen>
+<script type="text/javascript" src="../generated_toc.js"></script>
+<title>Agency</title>
+</head>
+<body>
+
+
+ <div class="title">Agency: Iterated Cournot with Investment</div>
+
+ <p class=abstract>This model provides an economic environment where an
+  arbitrary number of firms can compete in an arbitrary number of markets for a
+  single good. Each firm has a cobb-douglas form production function, where the
+  amount of labor may be chosen freely each model time step but the level of
+  capital is a function of the investment of that firm over time. Consumers are
+  represented in the traditional fashion, as a demand curve where market
+  clearing is performed by a virtual Walrasian auctioneer.</p>
+
+ <div id="generated-toc"></div>
+
+
+ <h1>Model Description</h1>
+ <h2>Economics</h2>
+
+ <p>This ACE model uses an iterated version of the well-known and frequently
+  studied Cournot oligopoly model, with a few twists-</p>
+
+ <ul>
+  <li>Firms compete in a configurable number of different markets at the
+   same time. Combined production mechanic, this makes it possible that firms
+   can cooperate by dividing up the available markets.
+  <li>Firms have a cobb-douglas production function, so the cost of
+   production depends not only on the quantity produced but the amount of
+   capital invested. Related, firms have an opportunity to increase the size of
+   their investments each model time step.
+ </ul>
+
+ <h2>Procedural Description</h2>
+
+ <p>For each step the model runs, the following procedure is performed.
+ <ol>
+  <li>Each firm in the simulation, which is required to implement the <code>InvestmentFirm</code>
+   interface, is asked through the <code>InvestmentFirm.purchaseCapital()</code>
+   and <code>InvestmentFirm.setProduction()</code> functions to return the
+   amount of capital to be invested and the quantity of the good to produce.
+  <li>If either of these numbers would cause the firm to spend more
+   resources than it currently has available, the amount is reduced to the
+   maximum number that still prevents this condition. (Negative production and
+   investment are also prohibited, and replaced with 0.0.) This process takes
+   place once for each pair of firm and market in the simulation.
+  <li>After the resources have been deducted from the firms, the total
+   quantity of goods that has been produced in each market is determined, and,
+   based on the demand parameters specified in the configuration file, a market
+   price is calculated.
+  <li>Based on the market price and the quantity produced by each firm, the
+   firm's revenue is calculated and its resources are increased by that amount.
+
+
+
+
+  
+ </ol>
+
+ <p>After this loop has been completed the number of times specified in the
+  configuration file, the simulation is considered finished, and the fitness
+  scores are delivered to the Agency simulation scheduling system so they can be
+  aggregated and passed on to ECJ during the breeding phase.
+ <h2>Parameters</h2>
+
+ <p>This model has a number of different exogenous parameters which may be
+  changed by modifying the associated lines in the configuration file. The
+  parameters may effect both the quantitative and qualitative results of the
+  model. For example, if investment costs are very high, it seems more likely
+  that firms will divide up the available markets between themselves. There are
+  few other hypotheses that would be interesting to test, and these are
+  described in further detail below. Here is the list of parameters, along with
+  the key used in the configuration file to specify them.</p>
+ <ul>
+  <li>The number of markets</li>
+  <pre>eval.simrunner.sim.numMarkets = 2</pre>
+  <li>The cost of capital</li>
+  <pre>eval.simrunner.sim.capitalCost = 1</pre>
+  <li>The cobb-douglas exponent for capital</li>
+  <pre>eval.simrunner.sim.capitalExponent = 0.5</pre>
+  <li>The cost of labor</li>
+  <pre>eval.simrunner.sim.laborCost = 1</pre>
+  <li>The cobb-douglas exponent for labor</li>
+  <pre>eval.simrunner.sim.laborExponent = 0.5</pre>
+  <li>The maximum amount a consumer is willing to pay</li>
+  <pre>eval.simrunner.sim.maximumWTP = 1000</pre>
+  <li>A coefficient and exponent describing how consumer WTP decreases with
+   the number of consumers</li>
+  <pre>eval.simrunner.sim.qtyRatio = 1.0
+eval.simrunner.sim.qtyExponent = 1.0</pre>
+ </ul>
+
+
+
+ <h1>Code</h1>
+
+ <h2>Implementation</h2>
+
+ <p>
+  The code for this model is in models/ source directory, in the package <code>abce.models.io.iterated.cournot.investment</code>,
+  and the main simulation class is un-creatively named <code>InvestmentModel</code>.
+  The parameters for consumer demand may vary across markets, and are stored in
+  the public variables maximumWTP, qtyRatio, and qtyExponent.
+ </p>
+
+ <p>InvestmentModel implements the Java interface Runnable, so each model
+  may be executed in a separate thread if desired. The inner model loop is
+  specified in the InvestmentModel.run() function. First, the model steps all of
+  firms by calling their purchaseCapital() and setProduction() functions, in
+  that order. Once production is set, all markets are cleared by the
+  InvestmentModel.clearMarket() function. This function aggregates the
+  production quantities for each market, and uses the consumerWTP() function to
+  determine the market price. Each firm then receives an amount of revenue equal
+  to that price multiplied by that firm's amount of production. All that remains
+  for the model step is to perform the maintenance of state variables to reflect
+  the move to the next time step.</p>
+
+ <p>Firms are required only to implement the
+  abce.models.io.investment.InvestmentFirm interface. In addition to the
+  purchaseCapital() and setProduction() functions described above, firms are
+  required to implement interfaces that verify and actualize the actions for
+  purchasing capital and setting production, represented by the
+  CapitalPurchaseAction and ProductionAction classes respectively. This pattern
+  should insure that agents do not e.g., spend more resources on production than
+  they have available. A BasicInvestmentFirm class is also present to perform
+  these functions using the general-purpose accounting code provided by Agency.</p>
+
+ <h2>Tests</h2>
+
+ <h1>Evolutionary Strategies</h1>
+
+ <h1>Static Strategies</h1>
+
+ <h1>Data to Collect</h1>
+
+ <h1>Hypotheses to Test</h1>
+
+
+</body>
+</html>

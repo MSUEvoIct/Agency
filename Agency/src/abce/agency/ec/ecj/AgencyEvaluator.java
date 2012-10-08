@@ -85,9 +85,9 @@ public class AgencyEvaluator extends Evaluator implements FitnessListener {
 			}
 			Double fitnessAverage = fitnessSum / fitnessList.size();
 			
-			if (true) {
-				System.out.println(ind + " fitnesses -> " + fitnessList);
-			}
+//			if (true) {
+//				System.out.println(ind + " fitnesses -> " + fitnessList);
+//			}
 			
 			SimpleFitness sf = (SimpleFitness) ind.fitness;
 			sf.setFitness(evoState, fitnessAverage.floatValue(), false);
