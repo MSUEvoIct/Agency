@@ -7,7 +7,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 
-
+/**
+ * Generic text output file.  It is synchronized to allow for multiple threads to
+ * write to it.  It is not compressed by default.
+ * 
+ * @author ruppmatt
+ *
+ */
 public class OutFile {
 
 	protected PrintWriter		_writer;
