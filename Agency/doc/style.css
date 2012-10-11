@@ -3,6 +3,7 @@
 
 body{
 	counter-reset: section;
+	counter-reset: footnote;
 	padding-left: 1.5cm;
 	padding-right: 1.5cm;
 	font-family: "CMU Bright",sans-serif;
@@ -56,8 +57,8 @@ p {
 }
 
 cite {
-	counter-increment: footnote;
 	color: #880044;
+	counter-increment: footnote;
 }
 
 pre {
@@ -87,7 +88,7 @@ display: block;
 background-color: #eeeeee;
 font-weight: normal;
 color: #000000;
-position: absolute;
+position: fixed;
 font-style: normal;
 margin: auto;
 padding: 25px;

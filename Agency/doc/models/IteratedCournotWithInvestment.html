@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <LINK REL=StyleSheet HREF="../style.css" TYPE="text/css" MEDIA=screen>
 <script type="text/javascript" src="../generated_toc.js"></script>
-<title>Agency</title>
+<title>Agency: Iterated Cournot with Investment</title>
 </head>
 <body>
 
@@ -29,13 +29,16 @@
   studied Cournot oligopoly model, with a few twists-</p>
 
  <ul>
-  <li>Firms compete in a configurable number of different markets at the
-   same time. Combined production mechanic, this makes it possible that firms
-   can cooperate by dividing up the available markets.
+  <li>Firms compete in a (configurable) number of different markets
+   simultaneously. This means it is possible for firms to arrange cooperation by
+   dividing up the available markets.
   <li>Firms have a cobb-douglas production function, so the cost of
    production depends not only on the quantity produced but the amount of
-   capital invested. Related, firms have an opportunity to increase the size of
-   their investments each model time step.
+   capital invested. The cost of capital, as well as the firm endowments, are
+   configurable simulation parameters, so the impact of capital investment (and
+   therefore lower production costs) can be examined.
+  <li>Related, firms have an opportunity to increase the size of their
+   investments each model time step.
  </ul>
 
  <h2>Procedural Description</h2>
@@ -45,39 +48,43 @@
   <li>Each firm in the simulation, which is required to implement the <code>InvestmentFirm</code>
    interface, is asked through the <code>InvestmentFirm.purchaseCapital()</code>
    and <code>InvestmentFirm.setProduction()</code> functions to return the
-   amount of capital to be invested and the quantity of the good to produce.
+   amount of capital to be invested and the quantity of the good to produce, in
+   that order.
   <li>If either of these numbers would cause the firm to spend more
    resources than it currently has available, the amount is reduced to the
    maximum number that still prevents this condition. (Negative production and
    investment are also prohibited, and replaced with 0.0.) This process takes
-   place once for each pair of firm and market in the simulation.
+   place once for each possible pair of (firm, market) in the simulation.
   <li>After the resources have been deducted from the firms, the total
-   quantity of goods that has been produced in each market is determined, and,
-   based on the demand parameters specified in the configuration file, a market
-   price is calculated.
+   quantity of goods that has been produced in each market is summed, and, based
+   on the demand parameters specified in the configuration file, a market price
+   is calculated.
   <li>Based on the market price and the quantity produced by each firm, the
    firm's revenue is calculated and its resources are increased by that amount.
-
-
 
 
   
  </ol>
 
- <p>After this loop has been completed the number of times specified in the
+ <p>
+  After this loop has been completed the number of times specified in the
   configuration file, the simulation is considered finished, and the fitness
   scores are delivered to the Agency simulation scheduling system so they can be
-  aggregated and passed on to ECJ during the breeding phase.
- <h2>Parameters</h2>
+  aggregated and passed on to ECJ during the breeding phase. The fitness
+  currently being used is a simple (<code>Double</code>) value describing the
+  amount of resources the agent has available to it at the end of the
+  simulation.
+ </p>
 
- <p>This model has a number of different exogenous parameters which may be
-  changed by modifying the associated lines in the configuration file. The
-  parameters may effect both the quantitative and qualitative results of the
-  model. For example, if investment costs are very high, it seems more likely
-  that firms will divide up the available markets between themselves. There are
-  few other hypotheses that would be interesting to test, and these are
-  described in further detail below. Here is the list of parameters, along with
-  the key used in the configuration file to specify them.</p>
+ <h2>Parameters</h2>
+ <p>This model has a number of exogenous parameters which can be changed by
+  modifying the associated lines in the configuration file. The parameters may
+  effect both the quantitative and qualitative results of the model. For
+  example, if investment costs are very high, it seems more likely that firms
+  will divide up the available markets between themselves. There are few other
+  hypotheses that would be interesting to test, and these are described in
+  further detail below. Here is the list of parameters, along with the key used
+  in the configuration file to specify them.</p>
  <ul>
   <li>The number of markets</li>
   <pre>eval.simrunner.sim.numMarkets = 2</pre>
@@ -97,7 +104,11 @@
 eval.simrunner.sim.qtyExponent = 1.0</pre>
  </ul>
 
-
+ <p>
+  These parameters can be easily overriden to explore how model results vary
+  across ranges of parameter values by using the ECJ <code>parent.<i>n</i></code>
+  pattern to include the larger general configuration file.
+ </p>
 
  <h1>Code</h1>
 
@@ -135,8 +146,21 @@ eval.simrunner.sim.qtyExponent = 1.0</pre>
  <h2>Tests</h2>
 
  <h1>Evolutionary Strategies</h1>
+ <p>While all strategies are evolutionary, in the sense that the frequency
+  of their expression in the population is a function of their success within
+  the simulation, evolutionary strategies are those that vary their behavior
+  based on values maintained by the ECJ evolutionary computation system.</p>
+
+ <h2>Genome-Specified Quantity</h2>
+ <p></p>
+
+
+
 
  <h1>Static Strategies</h1>
+ 
+ <h2>The Spiteful Cooperator</h2>
+ 
 
  <h1>Data to Collect</h1>
 
