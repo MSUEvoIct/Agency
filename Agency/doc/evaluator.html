@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<LINK REL=StyleSheet HREF="style.css" TYPE="text/css" MEDIA=screen>
+<script type="text/javascript" src="generated_toc.js"></script>
+<title>Agency: Evaluator</title>
+</head>
+<body>
+
+ <div class=title>Agency: Evaluator</div>
+
+ <div class=abstract>
+  The agency evaluator extends the ECJ <code>Evaluator</code> class, which
+  performs the role of calculating the fitness scores for individuals that are
+  used by the selection phase of the evolutionary algorithm. This is one of the
+  major features provided by Agency and its implementation (and justifications
+  for) is described in this document.
+ </div>
+
+ <div id="generated-toc"></div>
+
+ <h1>Overview</h1>
+
+ <p>
+  Evaluating the fitness of individuals is a task that must be performed in any
+  evolutionary computation system. In ECJ, this is done with with a class
+  appropriately named <a
+   href="http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/Evaluator.html"><code>Evaluator</code></a>.
+  Thankfully, ECJ is designed in such a way (using OO principles and a versatile
+  configuration) that overriding the default behavior with one that is more
+  appropriate to agent-based models is relatively simple and can be done in a
+  modular way that does not require modification of the ECJ source itself. This
+  document describes how the agency evaluator is implemented and can be
+  configured.
+ </p>
+
+ <p>
+  The evaluator and related classes are required to implement the <a
+   href="http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/Setup.html"><code>ec.Setup</code></a>
+  interface, which allows these objects to configure themselves from the ECJ 
+  <a href="http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/util/ParameterDatabase.html"><code>ParameterDatabase</code></a>,
+  which is populated from the main ECJ configuration file.
+ </p>
+
+ <h1>Creating Evaluation Groups</h1>
+ <p>
+  Unlike in many uses of evolutionary computation, where the fitness of
+  individuals can be calculated by examining a single individual in isolation,
+  the fitness of agents in an agent-based model is similar to the fitness of a
+  strategy in game theory. There, the outcome of any given strategy depends on
+  the strategies chosen by other players in the game. The logic of choosing the
+  best strategy given that other players will be doing the same thing results in
+  a <a href="http://en.wikipedia.org/wiki/Nash_equilibrium">Nash Equilibrium</a>,
+  and, in the evolutionary context, the <a
+   href="http://en.wikipedia.org/wiki/Evolutionarily_stable_strategy">Evolutionarily
+   Stable Strategy</a> refinement of it.
+ </p>
+
+ <p>However, there is typically a (large) mismatch between the number of
+  players that are part of any individual game and the size of the populations
+  that make evolutionary computation useful. This means that a (usually large)
+  number of subsets of the population must be created and evaluated together.
+  For example, the number of players in the prisoner's dilemma game is 2, while
+  the population size would be at least 100.</p>
+
+ <p>
+  Futher, there are a few things that need to be kept in mind while doing these
+  evaluations. First, in order for the evolutionary algorithm to work with the
+  entire population, each individual must be evaluated <i>at least once</i> so
+  that it has a non-null fitness score. Second, evaluating an agent only once
+  gives a very poor estimate of its expected performance as compared with the
+  entire population. On the other hand, running a comparison against all
+  possible groups of agents scales extraordinarily poorly; even in the case of a
+  two agent game, this would require <i>N<sup>2</sup></i> evaluations, where <i>N</i>
+  is the size of the population. The math gets much, much worse with games where
+  there are a larger number of agents in a simulation. Therefore, the system
+  that creates groups of agents for inclusion in a single game and runs the
+  simulations should evaluate each individual an appropriate number of times to
+  make sure that there is a reasonable collection of sample fitnesses to provide
+  a reliable aggregate fitness measure to the selection phase of the
+  evolutionary algorithm. (As an aside, there is also the issue of how multiple
+  fitness samples are aggregated into a single fitness measure to be used by the
+  EA. For now, we are using the assumption that a simple average is reasonable.)
+ </p>
+
+ <p>
+  The options in the ECJ configuration file that control the evaluation process
+  shown below. The first line should be the same for all agent-based models
+  using Agency. The second two lines specify the specific Java classes that <a
+   href="javadoc/abce/agency/ec/ecj/AgencyEvaluator.html"><code>AgencyEvaluator</code></a>
+  will use to accomplish its tasks of group creation and model evaluation. Both
+  the <code>groupcreator</code> and the <code>simrunner</code> will have their
+  own configuration options specific to their implementation. For example, the <a
+   href=javadoc/abce/agency/ec/ecj/LoopRunner.html><code>LoopRunner</code></a>
+  is a single threaded evaluator that simply iterates through the groups
+  provided by the group creator and runs each directly. It is extremely simple,
+  intended for single-threaded environments and requires no further
+  configuration. Likewise, the <a
+   href=javadoc/abce/agency/ec/ecj/RandomFlatGroupCreator.html><code>RandomFlatGroupCreator</code></a>
+  is also quite simple; it combines all individuals from all sub-populations
+  into one large pool, then iterates through that pool <code>eval.groupcreator.rounds</code>
+  times, randomly choosing <code>eval.groupcreator.groupSize - 1</code> other
+  agents as part of the evaluation group. Other groupers will need to be written
+  to deal with situations where there are multiple different roles for agents
+  within the simulation, each targeted by a specific subset of the available
+  sub-populations within the ECJ <a
+   href=http://www.cs.gmu.edu/~eclab/projects/ecj/docs/classdocs/ec/EvolutionState.html><code>EvolutionState</code></a>.
+  That configuration needs to specify which sub-populations go with which roles
+  and how many agents should be assigned to fill each one of the role
+  sub-groups.
+ </p>
+
+ <pre>eval  = abce.agency.ec.ecj.AgencyEvaluator
+eval.groupcreator = abce.agency.ec.ecj.RandomFlatGroupCreator
+eval.groupcreator.groupSize = 3
+eval.groupcreator.rounds = 4
+eval.simrunner = abce.agency.ec.ecj.LoopRunner</pre>
+
+
+
+ <h2>Group Creation</h2>
+
+ <p>The Group Creation Interface is simply a composite of <code>ec.Setup</code> and Java's
+ <code>Iterator&lt;Set&lt;Individual&gt;&gt;</code></p>
+
+
+ <p>Like other</p>
+
+
+
+
+
+ <h2>Simulation Running</h2>
+
+
+
+
+ <h2>Domain Simulations Must Accept Individuals</h2>
+
+
+
+
+
+
+
+ <h1>Creating and Running Simulations</h1>
+ <h2>
+  The <code>AgencyEvaluator</code>
+ </h2>
+
+
+ <h1>Reporting Fitness</h1>
+</html>
