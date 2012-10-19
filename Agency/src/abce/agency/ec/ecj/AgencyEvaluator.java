@@ -112,5 +112,28 @@ public class AgencyEvaluator extends Evaluator implements FitnessListener {
 		// ideal individuals cannot be automatically detected
 		return false;
 	}
+	
+	public static AgencyECJSimulation getSim(EvolutionState evoState, Parameter base) {
+		Class groupCreatorClass = (Class) evoState.parameters
+				.getClassForParameter(base.push("sim"), null, AgencyECJSimulation.class);
+		AgencyECJSimulation sim = null;
+
+		try {
+			sim = (AgencyECJSimulation) groupCreatorClass.newInstance();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		sim.setSeed(evoState.random[0].nextInt());
+		sim.setup(evoState, base.push("sim"));
+
+		return sim;
+	}
+	
+	
 
 }

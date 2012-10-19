@@ -51,7 +51,7 @@ public class RandomFlatGroupCreator implements GroupCreator {
 	}
 
 	@Override
-	public Set<Individual> nextGroup() {
+	public Set<Individual> next() {
 		Set<Individual> toReturn = new HashSet<Individual>();
 		if (!hasNext())
 			return null;
@@ -84,6 +84,11 @@ public class RandomFlatGroupCreator implements GroupCreator {
 		}
 
 		return toReturn;
+	}
+
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
 	}
 
 }
