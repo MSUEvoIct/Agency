@@ -25,8 +25,8 @@ public class RandomFlatGroupCreator implements GroupCreator {
 
 	@Override
 	public void setup(EvolutionState evoState, Parameter base) {
-		this.random = evoState.random[0];
-
+		this.random = new MersenneTwisterFast(evoState.random[0].nextLong());
+		
 		// Put all the Individuals into a single group.
 		Population pop = evoState.population;
 		for (int i = 0; i < pop.subpops.length; i++) {
