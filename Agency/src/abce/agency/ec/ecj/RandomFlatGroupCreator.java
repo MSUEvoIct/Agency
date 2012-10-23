@@ -40,7 +40,6 @@ public class RandomFlatGroupCreator implements GroupCreator {
 		groupSize = pd.getInt(base.push("groupSize"), null);
 		roundsRemaining = pd.getInt(base.push("rounds"), null);
 		samplesRemaining = allIndividuals.size();
-
 	}
 
 	@Override
@@ -68,7 +67,7 @@ public class RandomFlatGroupCreator implements GroupCreator {
 
 				if (j < 0)
 					throw new RuntimeException(
-							"Group size too small in relation to population");
+							"Group size too large in relation to population");
 
 			} while (toReturn.contains(ind));
 
