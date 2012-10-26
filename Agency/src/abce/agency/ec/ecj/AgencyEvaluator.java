@@ -28,36 +28,61 @@ public class AgencyEvaluator extends Evaluator implements FitnessListener {
 
 	@Override
 	public void evaluatePopulation(EvolutionState evoState) {
-		
+
 		// clear out fitnesses, start with a new average every generation
-		fitnesses =  new HashMap<Individual, List<Double>>();
+		fitnesses = new HashMap<Individual, List<Double>>();
+
+		// Get the grouper and runner
+		GroupCreator groupCreator = AgencyEvaluator.getGroupCreator(evoState);
+		AgencyRunner simRunner = AgencyEvaluator.getRunner(evoState);
+		
+		// Add the population to the grouper
+		groupCreator.addPopulation(evoState);
 		
 		
-		// Determine which individuals will be grouped together
-		// for execution
+		/* Have the runner execute the simulations.  They'll call us with
+		 * updateFitness when they finish, so when this call returns, we should
+		 * have all the measured fitnesses in this.fitnesses.
+		*/
+		simRunner.runSimulations(groupCreator, this);
 
-		// Instantiate and initialize the GroupCreator
-		@SuppressWarnings("rawtypes")
-		Class groupCreatorClass = (Class) evoState.parameters
-				.getClassForParameter(parameterRoot.push("groupcreator"), null,
-						GroupCreator.class);
-		GroupCreator groupCreator = null;
+		// Update Individual fitness with average.
+		for (Individual ind : fitnesses.keySet()) {
+			double fitnessSum = 0.00;
+			List<Double> fitnessList = fitnesses.get(ind);
+			for (Double d : fitnessList) {
+				fitnessSum += d;
+			}
+			Double fitnessAverage = fitnessSum / fitnessList.size();
 
-		try {
-			groupCreator = (GroupCreator) groupCreatorClass.newInstance();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			SimpleFitness sf = (SimpleFitness) ind.fitness;
+			sf.setFitness(evoState, fitnessAverage.floatValue(), false);
 		}
-		groupCreator.setup(evoState, parameterRoot.push("groupcreator"));
+
+	}
+
+	@Override
+	public synchronized void updateFitness(Individual ind, Double fit) {
+		List<Double> indFitnessSamples = fitnesses.get(ind);
+		if (indFitnessSamples == null) {
+			indFitnessSamples = new ArrayList<Double>();
+			fitnesses.put(ind, indFitnessSamples);
+		}
+		indFitnessSamples.add(fit);
+
+	}
+
+	@Override
+	public boolean runComplete(EvolutionState evoState) {
+		return false;
+	}
+
+	public static AgencyRunner getRunner(EvolutionState evoState) {
+		Parameter arParam = new Parameter("eval.simrunner");
 
 		// Instantiate and initialize the simulation runner
 		Class simRunnerClass = (Class) evoState.parameters
-				.getClassForParameter(parameterRoot.push("simrunner"), null,
-						AgencyRunner.class);
+				.getClassForParameter(arParam, null, AgencyRunner.class);
 
 		AgencyRunner simRunner = null;
 
@@ -70,62 +95,43 @@ public class AgencyEvaluator extends Evaluator implements FitnessListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		simRunner.setup(evoState, parameterRoot.push("simrunner"));
+		simRunner.setup(evoState, arParam);
 
-		
-		simRunner.runSimulations(groupCreator, this);
-
-		
-		// Update Individual fitness with average.
-		for (Individual ind : fitnesses.keySet()) {
-			double fitnessSum = 0.00;
-			List<Double> fitnessList = fitnesses.get(ind);
-			for (Double d : fitnessList) {
-				fitnessSum += d;
-			}
-			Double fitnessAverage = fitnessSum / fitnessList.size();
-			
-//			if (true) {
-//				System.out.println(ind + " fitnesses -> " + fitnessList);
-//			}
-			
-			SimpleFitness sf = (SimpleFitness) ind.fitness;
-			sf.setFitness(evoState, fitnessAverage.floatValue(), false);
-		}
-		
-		
+		return simRunner;
 	}
 
-	@Override
-	public synchronized void updateFitness(Individual ind, Double fit) {
-		List<Double> indFitnessSamples = fitnesses.get(ind);
-		if (indFitnessSamples == null) {
-			indFitnessSamples = new ArrayList<Double>();
-			fitnesses.put(ind,indFitnessSamples);
-		}
-		indFitnessSamples.add(fit);
-		
-	}
+	public static GroupCreator getGroupCreator(EvolutionState evoState) {
+		Parameter gcParam = new Parameter("eval.groupcreator");
 
-	@Override
-	public boolean runComplete(EvolutionState evoState) {
-		// ideal individuals cannot be automatically detected
-		return false;
-	}
-	
-	public static AgencyECJSimulation getSim(EvolutionState evoState, Parameter base) {
+		// Instantiate and initialize the GroupCreator
+		@SuppressWarnings("rawtypes")
 		Class groupCreatorClass = (Class) evoState.parameters
-				.getClassForParameter(base.push("sim"), null, AgencyECJSimulation.class);
+				.getClassForParameter(gcParam, null, GroupCreator.class);
+		GroupCreator groupCreator = null;
+
+		try {
+			groupCreator = (GroupCreator) groupCreatorClass.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException("Could not initialize group creator ");
+		}
+		groupCreator.setup(evoState, gcParam);
+		return groupCreator;
+	}
+
+	public static AgencyECJSimulation getSim(EvolutionState evoState,
+			Parameter base) {
+		Class groupCreatorClass = (Class) evoState.parameters
+				.getClassForParameter(base.push("sim"), null,
+						AgencyECJSimulation.class);
 		AgencyECJSimulation sim = null;
 
 		try {
 			sim = (AgencyECJSimulation) groupCreatorClass.newInstance();
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException("Could not initialize simulation class");
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(
+					"Illegal access trying to initialize simulation class");
 		}
 
 		sim.setSeed(evoState.random[0].nextInt());
@@ -133,7 +139,5 @@ public class AgencyEvaluator extends Evaluator implements FitnessListener {
 
 		return sim;
 	}
-	
-	
 
 }

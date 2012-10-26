@@ -10,36 +10,45 @@ import ec.Individual;
 import ec.Population;
 import ec.util.MersenneTwisterFast;
 import ec.util.Parameter;
-import ec.util.ParameterDatabase;
 
 public class RandomFlatGroupCreator implements GroupCreator {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Contains the number of individuals that must be present in each set
+	 * returned by this iterator.
+	 */
 	private int groupSize;
 	private int roundsRemaining;
 	private int samplesRemaining;
+	private boolean dirty = false;
 
 	private MersenneTwisterFast random;
-
-	private List<Individual> allIndividuals = new ArrayList<Individual>();
+	private List<Individual> allIndividuals;
 
 	@Override
 	public void setup(EvolutionState evoState, Parameter base) {
 		this.random = new MersenneTwisterFast(evoState.random[0].nextLong());
-		
+
+		groupSize = evoState.parameters.getInt(base.push("groupSize"), null);
+		roundsRemaining = evoState.parameters.getInt(base.push("rounds"), null);
+
+		allIndividuals = new ArrayList<Individual>();
+	}
+
+	@Override
+	public void addPopulation(EvolutionState evoState) {
+		if (dirty)
+			throw new RuntimeException(
+					"Individuals added after iteration has started");
+
 		// Put all the Individuals into a single group.
-		Population pop = evoState.population;
-		for (int i = 0; i < pop.subpops.length; i++) {
-			for (int j = 0; j < pop.subpops[i].individuals.length; j++) {
-				allIndividuals.add(pop.subpops[i].individuals[j]);
+		for (int i = 0; i < evoState.population.subpops.length; i++) {
+			for (int j = 0; j < evoState.population.subpops[i].individuals.length; j++) {
+				allIndividuals.add(evoState.population.subpops[i].individuals[j]);
 			}
 		}
-		
-		ParameterDatabase pd = evoState.parameters;
-		
-		groupSize = pd.getInt(base.push("groupSize"), null);
-		roundsRemaining = pd.getInt(base.push("rounds"), null);
-		samplesRemaining = allIndividuals.size();
+
 	}
 
 	@Override
@@ -51,6 +60,14 @@ public class RandomFlatGroupCreator implements GroupCreator {
 
 	@Override
 	public Set<Individual> next() {
+
+		// Our first iteration
+		if (!dirty) {
+			dirty = true;
+			samplesRemaining = allIndividuals.size();
+			
+		}
+
 		Set<Individual> toReturn = new HashSet<Individual>();
 		if (!hasNext())
 			return null;
@@ -72,7 +89,7 @@ public class RandomFlatGroupCreator implements GroupCreator {
 			} while (toReturn.contains(ind));
 
 			toReturn.add(ind);
-			
+
 		}
 
 		if (samplesRemaining == 0) {

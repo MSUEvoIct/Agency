@@ -54,7 +54,8 @@ public class ThreadPoolRunner implements AgencyRunner {
 	@Override
 	public void runSimulations(GroupCreator gc, FitnessListener fl) {
 		int simulationID = 0;
-
+		System.out.println("Starting evaluation of simulations");
+		
 		/*
 		 * Schedule all the simulations. This loop should block on task.add()
 		 * when the queue size full. After this while loop finishes all
@@ -85,11 +86,9 @@ public class ThreadPoolRunner implements AgencyRunner {
 			}
 			
 			threadPool.execute(sim);
-
-//			if (simulationID % 100 == 0)
-//				System.out.println(simulationID + " simulations queued");
 		}
-
+		// All simulations have now been submitted to the queue.
+		
 		/*
 		 * Check every 0.1 seconds to see if the task queue is empty. Print
 		 * status messages for debug purposes.

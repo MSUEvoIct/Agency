@@ -12,7 +12,7 @@
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
     <path id="JUnit 4.libraryclasspath">
-        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.10.0.v4_10_0_v20120426-0900/junit.jar"/>
         <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
     </path>
     <path id="Agency.classpath">
@@ -29,12 +29,12 @@
             </fileset>
         </copy>
         <copy includeemptydirs="false" todir="bin">
-            <fileset dir="test">
+            <fileset dir="models">
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
         <copy includeemptydirs="false" todir="bin">
-            <fileset dir="models">
+            <fileset dir="test">
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -47,16 +47,10 @@
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
-            <classpath refid="Agency.classpath"/>
-        </javac>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
-            <src path="test"/>
-            <classpath refid="Agency.classpath"/>
-        </javac>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
             <src path="models"/>
+            <src path="test"/>
             <classpath refid="Agency.classpath"/>
         </javac>
     </target>
@@ -81,6 +75,12 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
+    <target name="Iterated Prisoners' Dilemma">
+        <java classname="ec.Evolve" failonerror="true" fork="yes">
+            <arg line="-file models/abce/models/iteratedpd/evolve.properties"/>
+            <classpath refid="Agency.classpath"/>
+        </java>
+    </target>
     <target name="Iterated Cournot GA">
         <java classname="ec.Evolve" failonerror="true" fork="yes">
             <jvmarg line="-Xmx8192m"/>
@@ -88,16 +88,17 @@
             <classpath refid="Agency.classpath"/>
         </java>
     </target>
-    <target name="Agency Simple EC Market Simulation">
+    <target name="AgencyEvaluator Test">
         <java classname="ec.Evolve" failonerror="true" fork="yes">
-            <jvmarg line="-Xmx4096m"/>
-            <arg line="-file etc/price-evolve.cfg"/>
+            <jvmarg line="-Xmx1024m"/>
+            <arg line="-file etc/NewEvaluator-evolve.properties"/>
             <classpath refid="Agency.classpath"/>
         </java>
     </target>
-    <target name="Iterated Prisoners' Dilemma">
+    <target name="Agency Simple EC Market Simulation">
         <java classname="ec.Evolve" failonerror="true" fork="yes">
-            <arg line="-file models/abce/models/iteratedpd/evolve.properties"/>
+            <jvmarg line="-Xmx4096m"/>
+            <arg line="-file etc/oligopoly/short-test/mass-priceprod-evolve.cfg"/>
             <classpath refid="Agency.classpath"/>
         </java>
     </target>
