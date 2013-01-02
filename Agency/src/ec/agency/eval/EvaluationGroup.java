@@ -16,19 +16,29 @@ import ec.Individual;
  */
 public class EvaluationGroup {
 
-	// The individuals to put in a problem together
+	/**
+	 *  The individuals to put in a problem together
+	 */
 	public Individual[]	ind;
 
-	// The populations these individuals come from
+	/**
+	 *  The populations these individuals come from
+	 */
 	public int[]		subpops;
 
-	// Whether or not the should have their fitneses evaluated
+	/**
+	 * Whether or not the should have their fitneses evaluated
+	 */
 	public boolean[]	evaluate_fitness;
 
-	// The next index to store information
+	/**
+	 * The next index to store information
+	 */
 	public int			actual_size;
 
-	// Fitness information (even if not stored in the individual)
+	/**
+	 * Fitness information (even if not stored in the individual)
+	 */
 	public Fitness[]	fitness;
 
 
