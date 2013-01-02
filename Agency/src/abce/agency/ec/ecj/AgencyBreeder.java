@@ -9,6 +9,14 @@ import ec.util.Parameter;
 
 /**
  * 
+ * The purpose of this breeder is to scale the subpopulation sizes in a fitness-
+ * proportional way. We should probably reference documentation here that
+ * explains why this is necessary and the impact it is expected to have on
+ * outcomes.
+ * 
+ * TODO: This is currently just a skeleton implementation and is not currently
+ * used in any of our models. See https://github.com/kkoning/Agency/issues/15
+ * 
  * TODO: This overrides the normal elitism behavior. If elitism is required, it
  * will need to be re-implemented (i.e., re-integrated) here. For now, I'm not
  * accounting for it.
@@ -37,14 +45,13 @@ public class AgencyBreeder extends SimpleBreeder {
 		// How large are the new subpopulations going to be?
 		int numSubpops = state.population.subpops.length;
 		for (int i = 0; i < numSubpops; i++)
-			newPop.subpops[i].individuals = new Individual[newSubpopSize(state, i)];
+			newPop.subpops[i].individuals = new Individual[newSubpopSize(state,
+					i)];
 
 		// TODO: Parallelize this with a ThreadPoolExecutor.
-		
+
 		// Create chunks to breed and breed them.
-		
-		
-		
+
 		return newPop;
 	}
 
@@ -66,8 +73,6 @@ public class AgencyBreeder extends SimpleBreeder {
 		 * something.
 		 */
 
-		
-		
 	}
 
 	@Override
