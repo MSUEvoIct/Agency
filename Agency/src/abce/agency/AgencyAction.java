@@ -1,8 +1,7 @@
-package abce.agency.actions;
+package abce.agency;
 
 import java.io.Serializable;
 
-import abce.agency.TraceConfig;
 
 /**
  * All actions peformed by agents should be implemented using an extension of
@@ -15,7 +14,7 @@ import abce.agency.TraceConfig;
  * @author kkoning
  * 
  */
-public abstract class SimulationAction implements Serializable {
+public abstract class AgencyAction implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
