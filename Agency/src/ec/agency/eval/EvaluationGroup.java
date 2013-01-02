@@ -1,10 +1,7 @@
 package ec.agency.eval;
 
-
 import ec.Fitness;
 import ec.Individual;
-
-
 
 /**
  * An evaluation group is simply a container that holds which individuals in a
@@ -17,31 +14,34 @@ import ec.Individual;
 public class EvaluationGroup {
 
 	/**
-	 *  The individuals to put in a problem together
+	 * The individuals to put in a problem together
 	 */
-	public Individual[]	ind;
+	public Individual[] ind;
 
 	/**
-	 *  The populations these individuals come from
+	 * The populations these individuals come from
 	 */
-	public int[]		subpops;
+	public int[] subpops;
 
 	/**
-	 * Whether or not the should have their fitneses evaluated
+	 * This is necessary for, e.g., inter-generational statistics.
 	 */
-	public boolean[]	evaluate_fitness;
+	public int[] generation;
+
+	/**
+	 * Whether or not the should have their fitnesses evaluated
+	 */
+	public boolean[] evaluate_fitness;
 
 	/**
 	 * The next index to store information
 	 */
-	public int			actual_size;
+	public int actual_size;
 
 	/**
 	 * Fitness information (even if not stored in the individual)
 	 */
-	public Fitness[]	fitness;
-
-
+	public Fitness[] fitness;
 
 	/**
 	 * Create a fixed-size evaluation group
@@ -57,8 +57,6 @@ public class EvaluationGroup {
 		actual_size = 0;
 	}
 
-
-
 	/**
 	 * Add a single individual to the group
 	 * 
@@ -67,7 +65,8 @@ public class EvaluationGroup {
 	 * @param eval_fit
 	 * @throws RuntimeException
 	 */
-	public void add(Individual i, int subpop, boolean eval_fit) throws RuntimeException {
+	public void add(Individual i, int subpop, boolean eval_fit)
+			throws RuntimeException {
 		if (actual_size < ind.length) {
 			ind[actual_size] = i;
 			subpops[actual_size] = subpop;
@@ -78,8 +77,6 @@ public class EvaluationGroup {
 			throw new RuntimeException("Index out of bounds.");
 		}
 	}
-
-
 
 	@Override
 	public String toString() {
