@@ -26,7 +26,7 @@ import ec.util.Parameter;
  * @author ruppmatt
  * 
  */
-public abstract class EvaluationGrouper implements Prototype {
+public abstract class EvaluationGroupCreator implements Prototype {
 
 	/**
 	 * 
