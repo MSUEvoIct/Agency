@@ -2,11 +2,11 @@ package abce.agency.ec.ecj.terminals;
 
 
 import abce.agency.ec.StimulusResponse;
+import abce.agency.ec.ecj.Debugger;
 import abce.agency.ec.ecj.SRStimulable;
 import abce.agency.ec.ecj.StimulusResponseProblem;
 import abce.agency.ec.ecj.operators.GPNodeDebug;
 import abce.agency.ec.ecj.types.DoubleGP;
-import abce.ecj.Debugger;
 import abce.util.UnresolvableException;
 import abce.util.reflection.RestrictedMethodDictionary;
 import ec.EvolutionState;

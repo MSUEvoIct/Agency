@@ -3,7 +3,6 @@ package abce.ecj.ep;
 
 import java.io.IOException;
 
-import abce.ecj.EPSimpleEvolutionState;
 import abce.util.io.GZOutFile;
 import abce.util.events.EventProcedureArgs;
 import abce.util.events.Procedure;

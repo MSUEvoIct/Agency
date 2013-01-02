@@ -1,4 +1,4 @@
-package abce.ecj;
+package abce.ecj.ep;
 
 
 import abce.util.events.EventProcedureDescription;

@@ -1,9 +1,9 @@
 package abce.agency.ec.ecj.terminals;
 
 
+import abce.agency.ec.ecj.Debugger;
 import abce.agency.ec.ecj.operators.GPNodeDebug;
 import abce.agency.ec.ecj.types.BooleanGP;
-import abce.ecj.Debugger;
 import ec.EvolutionState;
 import ec.Problem;
 import ec.gp.ADFStack;

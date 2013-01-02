@@ -6,9 +6,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import abce.agency.ec.StimulusResponse;
 import abce.agency.ec.ecj.ECJEvolvableAgent;
+import abce.agency.ec.ecj.GPMASProblem;
 import abce.agency.firm.Firm;
-import abce.ecj.EPSimpleEvolutionState;
-import abce.ecj.GPMASProblem;
+import abce.ecj.ep.EPSimpleEvolutionState;
 import abce.util.events.EventProcedureDescription;
 import ec.EvolutionState;
 import ec.Individual;

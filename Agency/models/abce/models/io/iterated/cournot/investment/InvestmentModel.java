@@ -10,6 +10,7 @@ import abce.agency.ec.ecj.FitnessListener;
 import abce.util.io.DelimitedOutFile;
 import abce.util.io.FileManager;
 import ec.EvolutionState;
+import ec.Fitness;
 import ec.Individual;
 import ec.util.MersenneTwisterFast;
 import ec.util.Parameter;
@@ -379,6 +380,12 @@ public class InvestmentModel implements AgencyModel {
 
 	public void setSimulationID(Integer simulationID) {
 		this.simulationID = simulationID;
+	}
+
+	@Override
+	public Map<Individual, Fitness> getFitnesses() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

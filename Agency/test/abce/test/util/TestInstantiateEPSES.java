@@ -3,7 +3,7 @@ package abce.test.util;
 
 import org.junit.Test;
 
-import abce.ecj.EPSimpleEvolutionState;
+import abce.ecj.ep.EPSimpleEvolutionState;
 
 
 

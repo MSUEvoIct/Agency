@@ -3,7 +3,7 @@ package abce.agency.ec.ecj.operators;
 
 import java.io.IOException;
 
-import abce.ecj.EPSimpleEvolutionState;
+import abce.ecj.ep.EPSimpleEvolutionState;
 import abce.util.io.DelimitedOutFile;
 import ec.EvolutionState;
 import ec.gp.GPData;

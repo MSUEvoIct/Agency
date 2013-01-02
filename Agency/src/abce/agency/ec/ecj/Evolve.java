@@ -10,7 +10,7 @@
  See the file "LICENSE" for more information
  */
 
-package abce.ecj;
+package abce.agency.ec.ecj;
 
 
 import java.io.File;

@@ -1,7 +1,6 @@
 package abce.ecj.ep;
 
 
-import abce.ecj.EPSimpleEvolutionState;
 import abce.util.events.EventProcedureArgs;
 import abce.util.events.EventProcedureDescription;
 import abce.util.events.Procedure;

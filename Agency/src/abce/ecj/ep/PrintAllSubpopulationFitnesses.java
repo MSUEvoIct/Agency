@@ -2,7 +2,6 @@ package abce.ecj.ep;
 
 
 import abce.util.io.DelimitedOutFile;
-import abce.ecj.EPSimpleEvolutionState;
 import abce.util.events.EventProcedureArgs;
 import abce.util.events.Procedure;
 import abce.util.BadConfiguration;

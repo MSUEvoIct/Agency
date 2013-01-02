@@ -1,12 +1,9 @@
-package abce.ecj;
+package abce.agency.ec.ecj;
 
 
 import java.lang.reflect.Constructor;
 
 import abce.agency.ec.StimulusResponse;
-import abce.agency.ec.ecj.ECJEvolvableAgent;
-import abce.agency.ec.ecj.SRResponsive;
-import abce.agency.ec.ecj.SRStimulable;
 import abce.util.reflection.RestrictedMethodDictionary;
 import ec.EvolutionState;
 import ec.Subpopulation;
