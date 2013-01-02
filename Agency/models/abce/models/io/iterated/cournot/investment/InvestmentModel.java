@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import abce.agency.ec.ecj.AgencyECJSimulation;
+import abce.agency.ec.ecj.AgencyModel;
 import abce.agency.ec.ecj.FitnessListener;
 import abce.util.io.DelimitedOutFile;
 import abce.util.io.FileManager;
@@ -15,7 +15,7 @@ import ec.util.MersenneTwisterFast;
 import ec.util.Parameter;
 import ec.util.ParameterDatabase;
 
-public class InvestmentModel implements AgencyECJSimulation {
+public class InvestmentModel implements AgencyModel {
 	private static final long serialVersionUID = 1L;
 
 	/*

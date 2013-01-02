@@ -65,7 +65,7 @@ public class ThreadPoolRunner implements AgencyRunner {
 		 */
 		while (gc.hasNext()) {
 			Set<Individual> group = gc.next();
-			AgencyECJSimulation sim = AgencyEvaluator.getSim(evoState, base);
+			AgencyModel sim = AgencyEvaluator.getSim(evoState, base);
 			sim.addFitnessListener(fl);
 
 			for (Individual ind : group) {

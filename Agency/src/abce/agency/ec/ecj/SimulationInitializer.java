@@ -8,7 +8,7 @@ public class SimulationInitializer implements ec.Setup {
 
 	private EvolutionState evoState;
 	private Parameter base;
-	private Class<? extends AgencyECJSimulation> simClass = null;
+	private Class<? extends AgencyModel> simClass = null;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -16,13 +16,13 @@ public class SimulationInitializer implements ec.Setup {
 		this.evoState = evoState;
 		this.base = base;
 
-		simClass = (Class<? extends AgencyECJSimulation>) evoState.parameters
-				.getClassForParameter(base, null, AgencyECJSimulation.class);
+		simClass = (Class<? extends AgencyModel>) evoState.parameters
+				.getClassForParameter(base, null, AgencyModel.class);
 
 	}
 
-	public AgencyECJSimulation getSimulation() {
-		AgencyECJSimulation aes = null;
+	public AgencyModel getSimulation() {
+		AgencyModel aes = null;
 		try {
 			aes = simClass.newInstance();
 		} catch (InstantiationException e) {

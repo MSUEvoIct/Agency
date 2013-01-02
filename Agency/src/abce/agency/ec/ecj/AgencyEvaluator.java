@@ -118,15 +118,15 @@ public class AgencyEvaluator extends Evaluator implements FitnessListener {
 		return groupCreator;
 	}
 
-	public static AgencyECJSimulation getSim(EvolutionState evoState,
+	public static AgencyModel getSim(EvolutionState evoState,
 			Parameter base) {
 		Class groupCreatorClass = (Class) evoState.parameters
 				.getClassForParameter(base.push("sim"), null,
-						AgencyECJSimulation.class);
-		AgencyECJSimulation sim = null;
+						AgencyModel.class);
+		AgencyModel sim = null;
 
 		try {
-			sim = (AgencyECJSimulation) groupCreatorClass.newInstance();
+			sim = (AgencyModel) groupCreatorClass.newInstance();
 		} catch (InstantiationException e) {
 			throw new RuntimeException("Could not initialize simulation class");
 		} catch (IllegalAccessException e) {

@@ -14,7 +14,7 @@ import ec.Individual;
  * @author kkoning
  * 
  */
-public interface AgencyECJSimulation extends ec.Setup, Runnable, FitnessUpdater {
+public interface AgencyModel extends ec.Setup, Runnable, FitnessUpdater {
 
 	/**
 	 * Sets the random seed of the agent based model. This functionality is
