@@ -1,13 +1,13 @@
 package abce.models.oligopoly.ep;
 
 
-import abce.agency.consumer.Consumer;
-import abce.agency.goods.Good;
-import abce.util.io.DelimitedOutFile;
-import abce.util.events.EventProcedureArgs;
+import ec.agency.consumer.Consumer;
+import ec.agency.events.EventProcedureArgs;
+import ec.agency.events.Procedure;
+import ec.agency.goods.Good;
+import ec.agency.io.DelimitedOutFile;
+import ec.agency.util.BadConfiguration;
 import abce.models.oligopoly.OligopolySimulation;
-import abce.util.BadConfiguration;
-import abce.util.events.Procedure;
 
 
 

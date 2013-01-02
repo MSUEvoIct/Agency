@@ -1,10 +1,10 @@
 package abce.models.oligopoly.ep;
 
 
-import abce.agency.MarketSimulation;
-import abce.util.events.EventProcedureArgs;
-import abce.util.events.Procedure;
-import abce.util.BadConfiguration;
+import ec.agency.MarketSimulation;
+import ec.agency.events.EventProcedureArgs;
+import ec.agency.events.Procedure;
+import ec.agency.util.BadConfiguration;
 
 
 

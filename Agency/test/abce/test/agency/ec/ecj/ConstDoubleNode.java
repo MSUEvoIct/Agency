@@ -1,8 +1,8 @@
 package abce.test.agency.ec.ecj;
 
-import abce.agency.ec.ecj.types.DoubleGP;
 import ec.EvolutionState;
 import ec.Problem;
+import ec.agency.gp.types.DoubleGP;
 import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;

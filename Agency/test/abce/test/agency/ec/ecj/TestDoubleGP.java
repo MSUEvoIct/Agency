@@ -10,13 +10,13 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import abce.agency.ec.ecj.operators.AddGP;
-import abce.agency.ec.ecj.operators.DivideGP;
-import abce.agency.ec.ecj.operators.MultiplyGP;
-import abce.agency.ec.ecj.operators.SubtractGP;
-import abce.agency.ec.ecj.types.DoubleGP;
 import ec.EvolutionState;
 import ec.Problem;
+import ec.agency.gp.operators.AddGP;
+import ec.agency.gp.operators.DivideGP;
+import ec.agency.gp.operators.MultiplyGP;
+import ec.agency.gp.operators.SubtractGP;
+import ec.agency.gp.types.DoubleGP;
 import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;

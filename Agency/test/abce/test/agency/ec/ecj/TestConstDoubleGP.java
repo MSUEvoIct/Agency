@@ -4,15 +4,16 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import abce.agency.ec.ecj.terminals.Const0DoubleGP;
-import abce.agency.ec.ecj.terminals.Const100DoubleGP;
-import abce.agency.ec.ecj.terminals.Const10DoubleGP;
-import abce.agency.ec.ecj.terminals.Const1DoubleGP;
-import abce.agency.ec.ecj.terminals.Const20DoubleGP;
-import abce.agency.ec.ecj.terminals.Const2DoubleGP;
-import abce.agency.ec.ecj.terminals.Const50DoubleGP;
-import abce.agency.ec.ecj.terminals.Const5DoubleGP;
-import abce.agency.ec.ecj.types.DoubleGP;
+import ec.agency.gp.terminals.Const0DoubleGP;
+import ec.agency.gp.terminals.Const100DoubleGP;
+import ec.agency.gp.terminals.Const10DoubleGP;
+import ec.agency.gp.terminals.Const1DoubleGP;
+import ec.agency.gp.terminals.Const20DoubleGP;
+import ec.agency.gp.terminals.Const2DoubleGP;
+import ec.agency.gp.terminals.Const50DoubleGP;
+import ec.agency.gp.terminals.Const5DoubleGP;
+import ec.agency.gp.types.DoubleGP;
+
 
 public class TestConstDoubleGP {
 

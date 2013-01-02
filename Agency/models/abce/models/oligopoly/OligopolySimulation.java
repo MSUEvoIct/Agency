@@ -5,18 +5,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import abce.agency.Market;
-import abce.agency.MarketSimulation;
-import abce.agency.consumer.Consumer;
-import abce.agency.consumer.PerfectlyRationalConsumer;
+import ec.agency.Market;
+import ec.agency.MarketSimulation;
+import ec.agency.consumer.Consumer;
+import ec.agency.consumer.PerfectlyRationalConsumer;
+import ec.agency.events.EventProcedureDescription;
+import ec.agency.goods.DurableGood;
+import ec.agency.goods.Good;
+import ec.agency.goods.PerishableGood;
+import ec.agency.io.FileManager;
+import ec.agency.production.ConstantCostProductionFunction;
+import ec.agency.production.ProductionFunction;
+
 import abce.agency.firm.Firm;
-import abce.agency.goods.DurableGood;
-import abce.agency.goods.Good;
-import abce.agency.goods.PerishableGood;
-import abce.agency.production.ConstantCostProductionFunction;
-import abce.agency.production.ProductionFunction;
-import abce.util.events.EventProcedureDescription;
-import abce.util.io.FileManager;
 
 
 

@@ -10,10 +10,11 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import abce.util.UnresolvableException;
-import abce.util.reflection.CollectionAssistant;
-import abce.util.reflection.Stimulus;
-import abce.util.reflection.UnrestrictedMethodDictionary;
+import ec.agency.reflection.CollectionAssistant;
+import ec.agency.reflection.Stimulus;
+import ec.agency.reflection.UnrestrictedMethodDictionary;
+import ec.agency.util.UnresolvableException;
+
 
 
 

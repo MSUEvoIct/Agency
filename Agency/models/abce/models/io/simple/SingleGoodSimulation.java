@@ -3,16 +3,17 @@ package abce.models.io.simple;
 
 import java.io.PrintWriter;
 
-import abce.agency.Market;
-import abce.agency.MarketSimulation;
-import abce.agency.consumer.Consumer;
-import abce.agency.consumer.ReluctantSwitcher;
+import ec.agency.Market;
+import ec.agency.MarketSimulation;
+import ec.agency.consumer.Consumer;
+import ec.agency.consumer.ReluctantSwitcher;
+import ec.agency.goods.DurableGood;
+import ec.agency.goods.Good;
+import ec.agency.production.ConstantCostProductionFunction;
+import ec.agency.production.ProductionFunction;
+
 import abce.agency.firm.Firm;
 import abce.agency.firm.FixedPricingFirm;
-import abce.agency.goods.DurableGood;
-import abce.agency.goods.Good;
-import abce.agency.production.ConstantCostProductionFunction;
-import abce.agency.production.ProductionFunction;
 
 
 

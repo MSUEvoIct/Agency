@@ -5,13 +5,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import abce.agency.ec.ecj.AgencyModel;
-import abce.agency.ec.ecj.FitnessListener;
-import abce.util.io.DelimitedOutFile;
-import abce.util.io.FileManager;
 import ec.EvolutionState;
 import ec.Fitness;
 import ec.Individual;
+import ec.agency.eval.AgencyModel;
+import ec.agency.eval.FitnessListener;
+import ec.agency.io.DelimitedOutFile;
+import ec.agency.io.FileManager;
 import ec.util.MersenneTwisterFast;
 import ec.util.Parameter;
 import ec.util.ParameterDatabase;

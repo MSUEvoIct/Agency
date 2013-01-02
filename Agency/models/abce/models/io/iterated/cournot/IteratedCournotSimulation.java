@@ -1,8 +1,8 @@
 package abce.models.io.iterated.cournot;
 
+import ec.agency.io.DelimitedOutFile;
+import ec.agency.io.FileManager;
 import sim.engine.SimState;
-import abce.util.io.DelimitedOutFile;
-import abce.util.io.FileManager;
 
 public class IteratedCournotSimulation extends SimState implements Runnable {
 	private static final long serialVersionUID = 1L;

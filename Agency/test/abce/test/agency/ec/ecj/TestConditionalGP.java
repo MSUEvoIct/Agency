@@ -4,13 +4,13 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import ec.agency.gp.operators.DoubleSelector;
+import ec.agency.gp.operators.GreaterThanGP;
+import ec.agency.gp.operators.LessThanGP;
+import ec.agency.gp.types.BooleanGP;
+import ec.agency.gp.types.DoubleGP;
 import ec.gp.GPNode;
 
-import abce.agency.ec.ecj.operators.DoubleSelector;
-import abce.agency.ec.ecj.operators.GreaterThanGP;
-import abce.agency.ec.ecj.operators.LessThanGP;
-import abce.agency.ec.ecj.types.BooleanGP;
-import abce.agency.ec.ecj.types.DoubleGP;
 
 public class TestConditionalGP {
 

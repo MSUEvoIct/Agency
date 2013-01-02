@@ -4,14 +4,14 @@ package abce.models.oligopoly;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import abce.agency.ec.StimulusResponse;
-import abce.agency.ec.ecj.ECJEvolvableAgent;
-import abce.agency.ec.ecj.GPMASProblem;
 import abce.agency.firm.Firm;
-import abce.ecj.ep.EPSimpleEvolutionState;
-import abce.util.events.EventProcedureDescription;
 import ec.EvolutionState;
 import ec.Individual;
+import ec.agency.ECJEvolvableAgent;
+import ec.agency.StimulusResponse;
+import ec.agency.eval.GPMASProblem;
+import ec.agency.events.EPSimpleEvolutionState;
+import ec.agency.events.EventProcedureDescription;
 import ec.gp.GPIndividual;
 import ec.simple.SimpleFitness;
 

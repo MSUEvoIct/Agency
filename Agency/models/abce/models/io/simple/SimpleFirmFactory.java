@@ -1,9 +1,9 @@
 package abce.models.io.simple;
 
+import ec.agency.goods.Good;
+import ec.agency.production.ProductionFunction;
 import abce.agency.firm.Firm;
 import abce.agency.firm.FirmFactory;
-import abce.agency.goods.Good;
-import abce.agency.production.ProductionFunction;
 
 /**
  * A SimpleFirmFactory produces an unlimited numer of identical firms which

@@ -3,10 +3,11 @@ package abce.test.models.oligopoly;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import ec.agency.io.DelimitedOutFile;
+
 import abce.agency.firm.Firm;
 import abce.agency.firm.FixedProductionPricingFirm;
 import abce.models.oligopoly.OligopolySimulation;
-import abce.util.io.DelimitedOutFile;
 
 public class AssayPriceProductionMonopoly {
 	

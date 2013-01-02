@@ -4,9 +4,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import abce.agency.ec.ecj.terminals.FalseGP;
-import abce.agency.ec.ecj.terminals.TrueGP;
-import abce.agency.ec.ecj.types.BooleanGP;
+import ec.agency.gp.terminals.FalseGP;
+import ec.agency.gp.terminals.TrueGP;
+import ec.agency.gp.types.BooleanGP;
+
 
 public class TestBooleanGP {
 

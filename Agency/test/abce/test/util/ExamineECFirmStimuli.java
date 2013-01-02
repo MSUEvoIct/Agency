@@ -6,9 +6,10 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import ec.agency.io.GZOutFile;
+import ec.agency.reflection.StimulusManager;
+
 import abce.agency.firm.ECProdPriceFirm;
-import abce.util.io.GZOutFile;
-import abce.util.reflection.StimulusManager;
 
 
 

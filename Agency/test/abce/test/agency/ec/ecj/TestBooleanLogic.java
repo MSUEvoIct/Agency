@@ -13,14 +13,14 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import abce.agency.ec.ecj.operators.AndGP;
-import abce.agency.ec.ecj.operators.NotGP;
-import abce.agency.ec.ecj.operators.OrGP;
-import abce.agency.ec.ecj.operators.NotAndGP;
-import abce.agency.ec.ecj.operators.XOrGP;
-import abce.agency.ec.ecj.terminals.FalseGP;
-import abce.agency.ec.ecj.terminals.TrueGP;
-import abce.agency.ec.ecj.types.BooleanGP;
+import ec.agency.gp.operators.AndGP;
+import ec.agency.gp.operators.NotAndGP;
+import ec.agency.gp.operators.NotGP;
+import ec.agency.gp.operators.OrGP;
+import ec.agency.gp.operators.XOrGP;
+import ec.agency.gp.terminals.FalseGP;
+import ec.agency.gp.terminals.TrueGP;
+import ec.agency.gp.types.BooleanGP;
 import ec.gp.GPNode;
 
 public class TestBooleanLogic {

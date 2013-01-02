@@ -4,9 +4,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import abce.agency.ec.StimulusResponse;
+import ec.agency.StimulusResponse;
+import ec.agency.reflection.RestrictedMethodDictionary;
+
 import abce.agency.firm.sr.ScaleFirmPriceSR;
-import abce.util.reflection.RestrictedMethodDictionary;
 
 public class DisplaySRDictionaryPaths {
 
