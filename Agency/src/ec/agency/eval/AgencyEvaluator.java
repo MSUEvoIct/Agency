@@ -73,10 +73,12 @@ public class AgencyEvaluator extends Evaluator {
 
 		// Run all the models
 		for (EvaluationGroup evalGroup : groupCreator) {
-			AgencyModel model = getModel(evoState,pModel);
-			model.setEvaluationGroup(evalGroup);
+			ModelRunnerHelper mrh = new ModelRunnerHelper();
+			mrh.evoState = evoState;
+			mrh.seed = evoState.random[0].nextInt();
+			mrh.eg = evalGroup;
+			mrh.fa = fa;
 			
-			ModelRunnerHelper mrh = new ModelRunnerHelper(model,fa);
 			runner.runModel(mrh);
 		}
 		
@@ -118,13 +120,13 @@ public class AgencyEvaluator extends Evaluator {
 		return groupCreator;
 	}
 
-	public AgencyModel getModel(EvolutionState evoState, Parameter base) {
+	public AgencyModel getModel(EvolutionState evoState, Parameter base, int seed) {
 		AgencyModel model = null;
 
 		try {
 			model = (AgencyModel) modelClass.newInstance();
 			model.setup(evoState, pModel);
-			model.setSeed(evoState.random[0].nextInt());
+			model.setSeed(seed);
 		} catch (Exception e) {
 			String msg = "Count not initialize/setup AgencyModel "
 					+ modelClass.getCanonicalName();
@@ -156,17 +158,24 @@ public class AgencyEvaluator extends Evaluator {
 
 	public class ModelRunnerHelper implements Runnable {
 
-		AgencyModel model;
 		FitnessAggregator fa;
-
-		ModelRunnerHelper(AgencyModel model, FitnessAggregator fa) {
-			this.model = model;
-			this.fa = fa;
-		}
+		EvolutionState evoState;
+		int seed;
+		int simulationID;
+		
+		EvaluationGroup eg;
 
 		@Override
 		public void run() {
+			
+			AgencyModel model = getModel(evoState,null,seed);
+			model.setSeed(seed);
+			model.setGeneration(evoState.generation);
+			model.setSimulationID(simulationID);
+			model.setEvaluationGroup(eg);
+			
 			model.run();
+			
 			Map<Individual, Fitness> fitnessSamples = model.getFitnesses();
 			for (Map.Entry<Individual, Fitness> entry : fitnessSamples
 					.entrySet()) {
