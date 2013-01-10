@@ -9,35 +9,20 @@ import ec.util.Parameter;
 public class LoopRunner implements AgencyRunner {
 	private static final long serialVersionUID = 1L;
 
-	private EvolutionState evoState = null;
-	private Parameter base = null;
-
 	@Override
 	public void setup(EvolutionState evoState, Parameter base) {
-		this.evoState = evoState;
-		this.base = base;
+		// Nothing to do
 	}
 
 	@Override
-	public void runSimulations(GroupCreator gc, FitnessListener fl) {
-		int simulationID = 0;
-		
-		while (gc.hasNext()) {
-			Set<Individual> group = gc.next();
-			AgencyModel sim = AgencyEvaluator.getSim(evoState, base);
-			sim.addFitnessListener(fl);
+	public void runModel(Runnable model) {
+		// Simply run the model directly
+		model.run();
+	}
 
-			for (Individual ind : group) {
-				sim.addIndividual(ind);
-			}
-			
-			sim.setGeneration(evoState.generation);
-			sim.setSimulationID(simulationID++);
-			
-			sim.run();
-
-		}
-
+	@Override
+	public void finish() {
+		// Nothing to do; no asynchronous model execution
 	}
 
 

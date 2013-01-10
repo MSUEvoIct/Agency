@@ -7,137 +7,174 @@ import java.util.Map;
 
 import ec.Evaluator;
 import ec.EvolutionState;
+import ec.Fitness;
 import ec.Individual;
 import ec.simple.SimpleFitness;
 import ec.util.Parameter;
 
-public class AgencyEvaluator extends Evaluator implements FitnessListener {
+public class AgencyEvaluator extends Evaluator {
 	private static final long serialVersionUID = 1L;
 
-	private Parameter parameterRoot = null;
+	// Parameters for components
+	Parameter pRoot = new Parameter("eval");
+	Parameter pModel = pRoot.push("model");
+	Parameter pGroupCreator = pRoot.push("groupcreator");
+	Parameter pRunner = pRoot.push("runner");
+	Parameter pFitnessAggregator = pRoot.push("fitnessaggregator");
+
+	// The types of those components
+	Class<? extends AgencyModel> modelClass;
+	Class<? extends GroupCreator> groupCreatorClass;
+	Class<? extends AgencyRunner> runnerClass;
+	Class<? extends FitnessAggregator> fitnessAggregatorClass;
+
+	// We'll keep a single runner for the whole evolutionary run
+	AgencyRunner runner;
 
 	private Map<Individual, List<Double>> fitnesses = null;
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void setup(EvolutionState state, Parameter base) {
-		super.setup(state, base);
+	public void setup(EvolutionState evoState, Parameter base) {
+		super.setup(evoState, base);
 
-		parameterRoot = base;
+		// get java types for components from ecj configuration file
+		modelClass = (Class<? extends AgencyModel>) evoState.parameters
+				.getClassForParameter(pModel, null, AgencyModel.class);
+		groupCreatorClass = (Class<? extends GroupCreator>) evoState.parameters
+				.getClassForParameter(pGroupCreator, null, GroupCreator.class);
+		runnerClass = (Class<? extends AgencyRunner>) evoState.parameters
+				.getClassForParameter(pRunner, null, AgencyRunner.class);
+		fitnessAggregatorClass = (Class<? extends FitnessAggregator>) evoState.parameters
+				.getClassForParameter(pFitnessAggregator, null, FitnessAggregator.class);
+
+		// Initialize a runner to use for the duration
+		try {
+			runner = runnerClass.newInstance();
+			runner.setup(evoState, pRunner);
+		} catch (Exception e) {
+			String msg = "Could not initialize/setup AgencyRunner "
+					+ runnerClass.getCanonicalName();
+			throw new RuntimeException(msg, e);
+		}
 
 	}
 
 	@Override
 	public void evaluatePopulation(EvolutionState evoState) {
 
-		// clear out fitnesses, start with a new average every generation
-		fitnesses = new HashMap<Individual, List<Double>>();
-
-		// Get the grouper and runner
-		GroupCreator groupCreator = AgencyEvaluator.getGroupCreator(evoState);
-		AgencyRunner simRunner = AgencyEvaluator.getRunner(evoState);
-		
-		// Add the population to the grouper
+		// Get the grouper and populate it
+		GroupCreator groupCreator = getGroupCreator(evoState);
 		groupCreator.addPopulation(evoState);
 		
+		// Initialize a new fitness aggregator
+		FitnessAggregator fa = getFitnessAggregator(evoState, pFitnessAggregator);
 		
-		/* Have the runner execute the simulations.  They'll call us with
-		 * updateFitness when they finish, so when this call returns, we should
-		 * have all the measured fitnesses in this.fitnesses.
-		*/
-		simRunner.runSimulations(groupCreator, this);
 
-		// Update Individual fitness with average.
-		for (Individual ind : fitnesses.keySet()) {
-			double fitnessSum = 0.00;
-			List<Double> fitnessList = fitnesses.get(ind);
-			for (Double d : fitnessList) {
-				fitnessSum += d;
-			}
-			Double fitnessAverage = fitnessSum / fitnessList.size();
-
-			SimpleFitness sf = (SimpleFitness) ind.fitness;
-			sf.setFitness(evoState, fitnessAverage.floatValue(), false);
+		// Run all the models
+		for (EvaluationGroup evalGroup : groupCreator) {
+			AgencyModel model = getModel(evoState,pModel);
+			model.setEvaluationGroup(evalGroup);
+			
+			ModelRunnerHelper mrh = new ModelRunnerHelper(model,fa);
+			runner.runModel(mrh);
 		}
+		
+		// Wait for any/all asynchronously scheduled models to finish
+		runner.finish();
+		
+		// Tell the aggregator to update the population
+		fa.updatePopulation(evoState);
+		
 
 	}
 
-	@Override
-	public synchronized void updateFitness(Individual ind, Double fit) {
-		List<Double> indFitnessSamples = fitnesses.get(ind);
-		if (indFitnessSamples == null) {
-			indFitnessSamples = new ArrayList<Double>();
-			fitnesses.put(ind, indFitnessSamples);
-		}
-		indFitnessSamples.add(fit);
-
-	}
-
-	@Override
-	public boolean runComplete(EvolutionState evoState) {
-		return false;
-	}
-
-	public static AgencyRunner getRunner(EvolutionState evoState) {
-		Parameter arParam = new Parameter("eval.simrunner");
-
-		// Instantiate and initialize the simulation runner
-		Class simRunnerClass = (Class) evoState.parameters
-				.getClassForParameter(arParam, null, AgencyRunner.class);
-
-		AgencyRunner simRunner = null;
+	public AgencyRunner getRunner(EvolutionState evoState) {
+		AgencyRunner runner = null;
 
 		try {
-			simRunner = (AgencyRunner) simRunnerClass.newInstance();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			runner = (AgencyRunner) runnerClass.newInstance();
+			runner.setup(evoState, pRunner);
+		} catch (Exception e) {
+			String msg = "Could not initialize/setup AgencyRunner "
+					+ runnerClass.getCanonicalName();
+			throw new RuntimeException(msg, e);
 		}
-		simRunner.setup(evoState, arParam);
 
-		return simRunner;
+		return runner;
 	}
 
-	public static GroupCreator getGroupCreator(EvolutionState evoState) {
-		Parameter gcParam = new Parameter("eval.groupcreator");
-
-		// Instantiate and initialize the GroupCreator
-		@SuppressWarnings("rawtypes")
-		Class groupCreatorClass = (Class) evoState.parameters
-				.getClassForParameter(gcParam, null, GroupCreator.class);
+	public GroupCreator getGroupCreator(EvolutionState evoState) {
 		GroupCreator groupCreator = null;
 
 		try {
 			groupCreator = (GroupCreator) groupCreatorClass.newInstance();
+			groupCreator.setup(evoState, pGroupCreator);
 		} catch (Exception e) {
-			throw new RuntimeException("Could not initialize group creator ");
+			String msg = "Could not initialize/setup GroupCreator "
+					+ groupCreatorClass.getCanonicalName();
+			throw new RuntimeException(msg, e);
 		}
-		groupCreator.setup(evoState, gcParam);
 		return groupCreator;
 	}
 
-	public static AgencyModel getSim(EvolutionState evoState,
-			Parameter base) {
-		Class groupCreatorClass = (Class) evoState.parameters
-				.getClassForParameter(base.push("sim"), null,
-						AgencyModel.class);
-		AgencyModel sim = null;
+	public AgencyModel getModel(EvolutionState evoState, Parameter base) {
+		AgencyModel model = null;
 
 		try {
-			sim = (AgencyModel) groupCreatorClass.newInstance();
-		} catch (InstantiationException e) {
-			throw new RuntimeException("Could not initialize simulation class");
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(
-					"Illegal access trying to initialize simulation class");
+			model = (AgencyModel) modelClass.newInstance();
+			model.setup(evoState, pModel);
+			model.setSeed(evoState.random[0].nextInt());
+		} catch (Exception e) {
+			String msg = "Count not initialize/setup AgencyModel "
+					+ modelClass.getCanonicalName();
+			throw new RuntimeException(msg, e);
+		}
+		return model;
+	}
+
+	public FitnessAggregator getFitnessAggregator(EvolutionState evoState,
+			Parameter base) {
+		FitnessAggregator toReturn = null;
+
+		try {
+			toReturn = (FitnessAggregator) fitnessAggregatorClass.newInstance();
+			toReturn.setup(evoState, pFitnessAggregator);
+		} catch (Exception e) {
+			String msg = "Count not initialize/setup FitnessAgregator "
+					+ fitnessAggregatorClass.getCanonicalName();
+			throw new RuntimeException(msg, e);
+		}
+		return toReturn;
+	}
+
+	@Override
+	public boolean runComplete(EvolutionState evoState) {
+		// We can't find ideal individuals
+		return false;
+	}
+
+	public class ModelRunnerHelper implements Runnable {
+
+		AgencyModel model;
+		FitnessAggregator fa;
+
+		ModelRunnerHelper(AgencyModel model, FitnessAggregator fa) {
+			this.model = model;
+			this.fa = fa;
 		}
 
-		sim.setSeed(evoState.random[0].nextInt());
-		sim.setup(evoState, base.push("sim"));
+		@Override
+		public void run() {
+			model.run();
+			Map<Individual, Fitness> fitnessSamples = model.getFitnesses();
+			for (Map.Entry<Individual, Fitness> entry : fitnessSamples
+					.entrySet()) {
+				fa.addSample(entry.getKey(), entry.getValue());
+			}
 
-		return sim;
+		}
+
 	}
 
 }

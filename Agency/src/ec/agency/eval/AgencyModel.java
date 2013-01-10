@@ -14,7 +14,7 @@ import ec.Individual;
  * @author kkoning
  * 
  */
-public interface AgencyModel extends ec.Setup, Runnable, FitnessUpdater {
+public interface AgencyModel extends ec.Setup, Runnable {
 
 	/**
 	 * Sets the random seed of the agent based model. This functionality is
@@ -25,14 +25,11 @@ public interface AgencyModel extends ec.Setup, Runnable, FitnessUpdater {
 	public void setSeed(int seed);
 
 	/**
-	 * The function of agent based models in the EC context is to evaluate the
-	 * fitness of individual agents. In order to do that, ECJ must send the
-	 * individuals to the agent based model, and that model must accept those
-	 * individuals.
+	 * Contains the ec.Individual's to be evaluated
 	 * 
-	 * @param ind
+	 * @param evalGroup
 	 */
-	public void addIndividual(Individual ind);
+	public void setEvaluationGroup(EvaluationGroup evalGroup);
 	
 	/**
 	 * Provides the agent based model with information that is likely 

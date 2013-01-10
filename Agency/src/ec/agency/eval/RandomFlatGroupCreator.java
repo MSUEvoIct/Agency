@@ -1,17 +1,18 @@
 package ec.agency.eval;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import ec.EvolutionState;
 import ec.Individual;
-import ec.Population;
+import ec.agency.util.IdentitySet;
 import ec.util.MersenneTwisterFast;
 import ec.util.Parameter;
 
-public class RandomFlatGroupCreator implements GroupCreator {
+public class RandomFlatGroupCreator implements GroupCreator,
+		Iterator<EvaluationGroup> {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -45,7 +46,8 @@ public class RandomFlatGroupCreator implements GroupCreator {
 		// Put all the Individuals into a single group.
 		for (int i = 0; i < evoState.population.subpops.length; i++) {
 			for (int j = 0; j < evoState.population.subpops[i].individuals.length; j++) {
-				allIndividuals.add(evoState.population.subpops[i].individuals[j]);
+				allIndividuals
+						.add(evoState.population.subpops[i].individuals[j]);
 			}
 		}
 
@@ -58,9 +60,11 @@ public class RandomFlatGroupCreator implements GroupCreator {
 		return true;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Set<Individual> next() {
-
+	public EvaluationGroup next() {
+		EvaluationGroup toReturn = new EvaluationGroup();
+		
 		// Our first iteration
 		if (!dirty) {
 			dirty = true;
@@ -68,14 +72,14 @@ public class RandomFlatGroupCreator implements GroupCreator {
 			
 		}
 
-		Set<Individual> toReturn = new HashSet<Individual>();
+		Set evalGroupMembers = new IdentitySet();
 		if (!hasNext())
 			return null;
 
 		for (int i = 0; i < groupSize; i++) {
 			Individual ind = null;
 
-			int j = 20;
+			int j = 30;  // TODO Magic # for retries
 
 			do {
 				int randIndex = random.nextInt(allIndividuals.size());
@@ -86,9 +90,9 @@ public class RandomFlatGroupCreator implements GroupCreator {
 					throw new RuntimeException(
 							"Group size too large in relation to population");
 
-			} while (toReturn.contains(ind));
+			} while (evalGroupMembers.contains(ind));
 
-			toReturn.add(ind);
+			evalGroupMembers.add(ind);
 
 		}
 
@@ -99,12 +103,20 @@ public class RandomFlatGroupCreator implements GroupCreator {
 			samplesRemaining--;
 		}
 
+		List<Individual> inds = new ArrayList<Individual>(evalGroupMembers.size());
+		inds.addAll(evalGroupMembers);
+		toReturn.individuals = inds;
 		return toReturn;
 	}
 
 	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Iterator<EvaluationGroup> iterator() {
+		return this;
 	}
 
 }
