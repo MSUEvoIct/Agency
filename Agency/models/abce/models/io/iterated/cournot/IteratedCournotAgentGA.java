@@ -4,6 +4,8 @@ import sim.engine.SimState;
 import abce.agency.firm.Firm;
 import ec.Fitness;
 import ec.Individual;
+import ec.agency.iteratedcournot.IteratedCournotAgent;
+import ec.agency.iteratedcournot.IteratedCournotModel;
 import ec.vector.BitVectorIndividual;
 
 public class IteratedCournotAgentGA extends Firm implements
@@ -41,7 +43,7 @@ public class IteratedCournotAgentGA extends Firm implements
 	@Override
 	public void step(SimState state) {
 		super.step(state);
-		IteratedCournotSimulation ics = (IteratedCournotSimulation) state;
+		IteratedCournotModel ics = (IteratedCournotModel) state;
 		
 		// states to determine
 		boolean oppEqualProduction1, oppEqualProduction2;

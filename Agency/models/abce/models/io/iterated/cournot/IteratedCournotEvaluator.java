@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import ec.Evaluator;
 import ec.EvolutionState;
 import ec.Subpopulation;
+import ec.agency.iteratedcournot.IteratedCournotModel;
 import ec.util.Parameter;
 import ec.vector.BitVectorIndividual;
 
@@ -30,20 +31,20 @@ public class IteratedCournotEvaluator extends Evaluator {
 		int numSimulations = numIndividuals / 2;
 		
 		// create simulations
-		IteratedCournotSimulation[] icsArray = new IteratedCournotSimulation[numSimulations];
+		IteratedCournotModel[] icsArray = new IteratedCournotModel[numSimulations];
 		
 		for(int i = 0; i < numIndividuals; i++) {
 			if ((i % 2) == 0) {
 				IteratedCournotAgentGA first = new IteratedCournotAgentGA((BitVectorIndividual) state.population.subpops[0].individuals[i]);
 				IteratedCournotAgentGA second = new IteratedCournotAgentGA((BitVectorIndividual) state.population.subpops[0].individuals[i+1]);
-				icsArray[i / 2] = new IteratedCournotSimulation(state.random[0].nextLong(), first, second);
+				icsArray[i / 2] = new IteratedCournotModel(state.random[0].nextLong(), first, second);
 				icsArray[i / 2].simulationID = i / 2;
 				icsArray[i/2].generation = state.generation;
 			}
 		}
 		
 		for(int i = 0; i < icsArray.length; i++) {
-			IteratedCournotSimulation ics = icsArray[i];
+			IteratedCournotModel ics = icsArray[i];
 			ics.steps = numSteps;
 			ics.run();
 		}		
