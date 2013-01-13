@@ -73,6 +73,17 @@ public class IteratedCournotModel implements AgencyModel {
 	}
 
 	public void run() {
+		
+		// add some worthless processing to test threading
+//		int num = 100000000;
+//		double a = 0;
+//		for (int i = 0; i < num; i++) {
+//			a += Math.sqrt(i+1);
+//		}
+//		System.out.println(a);
+		
+		
+		
 		for (int step = 0; step < steps; step++) {
 			float price;
 			float totalProduction = 0;
