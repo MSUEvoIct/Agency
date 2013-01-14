@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import ec.EvolutionState;
+import ec.Fitness;
 import ec.Individual;
 import ec.Statistics;
 import ec.Subpopulation;
@@ -27,7 +28,8 @@ public class GenomeDumpCSV extends Statistics {
 	static final String subPopIndicator = ".subpop";
 	static final String genHeaderPrefix = "Generation";
 	static final String indHeaderPrefix = "Individual";
-	static final String lociHeaderPrefix = "loci";
+	static final String indFitnessPrefix = "Fitness";
+	static final String lociHeaderPrefix = "Loci";
 
 	
 	boolean filesOpened = false;
@@ -101,6 +103,8 @@ public class GenomeDumpCSV extends Statistics {
 		header.append(genHeaderPrefix);
 		header.append(separator);
 		header.append(indHeaderPrefix);
+		header.append(separator);
+		header.append(indFitnessPrefix);
 		header.append(separator);
 		
 		for (int i = 0; i < numLoci; i++) {
@@ -186,8 +190,15 @@ public class GenomeDumpCSV extends Statistics {
 			sb.append(i);
 			sb.append(separator);
 			
+			// TODO Deal with Fitnesses better?
+			Fitness fit = spop.individuals[i].fitness;
+			sb.append(fit.fitness());
+			sb.append(separator);
+			
+			
 			// TODO Fix for things other than FloatVectorIndividuals
 			FloatVectorIndividual fvi = (FloatVectorIndividual) spop.individuals[i];
+
 			
 			for (int j = 0; j < numLoci; j++) {
 				sb.append(fvi.genome[j]);
