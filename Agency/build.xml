@@ -3,10 +3,10 @@
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="Agency">
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="Agency">
     <property environment="env"/>
     <property name="ECLIPSE_HOME" value="../../../../../Applications/eclipse"/>
+    <property name="Misc.location" value="../../../Documents/workspaces/ace/Misc"/>
     <property name="Simternet.location" value="../../Simternet"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
@@ -20,21 +20,25 @@
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="lib/ECJ-20.jar"/>
         <pathelement location="lib/mason.16.jar"/>
+        <pathelement location="lib/commons-math3-3.1.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
+                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="models">
+                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="test">
+                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -55,6 +59,12 @@
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
+        <ant antfile="build.xml" dir="${Misc.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${Misc.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
         <ant antfile="build.xml" dir="${Simternet.location}" inheritAll="false" target="clean"/>
         <ant antfile="build.xml" dir="${Simternet.location}" inheritAll="false" target="build">
             <propertyset>
@@ -74,6 +84,13 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
+    </target>
+    <target name="ec.agency.iteratetedcournot.IteratedCournotModel">
+        <java classname="ec.Evolve" failonerror="true" fork="yes">
+            <jvmarg line="-Xmx1024m"/>
+            <arg line="-file etc/ec.agency.iteratedcournot-evolve.properties"/>
+            <classpath refid="Agency.classpath"/>
+        </java>
     </target>
     <target name="Iterated Prisoners' Dilemma">
         <java classname="ec.Evolve" failonerror="true" fork="yes">
