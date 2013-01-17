@@ -13,6 +13,7 @@ import ec.Individual;
 import ec.Statistics;
 import ec.Subpopulation;
 import ec.util.Parameter;
+import ec.vector.BitVectorIndividual;
 import ec.vector.FloatVectorIndividual;
 import ec.vector.VectorIndividual;
 
@@ -79,17 +80,9 @@ public class GenomeDumpCSV extends Statistics {
 					e.printStackTrace();
 				}
 				
-				
-				
-				
-				
 			}
 			
-			
-			
 		}
-		
-		
 		
 	}
 	
@@ -121,6 +114,9 @@ public class GenomeDumpCSV extends Statistics {
 
 	private boolean individualSupported(Individual o) {
 		if (o instanceof FloatVectorIndividual)
+			return true;
+		
+		if (o instanceof BitVectorIndividual)
 			return true;
 		
 		return false;
@@ -197,14 +193,23 @@ public class GenomeDumpCSV extends Statistics {
 			
 			
 			// TODO Fix for things other than FloatVectorIndividuals
-			FloatVectorIndividual fvi = (FloatVectorIndividual) spop.individuals[i];
-
-			
-			for (int j = 0; j < numLoci; j++) {
-				sb.append(fvi.genome[j]);
-				if (j + 1 < numLoci)
-					sb.append(separator);
-				
+			if (spop.individuals[i] instanceof FloatVectorIndividual) {
+				FloatVectorIndividual fvi = (FloatVectorIndividual) spop.individuals[i];
+				for (int j = 0; j < numLoci; j++) {
+					sb.append(fvi.genome[j]);
+					if (j + 1 < numLoci)
+						sb.append(separator);
+				}
+			} else if (spop.individuals[i] instanceof BitVectorIndividual) {
+				BitVectorIndividual bvi = (BitVectorIndividual) spop.individuals[i];
+				for (int j = 0; j < numLoci; j++) {
+					if (bvi.genome[j])
+						sb.append("1");
+					else
+						sb.append("0");
+					if (j + 1 < numLoci)
+						sb.append(separator);
+				}
 			}
 			
 			out[subPopIdx].println(sb.toString());

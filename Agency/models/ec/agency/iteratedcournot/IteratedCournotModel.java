@@ -1,5 +1,6 @@
 package ec.agency.iteratedcournot;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import ec.Fitness;
 import ec.Individual;
 import ec.agency.eval.AgencyModel;
 import ec.agency.eval.EvaluationGroup;
+import ec.agency.io.DelimitedOutFile;
 import ec.agency.io.FileManager;
 import ec.simple.SimpleFitness;
 import ec.util.MersenneTwisterFast;
@@ -27,8 +29,8 @@ public class IteratedCournotModel implements AgencyModel {
 		}
 	}
 
-	static final String productionFormat = "Generation%d,SimulationID%d,Step%f,Agent%d,Production%f,Price%f,TotalRevenue%f";
-	static final String productionFile = "production.csv.gz";
+	static final String productionFormat = "Generation%d,SimulationID%d,AvgPrice%f";
+	static final String productionFile = "marketPrices.csv.gz";
 
 	static final Parameter pRoot = new Parameter("eval.model");
 	static final Parameter pDemandIntercept = pRoot.push("demandintercept");
@@ -54,7 +56,7 @@ public class IteratedCournotModel implements AgencyModel {
 	float[] marketPrices;
 
 	/**
-	 * No-arg constructor required
+	 * No-arg constructor required, use ec.setup()
 	 */
 	public IteratedCournotModel() {
 	}
@@ -133,8 +135,29 @@ public class IteratedCournotModel implements AgencyModel {
 			// throw new RuntimeException(e);
 			// }
 			// }
-
+			
+			
 		}
+		
+		// After the model has finished, print out the average price.
+		
+		try {
+			DelimitedOutFile out;
+			out = fm.getDelimitedOutFile(productionFile, productionFormat);
+			float avgPrice = 0;
+			for (int i = 0; i < marketPrices.length; i++) {
+				avgPrice += marketPrices[i];
+			}
+			avgPrice = avgPrice / marketPrices.length;
+			
+			out.write(generation, simulationID, avgPrice);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
 
 	private ProductionStimulus constructProductionStimulus(
@@ -176,26 +199,22 @@ public class IteratedCournotModel implements AgencyModel {
 
 	@Override
 	public void setGeneration(Integer generation) {
-		// TODO Auto-generated method stub
-
+		this.generation = generation;
 	}
 
 	@Override
 	public Integer getGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		return generation;
 	}
 
 	@Override
 	public void setSimulationID(Integer simulationID) {
-		// TODO Auto-generated method stub
-
+		this.simulationID = simulationID;
 	}
 
 	@Override
 	public Integer getSimulationID() {
-		// TODO Auto-generated method stub
-		return null;
+		return simulationID;
 	}
 
 	@Override
