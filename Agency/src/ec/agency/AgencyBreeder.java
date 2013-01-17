@@ -1,7 +1,10 @@
 package ec.agency;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import ec.EvolutionState;
-import ec.Individual;
 import ec.Population;
 import ec.Subpopulation;
 import ec.simple.SimpleBreeder;
@@ -14,45 +17,57 @@ import ec.util.Parameter;
  * explains why this is necessary and the impact it is expected to have on
  * outcomes.
  * 
- * TODO: This is currently just a skeleton implementation and is not currently
- * used in any of our models. See https://github.com/kkoning/Agency/issues/15
- * 
- * TODO: This overrides the normal elitism behavior. If elitism is required, it
- * will need to be re-implemented (i.e., re-integrated) here. For now, I'm not
- * accounting for it.
- * 
  * @author kkoning
  * 
  */
 public class AgencyBreeder extends SimpleBreeder {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Breeding of new individuals is broken up into separate Runnables and fed
-	 * through a task queue. This controlls typical/maximum number of
-	 * inidivudals each Runnable is responsible for producing. In other words,
-	 * it will either be this number or a smaller number representing the
-	 * individuals left in that subpopulation.
-	 */
-	protected int breedChunkSize = 100;
+	private static final String P_tournamentSize = "tournamentSize";
+	private static final String P_numSubpopGroups = "numSubpopGroups";
+	private static final String P_changeWeight = "changeWeight";
+	
+	int numSubpopGroups;
+	int tournamentSize;
+	int[] groupSizes;
+	float changeWeight;
 
 	@Override
+	public void setup(EvolutionState state, Parameter base) {
+		super.setup(state, base);
+
+		tournamentSize = state.parameters.getInt(base.push(P_tournamentSize), null);
+		numSubpopGroups =  state.parameters.getInt(base.push(P_numSubpopGroups), null);
+		groupSizes = new int[numSubpopGroups];
+		
+		for (int i = 0; i < numSubpopGroups; i++) {
+			groupSizes[i] = state.parameters.getInt(base.push(P_numSubpopGroups).push("" + i), null);
+		}
+		
+		changeWeight = state.parameters.getFloat(base.push(P_changeWeight), null);
+		if (changeWeight < 0)
+			throw new RuntimeException("breed.changeWeight must be in (0-1].");
+		if (changeWeight >= 1)
+			throw new RuntimeException("breed.changeWeight must be in (0-1].");
+			
+	}
+	
+	@Override
 	public Population breedPopulation(EvolutionState state) {
-
-		// Get a new blank population (i.e., without Individuals)
-		Population newPop = (Population) state.population.emptyClone();
-
 		// How large are the new subpopulations going to be?
-		int numSubpops = state.population.subpops.length;
-		for (int i = 0; i < numSubpops; i++)
-			newPop.subpops[i].individuals = new Individual[newSubpopSize(state,
-					i)];
+		int[] subpopSizes = newSubpopSizes(state);
 
-		// TODO: Parallelize this with a ThreadPoolExecutor.
+		// 
+		for( int i = 0; i < subpopSizes.length; i++) {
+			Subpopulation s = state.population.subpops[i];
+			if (s instanceof ScalableSubpopulation) {
+				ScalableSubpopulation ss = (ScalableSubpopulation)s;
+				ss.setTargetSize(subpopSizes[i]);
+			}
+		}
+		
 
-		// Create chunks to breed and breed them.
-
-		return newPop;
+		return super.breedPopulation(state);
 	}
 
 	/**
@@ -60,31 +75,105 @@ public class AgencyBreeder extends SimpleBreeder {
 	 * @param subPop
 	 * @return the number of individuals
 	 */
-	protected int newSubpopSize(EvolutionState state, int subPop) {
-		Subpopulation sp = state.population.subpops[subPop];
-
-		// if this isn't a scalable subpopulation, don't change the size.
-		// if (!(sp instanceof ScalableSubpopulation))
-		return sp.individuals.length;
-
-		/*
-		 * TODO: Actually do the scaling. Try it without this feature initially,
-		 * or with a simple version of it like adding one each generation or
-		 * something.
-		 */
+	protected int[] newSubpopSizes(EvolutionState state) {
+		int numSubpops = state.population.subpops.length;
+		
+		int[] existingSize = new int[numSubpops];
+		int[] targetSize = new int[numSubpops];
+		
+		
+		// Populate existing sizes
+		for (int i = 0; i < numSubpops; i++) {
+			existingSize[i] = state.population.subpops[i].individuals.length;
+		}
+		
+		// Populate target sizes
+		// allocate minimums first, subtract sub of minimums from total
+		int[] remainingInds = groupSizes.clone();
+		for (int i = 0; i < numSubpopGroups; i++) { // i = subpop group
+			for (int j = 0; j < numSubpops; j++) { // j = subpop
+				Subpopulation s = state.population.subpops[j];
+				if (s instanceof ScalableSubpopulation) {
+					int minSize = ((ScalableSubpopulation) s).getMinSize();
+					targetSize[j] += minSize;
+					remainingInds[i] -= minSize;
+				}
+			}
+		}
+		
+		// allocate remaining slots with tournament selection
+		// TODO: Make this modular?
+		for (int i = 0; i < numSubpopGroups; i++) { // i = subpop group
+			List<SimpleInd> collapsedInds = collectInds(state, i);
+			
+			while (remainingInds[i] > 0) {
+				List<SimpleInd> tournamentMembers = new ArrayList<SimpleInd>();
+				for (int j = 0; j < tournamentSize; j++) { // j = slot in tournament
+					int numInds = collapsedInds.size();
+					int randIndex = state.random[0].nextInt(numInds);
+					tournamentMembers.add(collapsedInds.get(randIndex));
+				}
+				SimpleInd si = Collections.max(tournamentMembers);
+				int luckySubpop = si.subPop;
+				targetSize[luckySubpop]++;
+				remainingInds[i]--;
+			}
+			
+		}
+		
+		// Average the existing and targetsizes
+		int[] finalSizes = new int[numSubpops];
+		float stayWeight = 1 - changeWeight;
+		for (int i = 0; i< numSubpops; i++) {
+			finalSizes[i] = (int) (existingSize[i]*stayWeight + targetSize[i]*changeWeight);
+		}
+		
+		return finalSizes;
 
 	}
 
-	@Override
-	public void setup(EvolutionState state, Parameter base) {
-		// TODO Auto-generated method stub
-		super.setup(state, base);
+	
+	private class SimpleInd implements Comparable<SimpleInd> {
 
-		/*
-		 * We'll need some parameters to help determine the variable sizes of
-		 * populations
-		 */
-
+		int subPop;
+		float fitness;
+		
+		@Override
+		public int compareTo(SimpleInd o) {
+			if (fitness > o.fitness)
+				return 1;
+			if (fitness < o.fitness)
+				return -1;
+			return 0;
+		}
+		
 	}
 
+	private List<SimpleInd> collectInds(EvolutionState state, int subpopGroup) {
+		List<SimpleInd> toReturn = new ArrayList<SimpleInd>();
+		int numSubops = state.population.subpops.length;
+		for (int i = 0; i < numSubops; i++) {
+			Subpopulation s = state.population.subpops[i];
+			if (s instanceof ScalableSubpopulation) {
+				ScalableSubpopulation ss = (ScalableSubpopulation) s;
+				int thisGroup = ss.getSubpopulationGroup();
+				if (thisGroup == subpopGroup) {
+					// Add everyone
+					int numInds = s.individuals.length;
+					for (int j = 0; j < numInds; j++) {
+						SimpleInd si = new SimpleInd();
+						si.subPop = i;
+						si.fitness = s.individuals[j].fitness.fitness();
+						toReturn.add(si);
+					}
+				}
+			}
+		}
+		return toReturn;
+		
+	}
+	
+	
+	
+	
 }
