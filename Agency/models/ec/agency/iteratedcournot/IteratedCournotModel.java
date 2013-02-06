@@ -88,6 +88,8 @@ public class IteratedCournotModel implements AgencyModel {
 
 				ps = constructProductionStimulus(ica, step);
 				indProduction = ica.getProduction(ps);
+				if (indProduction < 0)
+					indProduction = 0;
 				indProdArray = production.get(ica);
 				indProdArray[step] = indProduction;
 				totalProduction += indProduction;
