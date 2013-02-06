@@ -170,6 +170,12 @@ public class IteratedCournotModel implements AgencyModel {
 			ps.myLastProduction = getProduction(step-1, ica);
 			ps.othersLastProduction = getOtherProduction(step-1, ica);
 		}
+		
+		if (step > 1) {
+			ps.price2 = marketPrices[step-2];
+			ps.myLastProduction2 = getProduction(step-2, ica);
+			ps.othersLastProduction2 = getOtherProduction(step-2, ica);
+		}
 
 		return ps;
 	}
@@ -177,6 +183,11 @@ public class IteratedCournotModel implements AgencyModel {
 	private void recordRevenue(IteratedCournotAgent ica, float amount) {
 		float oldAssets;
 		float newAssets;
+		
+		if (Float.isInfinite(amount))
+			throw new RuntimeException("Earning infinite revenue");
+		else if (Float.isNaN(amount))
+			throw new RuntimeException("Earning NaN revenue");
 
 		oldAssets = assets.get(ica);
 		newAssets = oldAssets + amount;
