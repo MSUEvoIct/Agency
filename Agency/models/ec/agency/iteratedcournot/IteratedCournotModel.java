@@ -76,16 +76,6 @@ public class IteratedCournotModel implements AgencyModel {
 
 	public void run() {
 		
-		// add some worthless processing to test threading
-//		int num = 100000000;
-//		double a = 0;
-//		for (int i = 0; i < num; i++) {
-//			a += Math.sqrt(i+1);
-//		}
-//		System.out.println(a);
-		
-		
-		
 		for (int step = 0; step < steps; step++) {
 			float price;
 			float totalProduction = 0;
@@ -119,28 +109,10 @@ public class IteratedCournotModel implements AgencyModel {
 				revenue = indProduction * price;
 				recordRevenue(ica, revenue);
 			}
-
-			// if ((generation % 10 == 0) && (simulationID % 10 == 0)
-			// && (schedule.getTime() > 48)) {
-			// try {
-			// DelimitedOutFile production = fm.getDelimitedOutFile(
-			// productionFile, productionFormat);
-			// production.write(generation, simulationID,
-			// schedule.getTime(), 0, first.getProduction(0),
-			// price, first.getTotalRevenue());
-			// production.write(generation, simulationID,
-			// schedule.getTime(), 1, second.getProduction(0),
-			// price, first.getTotalRevenue());
-			// } catch (Exception e) {
-			// throw new RuntimeException(e);
-			// }
-			// }
-			
 			
 		}
 		
 		// After the model has finished, print out the average price.
-		
 		try {
 			DelimitedOutFile out;
 			out = fm.getDelimitedOutFile(productionFile, productionFormat);
@@ -196,10 +168,10 @@ public class IteratedCournotModel implements AgencyModel {
 
 	public float getPrice(float productionQty) {
 		float targetPrice = demandIntercept - demandSlope * productionQty;
-		if (targetPrice > 0)
-			return targetPrice;
+		if (targetPrice < 0.00001)
+			return 0;
 		else
-			return Float.MIN_NORMAL;
+			return targetPrice;
 	}
 
 	@Override
