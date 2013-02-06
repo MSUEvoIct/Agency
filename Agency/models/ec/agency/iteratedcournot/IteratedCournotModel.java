@@ -47,6 +47,7 @@ public class IteratedCournotModel implements AgencyModel {
 	// Parameters
 	float demandIntercept = 0;
 	float demandSlope = 0;
+	
 
 	// Operational variables about the agents
 	int numAgents;
@@ -54,6 +55,8 @@ public class IteratedCournotModel implements AgencyModel {
 	Map<IteratedCournotAgent, float[]> production;
 	Map<IteratedCournotAgent, Float> assets;
 	float[] marketPrices;
+	float maxQty = 0; // derived from demand parameters
+	
 
 	/**
 	 * No-arg constructor required, use ec.setup()
@@ -66,6 +69,8 @@ public class IteratedCournotModel implements AgencyModel {
 		demandIntercept = evoState.parameters.getFloat(pDemandIntercept,
 				pDemandIntercept);
 		demandSlope = evoState.parameters.getFloat(pDemandSlope, pDemandSlope);
+		maxQty = demandIntercept / demandSlope;
+		
 		steps = evoState.parameters.getInt(pSteps, pSteps);
 		marketPrices = new float[steps];
 		
@@ -90,6 +95,9 @@ public class IteratedCournotModel implements AgencyModel {
 				indProduction = ica.getProduction(ps);
 				if (indProduction < 0)
 					indProduction = 0;
+				else if (indProduction > maxQty)
+					indProduction = maxQty;
+				
 				indProdArray = production.get(ica);
 				indProdArray[step] = indProduction;
 				totalProduction += indProduction;
