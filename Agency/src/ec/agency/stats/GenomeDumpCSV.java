@@ -170,8 +170,6 @@ public class GenomeDumpCSV extends Statistics {
 			}
 		}
 		
-		
-		
 	}
 
 	private void perSubPopulationDump(EvolutionState state, int subPopIdx) {

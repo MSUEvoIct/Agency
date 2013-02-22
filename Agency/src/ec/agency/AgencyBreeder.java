@@ -1,4 +1,4 @@
-package ec.agency;
+ package ec.agency;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +26,7 @@ public class AgencyBreeder extends SimpleBreeder {
 	private static final String P_tournamentSize = "tournamentSize";
 	private static final String P_numSubpopGroups = "numSubpopGroups";
 	private static final String P_changeWeight = "changeWeight";
+	private static final String P_size = "size";
 	
 	int numSubpopGroups;
 	int tournamentSize;
@@ -41,7 +42,7 @@ public class AgencyBreeder extends SimpleBreeder {
 		groupSizes = new int[numSubpopGroups];
 		
 		for (int i = 0; i < numSubpopGroups; i++) {
-			groupSizes[i] = state.parameters.getInt(base.push(P_numSubpopGroups).push("" + i), null);
+			groupSizes[i] = state.parameters.getInt(base.push(P_numSubpopGroups).push("" + i).push(P_size), null);
 		}
 		
 		changeWeight = state.parameters.getFloat(base.push(P_changeWeight), null);
