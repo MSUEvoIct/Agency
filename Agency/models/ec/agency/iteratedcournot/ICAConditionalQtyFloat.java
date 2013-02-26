@@ -8,9 +8,8 @@ public class ICAConditionalQtyFloat extends FloatVectorIndividual implements
 
 	static final int posFirstQty = 0;
 	static final int posCooperateTarget = 1;
-	static final int posCooperateTolerance = 2;
-	static final int posCooperateQty = 3;
-	static final int posDefectQty = 4;
+	static final int posCooperateQty = 2;
+	static final int posDefectQty = 3;
 	
 	@Override
 	public float getProduction(ProductionStimulus prodStim) {
@@ -18,11 +17,10 @@ public class ICAConditionalQtyFloat extends FloatVectorIndividual implements
 			return genome[posFirstQty];
 		
 		float othersQty = prodStim.othersLastProduction;
-		float deviance = Math.abs(genome[posCooperateTarget]-othersQty);
-		if (deviance < genome[posCooperateTolerance])
-			return genome[posCooperateQty];
-		else
+		if (othersQty > genome[posCooperateTarget])
 			return genome[posDefectQty];
+		else
+			return genome[posCooperateQty];
 
 	}
 
