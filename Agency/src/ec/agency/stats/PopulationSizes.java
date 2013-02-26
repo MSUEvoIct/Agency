@@ -9,100 +9,52 @@ import java.io.PrintStream;
 
 import ec.EvolutionState;
 import ec.Statistics;
+import ec.agency.io.DataOutputFile;
 import ec.util.Parameter;
 
 public class PopulationSizes extends Statistics {
 	private static final long serialVersionUID = 1L;
 
-	static final String genHeader = "Generation";
-	static final String popHeaderPrefix = "SPop";
-	static final String separator = ",";
-
-	static final String pFilename = "file";
+	static final String outFile = "popSizes";
 	String filename;
 	
 	boolean fileOpened = false;
 	boolean headerOutput = false;
-	
-	File outFile;
-	PrintStream out;
+
+	DataOutputFile out;
 	
 	@Override
 	public void setup(EvolutionState evoState, Parameter base) {
 		super.setup(evoState, base);
-
-		filename = evoState.parameters
-				.getString(base.push(pFilename), null);
 		
-		OutputStream os;
-		BufferedOutputStream bos;
-		PrintStream ps;
-				
-		try {
-			outFile = new File(filename);
-			os = new FileOutputStream(outFile);
-			bos = new BufferedOutputStream(os);
-			out = new PrintStream(bos);
-			fileOpened = true;
-			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-		}
-
+		String fileName = outFile + ".job" + evoState.job[0];
+		out = new DataOutputFile(fileName);
+		
 	}
 
 	public void finalStatistics(EvolutionState state, int result) {
 		super.finalStatistics(state, result);
+
 		// Just need to clean up out output files here
 		out.flush();
 		out.close();
 	}
 
 	@Override
-	public void postBreedingStatistics(EvolutionState state) {
+	public void postEvaluationStatistics(EvolutionState state) {
 		super.postBreedingStatistics(state);
-		if (!headerOutput) {
-			String header = fileHeader(state);
-			out.println(header);
-			headerOutput = true;
-		}
 		
-		StringBuffer line = new StringBuffer();
-		line.append(state.generation);
-		line.append(separator);
-
 		int numSubpops = state.population.subpops.length;
+		int size = numSubpops + 2;
+		Object[] o = new Object[size];
+		o[0] = state.job[0];
+		o[1] = state.generation;
 		
 		for (int i = 0; i < numSubpops; i++) {
-			line.append(state.population.subpops[i].individuals.length); // # individuals
-			if (i < (numSubpops - 1))
-				line.append(separator);
+			o[i+2] = state.population.subpops[i].individuals.length;
 		}
-		out.println(line);
+		out.writeTuple(o);
 		out.flush();
 	}
-	
-	
-	String fileHeader(EvolutionState state) {
-		StringBuffer header = new StringBuffer();
-		header.append(genHeader);
-		header.append(separator);
-		
-		int numSubpops = state.population.subpops.length;
-		
-		for (int i = 0; i < numSubpops; i++) {
-			header.append(popHeaderPrefix);
-			header.append(i);
-			if (i < (numSubpops - 1))
-				header.append(separator);
-		}
-		
-		return header.toString();
-	}
-	
-	
-	
 	
 }
