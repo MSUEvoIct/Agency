@@ -1,7 +1,6 @@
 package ec.agency.iteratedcournot;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -10,8 +9,8 @@ import ec.Fitness;
 import ec.Individual;
 import ec.agency.eval.AgencyModel;
 import ec.agency.eval.EvaluationGroup;
+import ec.agency.io.DataOutputFile;
 import ec.agency.io.DelimitedOutFile;
-import ec.agency.io.FileManager;
 import ec.simple.SimpleFitness;
 import ec.util.MersenneTwisterFast;
 import ec.util.Parameter;
@@ -19,18 +18,7 @@ import ec.util.Parameter;
 public class IteratedCournotModel implements AgencyModel {
 	private static final long serialVersionUID = 1L;
 
-	static FileManager fm = new FileManager();
-	static {
-		fm = new FileManager();
-		try {
-			fm.initialize(".");
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	static final String productionFormat = "Generation%d,SimulationID%d,AvgPrice%f";
-	static final String productionFile = "marketPrices.csv.gz";
+	private static DataOutputFile out;
 
 	static final Parameter pRoot = new Parameter("eval.model");
 	static final Parameter pDemandIntercept = pRoot.push("demandintercept");
@@ -38,8 +26,9 @@ public class IteratedCournotModel implements AgencyModel {
 	static final Parameter pSteps = pRoot.push("steps");
 
 	// Operational information about the model
-	int simulationID;
+	int job;
 	int generation;
+	int simulationID;
 	int steps;
 	int seed;
 	MersenneTwisterFast random;
@@ -47,7 +36,6 @@ public class IteratedCournotModel implements AgencyModel {
 	// Parameters
 	float demandIntercept = 0;
 	float demandSlope = 0;
-	
 
 	// Operational variables about the agents
 	int numAgents;
@@ -56,7 +44,6 @@ public class IteratedCournotModel implements AgencyModel {
 	Map<IteratedCournotAgent, Float> assets;
 	float[] marketPrices;
 	float maxQty = 0; // derived from demand parameters
-	
 
 	/**
 	 * No-arg constructor required, use ec.setup()
@@ -70,17 +57,28 @@ public class IteratedCournotModel implements AgencyModel {
 				pDemandIntercept);
 		demandSlope = evoState.parameters.getFloat(pDemandSlope, pDemandSlope);
 		maxQty = demandIntercept / demandSlope;
-		
+
 		steps = evoState.parameters.getInt(pSteps, pSteps);
 		marketPrices = new float[steps];
-		
-		agentIDs = new IdentityHashMap<IteratedCournotAgent,Integer>();
-		production = new IdentityHashMap<IteratedCournotAgent,float[]>();
-		assets = new IdentityHashMap<IteratedCournotAgent,Float>();
+
+		agentIDs = new IdentityHashMap<IteratedCournotAgent, Integer>();
+		production = new IdentityHashMap<IteratedCournotAgent, float[]>();
+		assets = new IdentityHashMap<IteratedCournotAgent, Float>();
+
+		initOutput(evoState);
+
+		job = (Integer) evoState.job[0];
+	}
+
+	private void initOutput(EvolutionState evoState) {
+		if (IteratedCournotModel.out == null) {
+			String fileName = "marketPrices.job" + evoState.job[0];
+			IteratedCournotModel.out = new DataOutputFile(fileName);
+		}
 	}
 
 	public void run() {
-		
+
 		for (int step = 0; step < steps; step++) {
 			float price;
 			float totalProduction = 0;
@@ -97,7 +95,7 @@ public class IteratedCournotModel implements AgencyModel {
 					indProduction = 0;
 				else if (indProduction > maxQty)
 					indProduction = maxQty;
-				
+
 				indProdArray = production.get(ica);
 				indProdArray[step] = indProduction;
 				totalProduction += indProduction;
@@ -119,44 +117,40 @@ public class IteratedCournotModel implements AgencyModel {
 				revenue = indProduction * price;
 				recordRevenue(ica, revenue);
 			}
-			
+
 		}
-		
-		// After the model has finished, print out the average price.
-		try {
-			DelimitedOutFile out;
-			out = fm.getDelimitedOutFile(productionFile, productionFormat);
-			float avgPrice = 0;
-			for (int i = 0; i < marketPrices.length; i++) {
-				avgPrice += marketPrices[i];
-			}
-			avgPrice = avgPrice / marketPrices.length;
-			
-			out.write(generation, simulationID, avgPrice);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		float avgPrice = 0;
+		for (int i = 0; i < marketPrices.length; i++) {
+			avgPrice += marketPrices[i];
 		}
-		
-		
-		
+		avgPrice = avgPrice / marketPrices.length;
+
+		Object[] o = new Object[4];
+		o[0] = job;
+		o[1] = generation;
+		o[2] = simulationID;
+		o[3] = avgPrice;
+
+		out.writeTuple(o);
+		out.flush();
 	}
 
 	private ProductionStimulus constructProductionStimulus(
 			IteratedCournotAgent ica, int step) {
 		ProductionStimulus ps = new ProductionStimulus();
 		ps.step = step;
-		
+
 		if (step > 0) {
-			ps.price = marketPrices[step-1];
-			ps.myLastProduction = getProduction(step-1, ica);
-			ps.othersLastProduction = getOtherProduction(step-1, ica);
+			ps.price = marketPrices[step - 1];
+			ps.myLastProduction = getProduction(step - 1, ica);
+			ps.othersLastProduction = getOtherProduction(step - 1, ica);
 		}
-		
+
 		if (step > 1) {
-			ps.price2 = marketPrices[step-2];
-			ps.myLastProduction2 = getProduction(step-2, ica);
-			ps.othersLastProduction2 = getOtherProduction(step-2, ica);
+			ps.price2 = marketPrices[step - 2];
+			ps.myLastProduction2 = getProduction(step - 2, ica);
+			ps.othersLastProduction2 = getOtherProduction(step - 2, ica);
 		}
 
 		return ps;
@@ -165,7 +159,7 @@ public class IteratedCournotModel implements AgencyModel {
 	private void recordRevenue(IteratedCournotAgent ica, float amount) {
 		float oldAssets;
 		float newAssets;
-		
+
 		if (Float.isInfinite(amount))
 			throw new RuntimeException("Earning infinite revenue");
 		else if (Float.isNaN(amount))
@@ -212,19 +206,19 @@ public class IteratedCournotModel implements AgencyModel {
 
 	@Override
 	public Map<Individual, Fitness> getFitnesses() {
-		Map<Individual,Fitness> toReturn = new IdentityHashMap<Individual,Fitness>();
-		
+		Map<Individual, Fitness> toReturn = new IdentityHashMap<Individual, Fitness>();
+
 		for (IteratedCournotAgent ica : agentIDs.keySet()) {
 			Individual ind;
 			SimpleFitness fitness = new SimpleFitness();
-			
+
 			float indAssets = assets.get(ica);
 			fitness.setFitness(null, indAssets, false);
 			ind = (Individual) ica;
-						
+
 			toReturn.put(ind, fitness);
 		}
-		
+
 		return toReturn;
 	}
 
@@ -254,30 +248,30 @@ public class IteratedCournotModel implements AgencyModel {
 	@Override
 	public void setEvaluationGroup(EvaluationGroup evalGroup) {
 		numAgents = 0;
-		
+
 		if (steps <= 0) {
 			String msg = "setup() must be called before setEvaluationGroup";
 			throw new RuntimeException(msg);
 		}
-		
+
 		for (Individual ind : evalGroup.individuals) {
 			IteratedCournotAgent ica;
-			
+
 			try {
 				ica = (IteratedCournotAgent) ind;
 			} catch (Exception e) {
-				String msg = "Individual (natively " + ind.getClass().getCanonicalName() + 
-						"), must implement IteratedCournotAgent";
-				throw new RuntimeException(msg,e);
+				String msg = "Individual (natively "
+						+ ind.getClass().getCanonicalName()
+						+ "), must implement IteratedCournotAgent";
+				throw new RuntimeException(msg, e);
 			}
-			
+
 			agentIDs.put(ica, numAgents++);
 			production.put(ica, new float[steps]);
 			assets.put(ica, new Float(0));
-			
+
 		}
-		
-		
+
 	}
 
 }
