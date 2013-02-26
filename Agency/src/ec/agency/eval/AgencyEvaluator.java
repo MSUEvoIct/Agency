@@ -30,6 +30,9 @@ public class AgencyEvaluator extends Evaluator {
 
 	// We'll keep a single runner for the whole evolutionary run
 	AgencyRunner runner;
+	
+	// give unique (per-generation) ids to simlations.
+	int simulationID;
 
 	private Map<Individual, List<Double>> fitnesses = null;
 
@@ -63,6 +66,8 @@ public class AgencyEvaluator extends Evaluator {
 	@Override
 	public void evaluatePopulation(EvolutionState evoState) {
 
+		simulationID = 0;
+		
 		// Get the grouper and populate it
 		GroupCreator groupCreator = getGroupCreator(evoState);
 		groupCreator.addPopulation(evoState);
@@ -161,7 +166,6 @@ public class AgencyEvaluator extends Evaluator {
 		FitnessAggregator fa;
 		EvolutionState evoState;
 		int seed;
-		int simulationID;
 		
 		EvaluationGroup eg;
 
@@ -171,7 +175,7 @@ public class AgencyEvaluator extends Evaluator {
 			AgencyModel model = getModel(evoState,null,seed);
 			model.setSeed(seed);
 			model.setGeneration(evoState.generation);
-			model.setSimulationID(simulationID);
+			model.setSimulationID(simulationID++);
 			model.setEvaluationGroup(eg);
 			
 			model.run();
