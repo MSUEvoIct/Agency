@@ -51,6 +51,22 @@ public class DataOutputFile implements Runnable {
 
 		writerThread = new Thread(this); // Spawn writer thread
 		writerThread.start();
+		
+		// Add a shutdown hook to make sure file is flushed and closed
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				flush();
+				close();
+				try {
+					writerThread.join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		
 	}
 
 	public void close() {
