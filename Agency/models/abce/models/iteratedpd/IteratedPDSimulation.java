@@ -1,14 +1,8 @@
 package abce.models.iteratedpd;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import ec.agency.Agent;
 import ec.agency.io.DelimitedOutFile;
 import ec.agency.io.FileManager;
 import ec.util.MersenneTwisterFast;
-
-import sim.engine.SimState;
 
 public class IteratedPDSimulation implements Runnable {
 	private static final long serialVersionUID = 1L;
@@ -109,8 +103,6 @@ public class IteratedPDSimulation implements Runnable {
 				throw new RuntimeException(e);
 			}
 		}
-		
-		
 	}
 
 	public int timesDefected(IteratedPDAgent agent) {
