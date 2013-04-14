@@ -37,6 +37,10 @@ public class DataOutputFile implements Runnable {
 	int approxQueueSize = 0;
 
 	public DataOutputFile(String fileName) {
+		this(fileName,null);
+	}
+	
+	public DataOutputFile(String fileName, String[] colNames) {
 		this.fileName = fileName;
 		queue = new ArrayBlockingQueue<Object[]>(queueSize);
 
@@ -64,10 +68,16 @@ public class DataOutputFile implements Runnable {
 					e.printStackTrace();
 				}
 			}
-		});
+		});	
+
+		if (colNames != null) {
+			writeTuple(colNames);
+		}
+		
 		
 		
 	}
+	
 
 	public void close() {
 		shutdown = true;
