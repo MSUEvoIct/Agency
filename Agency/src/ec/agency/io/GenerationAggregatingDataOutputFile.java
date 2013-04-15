@@ -24,7 +24,8 @@ public class GenerationAggregatingDataOutputFile extends DataOutputFile {
 
 	public GenerationAggregatingDataOutputFile(String fileName,
 			String[] colNames) {
-		super(fileName);
+		super(fileName); // this includes shutdown hook
+		
 		ArrayList<String> expandedColNames = new ArrayList<String>();
 
 		if (colNames != null) {
@@ -46,12 +47,39 @@ public class GenerationAggregatingDataOutputFile extends DataOutputFile {
 			throw new RuntimeException(this.getClass().getSimpleName()
 					+ " requires column names");
 		}
-		
+
 		super.writeTuple(expandedColNames.toArray());
+
 
 		numCols = colNames.length;
 		resetStats(numCols);
 
+	}
+
+	@Override
+	public void close() {
+		outputAndReset();
+		super.close();
+	}
+
+	private void outputAndReset() {
+		// Write data
+		int objSize = ((numCols - 1) * 7) + 1;
+		ArrayList<Object> toOutput = new ArrayList<Object>(objSize);
+		toOutput.add(this.currentGeneration);
+		for (int i = 1; i < numCols; i++) {
+			toOutput.add(min[i]);
+			toOutput.add(mean[i].getResult());
+			toOutput.add(stdDev[i].getResult());
+			toOutput.add(kurtosis[i].getResult());
+			toOutput.add(skew[i].getResult());
+			toOutput.add(max[i]);
+			toOutput.add(n[i]);
+		}
+		super.writeTuple(toOutput.toArray());
+
+		// Reset stats
+		resetStats(numCols);
 	}
 
 	@Override
@@ -61,32 +89,17 @@ public class GenerationAggregatingDataOutputFile extends DataOutputFile {
 
 		if (thisGen != currentGeneration) {
 
-			// Write data
-			int objSize = ((numCols - 1) * 7) + 1;
-			ArrayList<Object> toOutput = new ArrayList<Object>(objSize);
-			toOutput.add(thisGen);
-			for (int i = 1; i < numCols; i++) {
-				toOutput.add(min[i]);
-				toOutput.add(mean[i].getResult());
-				toOutput.add(stdDev[i].getResult());
-				toOutput.add(kurtosis[i].getResult());
-				toOutput.add(skew[i].getResult());
-				toOutput.add(max[i]);
-				toOutput.add(n[i]);
-			}
-			super.writeTuple(toOutput.toArray());
-
+			outputAndReset();
+			
 			// Update generation
 			currentGeneration = thisGen;
 
-			// Reset stats
-			resetStats(numCols);
 		}
 
 		for (int i = 1; i < v.length; i++) {
 			Number number = (Number) v[i];
 			double realValue = number.doubleValue();
-			
+
 			// update min
 			if (realValue < min[i])
 				min[i] = realValue;
@@ -131,7 +144,7 @@ public class GenerationAggregatingDataOutputFile extends DataOutputFile {
 		colNames[2] = "testvar2";
 		GenerationAggregatingDataOutputFile gadof = new GenerationAggregatingDataOutputFile(
 				"test.tsv", colNames);
-		
+
 		MersenneTwisterFast random = new MersenneTwisterFast();
 		for (int gen = 0; gen < 30; gen++) {
 			for (int i = 0; i < 1000; i++) {
@@ -142,9 +155,9 @@ public class GenerationAggregatingDataOutputFile extends DataOutputFile {
 				gadof.writeTuple(toOut);
 			}
 		}
-		
+
 		System.exit(0);
-		
+
 	}
 
 }
