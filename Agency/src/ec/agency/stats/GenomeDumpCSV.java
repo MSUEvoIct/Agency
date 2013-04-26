@@ -72,6 +72,8 @@ public class GenomeDumpCSV extends Statistics {
 				try {
 					OutputStream os = new FileOutputStream(toOpen);
 					BufferedOutputStream bos = new BufferedOutputStream(os);
+					
+					@SuppressWarnings("resource") // closed in finalize
 					PrintStream ps = new PrintStream(bos);
 					out[i] = ps;
 					ps.println(getHeader(ind));
@@ -216,5 +218,16 @@ public class GenomeDumpCSV extends Statistics {
 		
 		
 	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		for (PrintStream ps : out) {
+			ps.flush();
+			ps.close();
+		}
+		
+	}
+
 
 }

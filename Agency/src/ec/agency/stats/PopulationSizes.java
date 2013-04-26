@@ -1,12 +1,5 @@
 package ec.agency.stats;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 import ec.EvolutionState;
 import ec.Statistics;
 import ec.agency.io.DataOutputFile;
