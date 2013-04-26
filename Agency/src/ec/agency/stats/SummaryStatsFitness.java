@@ -49,18 +49,6 @@ public class SummaryStatsFitness extends ec.Statistics {
 		sb.append(stats.getN());
 		
 		evoState.output.println(sb.toString(), statisticsLog);
-		
-//		evoState.output.println("Fitness summary statistics for subpopulation "
-//				+ subPopNum + ", " + stats.getN() + " Individuals",
-//				statisticsLog);
-//
-//		String minString = "Min: " + stats.getMin();
-//		String meanDevString = "Mean(StdDev): " + stats.getMean() + "("
-//				+ stats.getStandardDeviation() + ")";
-//		String maxString = "Max: " + stats.getMax();
-//
-//		evoState.output.println(minString + ", " + meanDevString + ", "
-//				+ maxString, statisticsLog);
 
 	}
 }
