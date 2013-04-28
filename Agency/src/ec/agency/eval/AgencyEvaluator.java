@@ -1,7 +1,5 @@
 package ec.agency.eval;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +7,6 @@ import ec.Evaluator;
 import ec.EvolutionState;
 import ec.Fitness;
 import ec.Individual;
-import ec.simple.SimpleFitness;
 import ec.util.Parameter;
 
 public class AgencyEvaluator extends Evaluator {

@@ -53,10 +53,11 @@ public class GenomeDump extends Statistics {
 				// then open a file for this subpop
 
 				String fileName = null;
-				if (evoState.job.length > 0) {
+				
+				if (evoState.job != null) {
 					fileName = "genome.job" + evoState.job[0] + ".spop" + i;
 				} else {
-					fileName = "genome.job" + evoState.job[0] + ".spop" + i;
+					fileName = "genome.spop" + i;
 				}
 				
 				out[i] = new DataOutputFile(fileName);
@@ -120,7 +121,7 @@ public class GenomeDump extends Statistics {
 		int numLoci = getNumLoci(state.population.subpops[subPopIdx].individuals[0]);
 		
 		Object job = null;
-		if (state.job.length >0)
+		if (state.job != null)
 			job = state.job[0];
 		int gen = state.generation; 
 		
