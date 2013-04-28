@@ -1,5 +1,6 @@
 package ec.agency.eval;
 
+import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -20,31 +21,30 @@ public class ThreadPoolRunner implements AgencyRunner {
 
 	private final Lock lock = new ReentrantLock();
 	private final Condition queueCleared = lock.newCondition();
-	
-	private final int bundleSize = 1000;
 
-	private int bundlePos = 0;
-	private RunBundle bundle = new RunBundle();
-	
-	public class RunBundle implements Runnable {
-
-		private Runnable[] tasks = new Runnable[bundleSize];
-		
-		@Override
-		public void run() {
-			for (Runnable task : tasks) {
-				if (task != null)
-					task.run();
-			}
-		}
-		
-	}
+	// private final int bundleSize = 100;
+	//
+	// private int bundlePos = 0;
+	// private RunBundle bundle = new RunBundle();
+	//
+	// public class RunBundle extends ArrayList<Runnable> implements Runnable {
+	// private static final long serialVersionUID = 1L;
+	//
+	// @Override
+	// public void run() {
+	// for (Runnable task : tasks) {
+	// if (task != null)
+	// task.run();
+	// }
+	// }
+	//
+	// }
 
 	/**
 	 * The queue of simulations in place for this threadpool will be this number
 	 * times the ECJ evalthreads parameter.
 	 */
-	private static final int queueSizeMultiplier = 3;
+	private static final int queueSizeMultiplier = 30;
 
 	@Override
 	public void setup(EvolutionState state, Parameter base) {
@@ -63,58 +63,21 @@ public class ThreadPoolRunner implements AgencyRunner {
 	}
 
 	@Override
-	public void runModel(Runnable model) {
-		// Wait, and make bundles of tasks
-		if (bundlePos < bundleSize) {
-			// collect tasks in bundles
-			bundle.tasks[bundlePos] = model;
-			bundlePos++;
-			return;
-		}
-		
-		// else...
-		
-		// submit the bundle and reset it
-		bundlePos = 0;
-		
-		RunBundle toSubmit = bundle;
-		bundle = new RunBundle();
-		
+	public synchronized void runModel(Runnable model) {
 		// Wait for space to open up in the queue
 		while (tasks.remainingCapacity() < 1) {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 		}
 
-		threadPool.execute(toSubmit);
-		
+		threadPool.submit(model);
 	}
 
 	@Override
 	public void finish() {
-		// Clear out the likely somewhat-filled bundle
-		RunBundle toSubmit = bundle;
-		bundle = new RunBundle();
-		
-		// Wait for space to open up in the queue
-		while (tasks.remainingCapacity() < 1) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		threadPool.execute(bundle);
-
-		
-		
-		
 		/*
 		 * Check every 0.1 seconds to see if the task queue is empty. Print
 		 * status messages for debug purposes.
@@ -126,7 +89,8 @@ public class ThreadPoolRunner implements AgencyRunner {
 		 */
 		System.out.println("Waiting for all simulations to finish");
 		int timesWaited = 0;
-		while (!tasks.isEmpty()) {
+
+		while (threadPool.getActiveCount() > 0) {
 			if (timesWaited % 300 == 0)
 				System.out.println("Waited " + timesWaited / 10 + " seconds");
 			try {
@@ -137,7 +101,6 @@ public class ThreadPoolRunner implements AgencyRunner {
 		}
 		System.out.println("All Simulations Finished.");
 
-		
 	}
 
 }
