@@ -16,6 +16,7 @@ import ec.vector.VectorIndividual;
 public class GenomeDump extends Statistics {
 	private static final long serialVersionUID = 1L;
 	
+	static final String jobHeaderPrefix = "Job";
 	static final String genHeaderPrefix = "Generation";
 	static final String indHeaderPrefix = "Individual";
 	static final String indFitnessPrefix = "Fitness";
@@ -23,6 +24,7 @@ public class GenomeDump extends Statistics {
 
 	boolean filesOpened = false;
 	DataOutputFile[] out;
+	boolean[] headersOutput;
 
 	@Override
 	public void setup(EvolutionState evoState, Parameter base) {
@@ -43,8 +45,11 @@ public class GenomeDump extends Statistics {
 		int numSubpops = evoState.population.subpops.length;
 
 		out = new DataOutputFile[numSubpops];
+		headersOutput = new boolean[numSubpops];
 		
 		for (int i = 0; i < numSubpops; i++) {
+			headersOutput[i] = false;
+			
 			// Get a test individual, see if we support it
 			Subpopulation spop = evoState.population.subpops[i];
 			Individual ind = spop.individuals[0];
@@ -120,6 +125,14 @@ public class GenomeDump extends Statistics {
 		int numInds = spop.individuals.length;
 		int numLoci = getNumLoci(state.population.subpops[subPopIdx].individuals[0]);
 		
+		// print header first
+		if (!headersOutput[subPopIdx]) {
+			Object[] headers = getHeaders(numLoci);
+			out[subPopIdx].writeTuple(headers);
+			headersOutput[subPopIdx] = true;
+		}
+		
+		
 		Object job = null;
 		if (state.job != null)
 			job = state.job[0];
@@ -156,5 +169,19 @@ public class GenomeDump extends Statistics {
 		
 		
 	}
+	
+	private Object[] getHeaders(int numLoci) {
+		int size = 4 + numLoci;
+		Object[] headers = new Object[size];
+		headers[0] = jobHeaderPrefix;
+		headers[1] = genHeaderPrefix;
+		headers[2] = indHeaderPrefix;
+		headers[3] = indFitnessPrefix;
+		for (int i = 4; i < size; i++) {
+			headers[i] = lociHeaderPrefix + (i - 4);
+		}
+		return headers;
+	}
+	
 
 }

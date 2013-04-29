@@ -20,7 +20,12 @@ public class PopulationSizes extends Statistics {
 	public void setup(EvolutionState evoState, Parameter base) {
 		super.setup(evoState, base);
 		
-		String fileName = outFile + ".job" + evoState.job[0];
+		String fileName;
+		if (evoState.job != null)
+			fileName = outFile + ".job" + evoState.job[0];
+		else
+			fileName = outFile;
+		
 		out = new DataOutputFile(fileName);
 		
 	}
