@@ -45,7 +45,10 @@ public class PopulationSizes extends Statistics {
 		int numSubpops = state.population.subpops.length;
 		int size = numSubpops + 2;
 		Object[] o = new Object[size];
-		o[0] = state.job[0];
+		if (state.job != null) 
+			o[0] = state.job[0];
+		else
+			o[0] = null;
 		o[1] = state.generation;
 		
 		for (int i = 0; i < numSubpops; i++) {
