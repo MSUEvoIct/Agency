@@ -63,7 +63,8 @@ public class AgencyEvaluator extends Evaluator {
 	@Override
 	public void evaluatePopulation(EvolutionState evoState) {
 
-		simulationID = 0;
+		int simulationID = 0;
+		
 		
 		// Get the grouper and populate it
 		GroupCreator groupCreator = getGroupCreator(evoState);
@@ -77,6 +78,7 @@ public class AgencyEvaluator extends Evaluator {
 		for (EvaluationGroup evalGroup : groupCreator) {
 			ModelRunnerHelper mrh = new ModelRunnerHelper();
 			mrh.evoState = evoState;
+			mrh.simulationID = simulationID++;
 			mrh.seed = evoState.random[0].nextInt();
 			mrh.eg = evalGroup;
 			mrh.fa = fa;
@@ -86,6 +88,7 @@ public class AgencyEvaluator extends Evaluator {
 		
 		// Wait for any/all asynchronously scheduled models to finish
 		runner.finish();
+		evoState.output.println(simulationID + " agency models executed.", 1);
 		
 		// Tell the aggregator to update the population
 		fa.updatePopulation(evoState);
@@ -154,7 +157,8 @@ public class AgencyEvaluator extends Evaluator {
 
 	@Override
 	public boolean runComplete(EvolutionState evoState) {
-		// We can't find ideal individuals
+		// We can't find ideal individuals; if there is a strategic element
+		// to the game, fitness depends on the population context.
 		return false;
 	}
 
@@ -163,6 +167,7 @@ public class AgencyEvaluator extends Evaluator {
 		FitnessAggregator fa;
 		EvolutionState evoState;
 		int seed;
+		int simulationID;
 		
 		EvaluationGroup eg;
 
@@ -172,7 +177,7 @@ public class AgencyEvaluator extends Evaluator {
 			AgencyModel model = getModel(evoState,null,seed);
 			model.setSeed(seed);
 			model.setGeneration(evoState.generation);
-			model.setSimulationID(simulationID++);
+			model.setSimulationID(simulationID);
 			model.setEvaluationGroup(eg);
 			
 			model.run();
