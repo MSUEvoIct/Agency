@@ -12,12 +12,10 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import ec.EvolutionState;
 import ec.Individual;
 import ec.agency.eval.AgencyEvaluator;
 import ec.agency.eval.AgencyRunner;
-import ec.agency.eval.FitnessListener;
 import ec.agency.eval.GroupCreator;
 import ec.agency.io.DelimitedOutFile;
 import ec.agency.io.FileManager;
@@ -32,8 +30,7 @@ import ec.util.Parameter;
  * @author kkoning
  * 
  */
-public class IntergenerationalStatistics extends ec.Statistics implements
-		FitnessListener {
+public class IntergenerationalStatistics extends ec.Statistics {
 	private static final long serialVersionUID = 1L;
 
 	private static final String fnPrefix = "igCkp";
@@ -203,17 +200,17 @@ public class IntergenerationalStatistics extends ec.Statistics implements
 		trackIndividuals(laggedState);
 		
 		// Get the GroupCreator
-		GroupCreator gc = AgencyEvaluator.getGroupCreator(evoState);
+//		GroupCreator gc = AgencyEvaluator.getGroupCreator(evoState);
 		
 		// Add the populations to the GroupCreator
-		gc.addPopulation(evoState);
-		gc.addPopulation(laggedState);
+//		gc.addPopulation(evoState);
+//		gc.addPopulation(laggedState);
 		
 		// Get the AgencyRunner
-		AgencyRunner ar = AgencyEvaluator.getRunner(evoState);
+//		AgencyRunner ar = AgencyEvaluator.getRunner(evoState);
 		
 		// Have the runner execute the simulations; use us as the fitness listener
-		ar.runSimulations(gc, this);
+//		ar.runSimulations(gc, this);
 		
 		
 		// All the fitnesses and other information should now be in the associated variables.
@@ -361,14 +358,14 @@ public class IntergenerationalStatistics extends ec.Statistics implements
 				+ ".evoState.ser";
 	}
 
-	@Override
-	public synchronized void updateFitness(Individual ind, Double fit) {
-		List<Double> fitList = fitnesses.get(ind);
-		if (fitList == null) {
-			fitList = new ArrayList<Double>();
-			fitnesses.put(ind, fitList);
-		}
-		fitList.add(fit);
-	}
+//	@Override
+//	public synchronized void updateFitness(Individual ind, Double fit) {
+//		List<Double> fitList = fitnesses.get(ind);
+//		if (fitList == null) {
+//			fitList = new ArrayList<Double>();
+//			fitnesses.put(ind, fitList);
+//		}
+//		fitList.add(fit);
+//	}
 
 }
