@@ -32,7 +32,7 @@ public abstract class AbstractFitnessAggregator implements FitnessAggregator {
 
 	@Override
 	public void updatePopulation(EvolutionState evoState) {
-		
+
 		int numSubpops = evoState.population.subpops.length;
 		for (int i = 0; i < numSubpops; i++) {
 			int numIndividuals = evoState.population.subpops[i].individuals.length;
@@ -41,9 +41,9 @@ public abstract class AbstractFitnessAggregator implements FitnessAggregator {
 				ind.fitness = getAggregatedFitness(fitnessSamples.get(ind));
 			}
 		}
-		
+
 	}
-	
+
 	abstract Fitness getAggregatedFitness(List<Fitness> samples);
-	
+
 }

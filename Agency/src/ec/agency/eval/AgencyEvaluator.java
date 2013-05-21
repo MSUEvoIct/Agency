@@ -173,19 +173,32 @@ public class AgencyEvaluator extends Evaluator {
 
 		@Override
 		public void run() {
-			
-			AgencyModel model = getModel(evoState,null,seed);
-			model.setSeed(seed);
-			model.setGeneration(evoState.generation);
-			model.setSimulationID(simulationID);
-			model.setEvaluationGroup(eg);
-			
-			model.run();
-			
-			Map<Individual, Fitness> fitnessSamples = model.getFitnesses();
-			for (Map.Entry<Individual, Fitness> entry : fitnessSamples
-					.entrySet()) {
-				fa.addSample(entry.getKey(), entry.getValue());
+			try {
+				AgencyModel model = getModel(evoState,null,seed);
+				model.setSeed(seed);
+				model.setGeneration(evoState.generation);
+				model.setSimulationID(simulationID);
+				model.setEvaluationGroup(eg);
+				
+				
+				model.run();
+				
+				Map<Individual, Fitness> fitnessSamples = model.getFitnesses();
+				
+				if (fitnessSamples == null) 
+					throw new RuntimeException("Model returned null fitness samples");
+				
+				if (fitnessSamples.size() == 0)
+					throw new RuntimeException("Model returned empty fitness samples");
+				
+				for (Map.Entry<Individual, Fitness> entry : fitnessSamples
+						.entrySet()) {
+					fa.addSample(entry.getKey(), entry.getValue());
+				}
+			} catch (Exception e) {
+				System.out.println("Error running simulation");
+				e.printStackTrace(System.err);
+				System.exit(-1);
 			}
 
 		}
