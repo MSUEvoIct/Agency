@@ -1,122 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="Agency">
-    <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../../../../Applications/eclipse"/>
-    <property name="Misc.location" value="../../../Documents/workspaces/ace/Misc"/>
-    <property name="Simternet.location" value="../../Simternet"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.6"/>
-    <property name="source" value="1.6"/>
-    <path id="JUnit 4.libraryclasspath">
-        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.10.0.v4_10_0_v20120426-0900/junit.jar"/>
-        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
-    </path>
-    <path id="Agency.classpath">
-        <pathelement location="bin"/>
-        <path refid="JUnit 4.libraryclasspath"/>
-        <pathelement location="lib/ECJ-20.jar"/>
-        <pathelement location="lib/mason.16.jar"/>
-        <pathelement location="lib/commons-math3-3.1.jar"/>
-    </path>
-    <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="models">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="test">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="bin"/>
-    </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <src path="models"/>
-            <src path="test"/>
-            <classpath refid="Agency.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
-        <ant antfile="build.xml" dir="${Misc.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${Misc.location}" inheritAll="false" target="build">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-        <ant antfile="build.xml" dir="${Simternet.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${Simternet.location}" inheritAll="false" target="build">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-    </target>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
-    <target name="ec.agency.iteratetedcournot.IteratedCournotModel">
-        <java classname="ec.Evolve" failonerror="true" fork="yes">
-            <jvmarg line="-Xmx1024m"/>
-            <arg line="-file etc/ec.agency.iteratedcournot-evolve.properties"/>
-            <classpath refid="Agency.classpath"/>
-        </java>
-    </target>
-    <target name="Iterated Prisoners' Dilemma">
-        <java classname="ec.Evolve" failonerror="true" fork="yes">
-            <arg line="-file models/abce/models/iteratedpd/evolve.properties"/>
-            <classpath refid="Agency.classpath"/>
-        </java>
-    </target>
-    <target name="Iterated Cournot GA">
-        <java classname="ec.Evolve" failonerror="true" fork="yes">
-            <jvmarg line="-Xmx8192m"/>
-            <arg line="-file etc/evolve.properties"/>
-            <classpath refid="Agency.classpath"/>
-        </java>
-    </target>
-    <target name="AgencyEvaluator Test">
-        <java classname="ec.Evolve" failonerror="true" fork="yes">
-            <jvmarg line="-Xmx1024m"/>
-            <arg line="-file etc/NewEvaluator-evolve.properties"/>
-            <classpath refid="Agency.classpath"/>
-        </java>
-    </target>
-    <target name="Agency Simple EC Market Simulation">
-        <java classname="ec.Evolve" failonerror="true" fork="yes">
-            <jvmarg line="-Xmx4096m"/>
-            <arg line="-file etc/oligopoly/short-test/mass-priceprod-evolve.cfg"/>
-            <classpath refid="Agency.classpath"/>
-        </java>
-    </target>
+<project basedir="." default="build" name="Agency">
+
+ <path id="compile.classpath">
+  <fileset dir="lib">
+   <include name="*.jar"/>
+  </fileset>
+ </path>
+
+ <target name="build">
+  <javac srcdir="src" destdir="bin" debug="on">
+   <classpath refid="compile.classpath"/>
+  </javac>
+ </target>
+
 </project>
