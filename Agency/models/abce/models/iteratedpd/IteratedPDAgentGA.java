@@ -1,7 +1,5 @@
 package abce.models.iteratedpd;
 
-import sim.engine.SimState;
-import abce.agency.firm.Firm;
 import ec.vector.BitVectorIndividual;
 
 /**
