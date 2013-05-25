@@ -204,4 +204,19 @@ public class AgencyEvaluator extends Evaluator {
 
 	}
 
+	@Override
+	public void closeContacts(EvolutionState state, int result) {
+		// We don't use this
+	}
+
+	@Override
+	public void initializeContacts(EvolutionState state) {
+		// We don't use this
+	}
+
+	@Override
+	public void reinitializeContacts(EvolutionState state) {
+		// We don't use this
+	}
+	
 }
