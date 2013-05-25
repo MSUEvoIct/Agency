@@ -36,7 +36,6 @@ public class AgencyEvaluator extends Evaluator {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setup(EvolutionState evoState, Parameter base) {
-		super.setup(evoState, base);
 
 		// get java types for components from ecj configuration file
 		modelClass = (Class<? extends AgencyModel>) evoState.parameters
