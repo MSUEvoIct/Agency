@@ -1,4 +1,4 @@
-package abce.models.iteratedpd;
+package ec.agency.prisonersdilemma;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;
