@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import ec.EvolutionState;
 import ec.Fitness;
 import ec.Individual;
 import ec.agency.eval.AgencyModel;
 import ec.agency.eval.EvaluationGroup;
+import ec.agency.io.DataOutputFile;
+import ec.agency.io.GenerationAggregatingDataOutputFile;
 import ec.simple.SimpleFitness;
 import ec.util.MersenneTwisterFast;
 import ec.util.Parameter;
@@ -24,6 +28,9 @@ public class IteratedPDModel implements AgencyModel {
 	static final String P_PAYOFF_LOSER = "payoffLoser";
 	static final String P_PAYOFF_DEFECT = "payoffBothDefect";
 
+	static final Lock openOutputLock = new ReentrantLock();
+	static DataOutputFile outFile;
+
 	// Operational Details
 	MersenneTwisterFast random;
 	int simulationID;
@@ -32,20 +39,42 @@ public class IteratedPDModel implements AgencyModel {
 	int step = 0;
 
 	// Game outcome variables
-	public double payoffBothCooperate;
-	public double payoffWinner;
-	public double payoffLoser;
-	public double payoffBothDefect;
+	double payoffBothCooperate;
+	double payoffWinner;
+	double payoffLoser;
+	double payoffBothDefect;
 
 	// Participating agents and variables
 	Prisoner[] prisoners = new Prisoner[2];
 	double[] payoffs = new double[2];
+	int numCooperated = 0;
+	int numWinnerLoser = 0;
+	int numDefected = 0;
 
 	@SuppressWarnings("unchecked")
 	// Generics not supported with arrays
 	List<Boolean>[] defections = new ArrayList[2];
 
 	public IteratedPDModel() {
+		openOutputLock.lock();
+		try {
+			if (outFile == null) {
+				String[] colNames = new String[7];
+				colNames[0] = "Generation";
+				colNames[1] = "SimulationID";
+				colNames[2] = "Cooperated";
+				colNames[3] = "WinnerLoser";
+				colNames[4] = "Defected";
+				colNames[5] = "TotalPayoff";
+				colNames[6] = "PayoffDifference";
+
+				outFile = new GenerationAggregatingDataOutputFile("PrisonersDilemmaResults.tsv",
+						colNames);
+			}
+		} finally {
+			openOutputLock.unlock();
+		}
+
 	}
 
 	@Override
@@ -72,7 +101,7 @@ public class IteratedPDModel implements AgencyModel {
 		InterrogationStimulus[] stimuli = new InterrogationStimulus[2];
 		stimuli[0] = new InterrogationStimulus();
 		stimuli[1] = new InterrogationStimulus();
-		
+
 		stimuli[0].myPlays = defections[0];
 		stimuli[0].opponentsPlays = defections[1];
 		stimuli[1].myPlays = defections[1];
@@ -93,17 +122,33 @@ public class IteratedPDModel implements AgencyModel {
 			if (defected[0] && defected[1]) {
 				payoffs[0] += payoffBothDefect;
 				payoffs[1] += payoffBothDefect;
+				numDefected++;
 			} else if (defected[0] && !defected[1]) {
 				payoffs[0] += payoffWinner;
 				payoffs[1] += payoffLoser;
+				numWinnerLoser++;
 			} else if (!defected[0] && defected[1]) {
 				payoffs[0] += payoffLoser;
 				payoffs[1] += payoffWinner;
+				numWinnerLoser++;
 			} else if (!defected[0] && !defected[1]) {
 				payoffs[0] += payoffBothCooperate;
 				payoffs[1] += payoffBothCooperate;
+				numCooperated++;
 			}
 		}
+
+		// Data Output
+		Object[] data = new Object[7];
+		data[0] = this.generation;
+		data[1] = this.simulationID;
+		data[2] = this.numCooperated;
+		data[3] = this.numWinnerLoser;
+		data[4] = this.numDefected;
+		data[5] = payoffs[0] + payoffs[1];
+		data[6] = Math.abs(payoffs[0] - payoffs[1]);
+		outFile.writeTuple(data);
+
 	}
 
 	@Override
