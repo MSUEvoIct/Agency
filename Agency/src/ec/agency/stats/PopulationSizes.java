@@ -44,6 +44,19 @@ public class PopulationSizes extends Statistics {
 		
 		int numSubpops = state.population.subpops.length;
 		int size = numSubpops + 2;
+		if (!headerOutput) {
+			String[] headers = new String[size];
+			headers[0] = "Job";
+			headers[1] = "Generation";
+			for (int i = 0; i < numSubpops; i++) {
+				headers[i+2] = "SubPop" + i;
+			}
+			out.writeTuple(headers);
+			headerOutput = true;
+		}
+		
+		
+		
 		Object[] o = new Object[size];
 		if (state.job != null) 
 			o[0] = state.job[0];
