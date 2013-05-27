@@ -60,9 +60,9 @@ public class GenomeDump extends Statistics {
 				String fileName = null;
 				
 				if (evoState.job != null) {
-					fileName = "genome.job" + evoState.job[0] + ".spop" + i;
+					fileName = "genome.job" + evoState.job[0] + ".spop" + i + ".tsv";
 				} else {
-					fileName = "genome.spop" + i;
+					fileName = "genome.spop" + i + ".tsv";
 				}
 				
 				out[i] = new DataOutputFile(fileName);
