@@ -7,6 +7,7 @@ import ec.Fitness;
 import ec.Individual;
 import ec.Statistics;
 import ec.Subpopulation;
+import ec.agency.NullIndividual;
 import ec.agency.io.DataOutputFile;
 import ec.util.Parameter;
 import ec.vector.BitVectorIndividual;
@@ -77,11 +78,14 @@ public class GenomeDump extends Statistics {
 		if (o instanceof BitVectorIndividual)
 			return true;
 		
+		if (o instanceof NullIndividual)
+			return true;
+		
 		return false;
 	}
 	
 	private int getNumLoci(Individual ind) {
-		int numLoci = -1; // i.e., impossible value; not supported
+		int numLoci = 0; // i.e., impossible value; not supported
 		
 		if (ind instanceof VectorIndividual) {
 			VectorIndividual vi = (VectorIndividual) ind;
@@ -128,7 +132,8 @@ public class GenomeDump extends Statistics {
 		// print header first
 		if (!headersOutput[subPopIdx]) {
 			Object[] headers = getHeaders(numLoci);
-			out[subPopIdx].writeTuple(headers);
+			if (out[subPopIdx] != null)
+				out[subPopIdx].writeTuple(headers);
 			headersOutput[subPopIdx] = true;
 		}
 		
