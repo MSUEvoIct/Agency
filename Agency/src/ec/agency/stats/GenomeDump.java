@@ -102,7 +102,6 @@ public class GenomeDump extends Statistics {
 		for (DataOutputFile dof : out) {
 			if (dof != null) {
 				dof.flush();
-				dof.close();
 			}
 		}
 	}
