@@ -146,6 +146,7 @@ public class DataOutputFile implements Runnable {
 			}
 			out.println(sb.toString());
 		}
+		out.flush();
 	}
 
 	public static void main(String[] args) throws InterruptedException {
