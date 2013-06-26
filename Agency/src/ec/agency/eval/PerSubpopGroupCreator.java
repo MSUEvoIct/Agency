@@ -15,6 +15,11 @@ import ec.util.Parameter;
 import ec.util.ParameterDatabase;
 
 /**
+ * AgencyEvaluator instantiates a new GroupCreator for each generation.  After it does so,
+ * it calls addPopulation to put individuals into the pool to be evaluated.  This is done
+ * so that individuals from multiple generations can be evaluated together.  For this reason,
+ * when we add our first individuals, we don't know how many tota
+ * 
  * @author kkoning
  *
  */
@@ -23,19 +28,26 @@ public class PerSubpopGroupCreator implements GroupCreator,
 
 	int numSubpopGroups;
 	int[] groupSize;
-	int totalGroupSize;
 	int[] rounds;
 	int samplesRemaining;
 	boolean dirty = false;
 	boolean firstRound;
 
 	MersenneTwisterFast random;
-	/** temporary, before start */
-	List[] allIndividuals;
+	
+	List<Individual>[] allIndsPerSubpopGroup;
+	
 	/** warning, this is a NON-RECTANGULAR array of (different size) arrays */
-	Individual[][] inds;
 	int[] listPos;
 
+	
+	/* 
+	 * AgencyEvaluator creates a new instantiation of the GroupCreator each
+	 * generation, and the group creation component is single-threaded.
+	 * 
+	 * (non-Javadoc)
+	 * @see ec.Setup#setup(ec.EvolutionState, ec.util.Parameter)
+	 */
 	@Override
 	public void setup(EvolutionState evoState, Parameter base) {
 		this.random = new MersenneTwisterFast(evoState.random[0].nextLong());
@@ -44,14 +56,13 @@ public class PerSubpopGroupCreator implements GroupCreator,
 		numSubpopGroups = p
 				.getInt(new Parameter("breed.numSubpopGroups"), null);
 		groupSize = new int[numSubpopGroups];
-		allIndividuals = new List[numSubpopGroups];
 		rounds = new int[numSubpopGroups];
 		listPos = new int[numSubpopGroups];
+		allIndsPerSubpopGroup = new List[numSubpopGroups];
 		
 		for (int i = 0; i < numSubpopGroups; i++) {
-			allIndividuals[i] = new ArrayList<Individual>();
+			allIndsPerSubpopGroup[i] = new ArrayList<Individual>();
 			groupSize[i] = p.getInt(base.push("groupSize." + i), null);
-			totalGroupSize += groupSize[i];
 			rounds[i] = p.getInt(base.push("rounds." + i), null);
 		}
 	}
@@ -70,14 +81,14 @@ public class PerSubpopGroupCreator implements GroupCreator,
 	}
 	
 	private Individual getInd(int spg) {
-		if (listPos[spg] >= inds[spg].length) {
+		if (listPos[spg] >= allIndsPerSubpopGroup[spg].size()) {
 			// randomize
 			Individual tmp;
-			for (int i = 0; i < inds[spg].length; i++) {
-				int randInd = random.nextInt(inds[spg].length);
-				tmp = inds[spg][randInd];
-				inds[spg][randInd] = inds[spg][i];
-				inds[spg][i] = tmp;
+			for (int i = 0; i < allIndsPerSubpopGroup[spg].size(); i++) {
+				int randInd = random.nextInt(allIndsPerSubpopGroup[spg].size());
+				tmp = allIndsPerSubpopGroup[spg].get(randInd);
+				allIndsPerSubpopGroup[spg].set(randInd, allIndsPerSubpopGroup[spg].get(i));
+				allIndsPerSubpopGroup[spg].set(i, tmp);
 			}
 			// reset list pos
 			listPos[spg] = 0;
@@ -86,7 +97,7 @@ public class PerSubpopGroupCreator implements GroupCreator,
 		}
 		
 		// reset has occurred if necessary
-		Individual toReturn = inds[spg][listPos[spg]++];
+		Individual toReturn = allIndsPerSubpopGroup[spg].get(listPos[spg]++);
 		return toReturn;
 	}
 	
@@ -98,17 +109,6 @@ public class PerSubpopGroupCreator implements GroupCreator,
 		
 		// Our first iteration
 		if (!dirty) {
-			// move everything to the fixed-length arrays
-			// (did this so randomizing order would be easier)
-			inds = new Individual[allIndividuals.length][];
-			for (int i = 0; i < allIndividuals.length; i++) {
-				int numInds = allIndividuals[i].size();
-				inds[i] = new Individual[numInds];
-				for (int j = 0; j < numInds; j++) {
-					inds[i][j] = (Individual) allIndividuals[i].get(j);
-				}
-			}
-			
 			dirty = true;
 		}
 
@@ -145,7 +145,7 @@ public class PerSubpopGroupCreator implements GroupCreator,
 				ScalableSubpopulation ss = (ScalableSubpopulation) subpops[i];
 				int group = ss.getSubpopulationGroup();
 				for (Individual ind : subpops[i].individuals) {
-					allIndividuals[group].add(ind);
+					allIndsPerSubpopGroup[group].add(ind);
 				}
 
 			} else {
