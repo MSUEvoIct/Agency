@@ -1,5 +1,7 @@
 package ec.agency.eval;
 
+import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +29,7 @@ public class AgencyEvaluator extends Evaluator {
 
 	// We'll keep a single runner for the whole evolutionary run
 	AgencyRunner runner;
-	
+
 	// give unique (per-generation) ids to simlations.
 	int simulationID;
 
@@ -45,7 +47,8 @@ public class AgencyEvaluator extends Evaluator {
 		runnerClass = (Class<? extends AgencyRunner>) evoState.parameters
 				.getClassForParameter(pRunner, null, AgencyRunner.class);
 		fitnessAggregatorClass = (Class<? extends FitnessAggregator>) evoState.parameters
-				.getClassForParameter(pFitnessAggregator, null, FitnessAggregator.class);
+				.getClassForParameter(pFitnessAggregator, null,
+						FitnessAggregator.class);
 
 		// Initialize a runner to use for the duration
 		try {
@@ -62,16 +65,18 @@ public class AgencyEvaluator extends Evaluator {
 	@Override
 	public void evaluatePopulation(EvolutionState evoState) {
 
+		// Get start time
+		Date start = new Date();
+
 		int simulationID = 0;
-		
-		
+
 		// Get the grouper and populate it
 		GroupCreator groupCreator = getGroupCreator(evoState);
 		groupCreator.addPopulation(evoState);
-		
+
 		// Initialize a new fitness aggregator
-		FitnessAggregator fa = getFitnessAggregator(evoState, pFitnessAggregator);
-		
+		FitnessAggregator fa = getFitnessAggregator(evoState,
+				pFitnessAggregator);
 
 		// Run all the models
 		for (EvaluationGroup evalGroup : groupCreator) {
@@ -81,17 +86,23 @@ public class AgencyEvaluator extends Evaluator {
 			mrh.seed = evoState.random[0].nextInt();
 			mrh.eg = evalGroup;
 			mrh.fa = fa;
-			
+
 			runner.runModel(mrh);
 		}
-		
+
 		// Wait for any/all asynchronously scheduled models to finish
 		runner.finish();
-		evoState.output.println(simulationID + " agency models executed.", 1);
-		
+
+		long msElapsed = new Date().getTime() - start.getTime();
+
+		double simPerSecond = (simulationID * 1000) / (msElapsed + 1);
+		DecimalFormat df = new DecimalFormat("#,##0.00");
+
+		evoState.output.println(simulationID + " models executed in "
+				+ msElapsed + "ms, " + df.format(simPerSecond) + "/sec", 1);
+
 		// Tell the aggregator to update the population
 		fa.updatePopulation(evoState);
-		
 
 	}
 
@@ -124,7 +135,8 @@ public class AgencyEvaluator extends Evaluator {
 		return groupCreator;
 	}
 
-	public AgencyModel getModel(EvolutionState evoState, Parameter base, int seed) {
+	public AgencyModel getModel(EvolutionState evoState, Parameter base,
+			int seed) {
 		AgencyModel model = null;
 
 		try {
@@ -167,29 +179,33 @@ public class AgencyEvaluator extends Evaluator {
 		EvolutionState evoState;
 		int seed;
 		int simulationID;
-		
+
 		EvaluationGroup eg;
 
 		@Override
 		public void run() {
 			try {
-				AgencyModel model = getModel(evoState,null,seed);
+				AgencyModel model = getModel(evoState, null, seed);
 				model.setSeed(seed);
 				model.setGeneration(evoState.generation);
 				model.setSimulationID(simulationID);
 				model.setEvaluationGroup(eg);
-				
-				
+
 				model.run();
-				
+
+				// Output progress to console
+				System.out.print(simulationID + "\r"); 
+
 				Map<Individual, Fitness> fitnessSamples = model.getFitnesses();
-				
-				if (fitnessSamples == null) 
-					throw new RuntimeException("Model returned null fitness samples");
-				
+
+				if (fitnessSamples == null)
+					throw new RuntimeException(
+							"Model returned null fitness samples");
+
 				if (fitnessSamples.size() == 0)
-					throw new RuntimeException("Model returned empty fitness samples");
-				
+					throw new RuntimeException(
+							"Model returned empty fitness samples");
+
 				for (Map.Entry<Individual, Fitness> entry : fitnessSamples
 						.entrySet()) {
 					fa.addSample(entry.getKey(), entry.getValue());
@@ -218,5 +234,5 @@ public class AgencyEvaluator extends Evaluator {
 	public void reinitializeContacts(EvolutionState state) {
 		// We don't use this
 	}
-	
+
 }

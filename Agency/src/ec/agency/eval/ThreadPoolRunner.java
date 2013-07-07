@@ -87,17 +87,17 @@ public class ThreadPoolRunner implements AgencyRunner {
 		 * jobs are somewhere else, then an empty queue doesn't mean that all
 		 * jobs have finished.
 		 */
-		System.out.println("Waiting for all simulations to finish");
-		int timesWaited = 0;
+//		System.out.println("Waiting for all simulations to finish");
+//		int timesWaited = 0;
 
 		while (threadPool.getActiveCount() > 0) {
-			if (timesWaited % 300 == 0)
-				System.out.println("Waited " + timesWaited / 10 + " seconds");
+//			if (timesWaited % 300 == 0)
+//				System.out.println("Waited " + timesWaited / 10 + " seconds");
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 			}
-			timesWaited++;
+//			timesWaited++;
 		}
 		System.out.println("All Simulations Finished.");
 
