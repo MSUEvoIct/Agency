@@ -20,6 +20,7 @@ public class AgencyEvaluator extends Evaluator {
 	Parameter pGroupCreator = pRoot.push("groupcreator");
 	Parameter pRunner = pRoot.push("runner");
 	Parameter pFitnessAggregator = pRoot.push("fitnessaggregator");
+	Parameter pProgress = pRoot.push("progress");
 
 	// The types of those components
 	Class<? extends AgencyModel> modelClass;
@@ -32,6 +33,9 @@ public class AgencyEvaluator extends Evaluator {
 
 	// give unique (per-generation) ids to simlations.
 	int simulationID;
+	
+	// output progress?
+	boolean progress = false;
 
 	private Map<Individual, List<Double>> fitnesses = null;
 
@@ -49,6 +53,8 @@ public class AgencyEvaluator extends Evaluator {
 		fitnessAggregatorClass = (Class<? extends FitnessAggregator>) evoState.parameters
 				.getClassForParameter(pFitnessAggregator, null,
 						FitnessAggregator.class);
+		progress = evoState.parameters.getBoolean(pProgress, null, false);
+		
 
 		// Initialize a runner to use for the duration
 		try {
@@ -96,7 +102,7 @@ public class AgencyEvaluator extends Evaluator {
 		long msElapsed = new Date().getTime() - start.getTime();
 
 		double simPerSecond = (simulationID * 1000) / (msElapsed + 1);
-		DecimalFormat df = new DecimalFormat("#,##0.00");
+		DecimalFormat df = new DecimalFormat("#,##0.##");
 
 		evoState.output.println(simulationID + " models executed in "
 				+ msElapsed + "ms, " + df.format(simPerSecond) + "/sec", 1);
@@ -194,7 +200,8 @@ public class AgencyEvaluator extends Evaluator {
 				model.run();
 
 				// Output progress to console
-				System.out.print(simulationID + "\r"); 
+				if (progress)
+					System.out.print(simulationID + "\r"); 
 
 				Map<Individual, Fitness> fitnessSamples = model.getFitnesses();
 
