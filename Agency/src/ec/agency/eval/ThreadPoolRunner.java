@@ -90,7 +90,7 @@ public class ThreadPoolRunner implements AgencyRunner {
 //		System.out.println("Waiting for all simulations to finish");
 //		int timesWaited = 0;
 
-		while (threadPool.getActiveCount() > 0) {
+		while (!tasks.isEmpty() && threadPool.getActiveCount() > 0) {
 //			if (timesWaited % 300 == 0)
 //				System.out.println("Waited " + timesWaited / 10 + " seconds");
 			try {
