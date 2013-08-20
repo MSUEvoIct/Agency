@@ -20,26 +20,8 @@ public class ThreadPoolRunner implements AgencyRunner {
 	private ThreadPoolExecutor threadPool = null;
 
 	private final Lock lock = new ReentrantLock();
-	private final Condition queueCleared = lock.newCondition();
-
-	// private final int bundleSize = 100;
-	//
-	// private int bundlePos = 0;
-	// private RunBundle bundle = new RunBundle();
-	//
-	// public class RunBundle extends ArrayList<Runnable> implements Runnable {
-	// private static final long serialVersionUID = 1L;
-	//
-	// @Override
-	// public void run() {
-	// for (Runnable task : tasks) {
-	// if (task != null)
-	// task.run();
-	// }
-	// }
-	//
-	// }
-
+	private int activeJobs = 0;
+	
 	/**
 	 * The queue of simulations in place for this threadpool will be this number
 	 * times the ECJ evalthreads parameter.
@@ -73,7 +55,10 @@ public class ThreadPoolRunner implements AgencyRunner {
 			}
 		}
 
-		threadPool.submit(model);
+		ThreadPoolHelper helper = new ThreadPoolHelper(model);
+		
+		threadPool.submit(helper);
+		
 	}
 
 	@Override
@@ -82,25 +67,40 @@ public class ThreadPoolRunner implements AgencyRunner {
 		 * Check every 0.1 seconds to see if the task queue is empty. Print
 		 * status messages for debug purposes.
 		 * 
-		 * TODO: Make sure that items are only removed from the queue once
-		 * execution is *complete*. If the queue is empty only because running
-		 * jobs are somewhere else, then an empty queue doesn't mean that all
-		 * jobs have finished.
 		 */
-//		System.out.println("Waiting for all simulations to finish");
-//		int timesWaited = 0;
-
-		while (!tasks.isEmpty() && threadPool.getActiveCount() > 0) {
-//			if (timesWaited % 300 == 0)
-//				System.out.println("Waited " + timesWaited / 10 + " seconds");
+		
+		while(activeJobs != 0) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 			}
-//			timesWaited++;
 		}
 		System.out.println("All Simulations Finished.");
 
 	}
+
+	private class ThreadPoolHelper implements Runnable {
+
+		Runnable model;
+		
+		ThreadPoolHelper(final Runnable model) {
+			this.model = model;
+		}
+		
+		@Override
+		public void run() {
+			lock.lock();
+			activeJobs++;
+			lock.unlock();
+
+			model.run();
+			
+			lock.lock();
+			activeJobs--;
+			lock.unlock();
+		}
+		
+	}
+	
 
 }

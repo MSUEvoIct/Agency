@@ -33,6 +33,8 @@ public class AgencyEvaluator extends Evaluator {
 
 	// give unique (per-generation) ids to simlations.
 	int simulationID;
+	int numModelsRun;
+	
 	
 	// output progress?
 	boolean progress = false;
@@ -75,6 +77,7 @@ public class AgencyEvaluator extends Evaluator {
 		Date start = new Date();
 
 		int simulationID = 0;
+		numModelsRun = 0;
 
 		// Get the grouper and populate it
 		GroupCreator groupCreator = getGroupCreator(evoState);
@@ -104,7 +107,7 @@ public class AgencyEvaluator extends Evaluator {
 		double simPerSecond = (simulationID * 1000) / (msElapsed + 1);
 		DecimalFormat df = new DecimalFormat("#,##0.##");
 
-		evoState.output.println(simulationID + " models executed in "
+		evoState.output.println(numModelsRun + "/" + simulationID + " models executed in "
 				+ msElapsed + "ms, " + df.format(simPerSecond) + "/sec", 1);
 
 		// Tell the aggregator to update the population
@@ -222,11 +225,16 @@ public class AgencyEvaluator extends Evaluator {
 				e.printStackTrace(System.err);
 				System.exit(-1);
 			}
+			incModelsRun();
 
 		}
 
 	}
 
+	private synchronized void incModelsRun() {
+		numModelsRun++;
+	}
+	
 	@Override
 	public void closeContacts(EvolutionState state, int result) {
 		// We don't use this
